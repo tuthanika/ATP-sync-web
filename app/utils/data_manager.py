@@ -94,53 +94,24 @@ class DataManager:
         retry_delay = 1
         for attempt in range(max_retries):
             try:
-                # 读取原始文件内容（如果存在）
-                original_content = None
-                if os.path.exists(file_path):
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        original_content = f.read()
-                # 如果文件不存在，创建默认内容
-                if not os.path.exists(file_path):
-                    current_app.logger.warning(f"文件不存在，创建默认内容: {file_path}")
-                    if "logs.json" in file_path:
-                        self._ensure_file_exists(file_path, [])
-                    elif "users.json" in file_path:
-                        self._ensure_file_exists(file_path, self._get_default_users())
-                    elif "settings.json" in file_path:
-                        self._ensure_file_exists(file_path, self._get_default_settings())
-                    else:
-                        self._ensure_file_exists(file_path, [])
                 # 尝试读取文件内容
+                content = None
                 with open(file_path, 'r', encoding='utf-8') as f:
-                    content = f.read().strip()
+                    content = f.read()
                     # 检查文件是否为空
                     if not content:
-                        current_app.logger.error(f"文件为空: {file_path}")
-                        if original_content:
-                            current_app.logger.error(f"文件被重置前的原始内容: {original_content}")
-                        if "logs.json" in file_path:
-                            return []
-                        elif "users.json" in file_path:
-                            return self._get_default_users()
-                        elif "settings.json" in file_path:
-                            return self._get_default_settings()
-                        else:
-                            return []
+                        raise ValueError("文件内容为空")
                     # 尝试解析JSON
-                    try:
-                        return json.loads(content)
-                    except json.JSONDecodeError as e:
-                        current_app.logger.error(f"JSON解析错误 ({file_path}): {str(e)}，尝试第 {attempt + 1} 次重试")
-                        if original_content:
-                            current_app.logger.error(f"无效JSON内容: {content}")
+                    json_content = json.loads(content)
+                    if isinstance(json_content, list) and not json_content:
+                        raise ValueError("文件内容为空数组")
+                    return json_content
             except Exception as e:
                 if attempt < max_retries - 1:
                     current_app.logger.error(f"读取JSON文件时出错 ({file_path}): {str(e)}，尝试第 {attempt + 1} 次重试")
                     time.sleep(retry_delay)
                 else:
-                    current_app.logger.error(f"读取JSON文件时出错 ({file_path}): {str(e)}，达到最大重试次数")
-                    if original_content:
-                        current_app.logger.error(f"异常发生前的文件内容: {original_content}")
+                    current_app.logger.error(f"读取JSON文件时出错 ({file_path}): {str(e)}，达到最大重试次数，将返回默认值")
             # 返回默认值
             if "logs.json" in file_path:
                 return []
@@ -158,40 +129,29 @@ class DataManager:
             current_app.logger.warning(f"尝试写入空数组到文件: {file_path}，拒绝写入")
             return
         try:
-            # 记录原始文件内容（如果存在）
-            original_content = None
-            if os.path.exists(file_path):
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    original_content = f.read()
             # 确保目录存在
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            # 先写入临时文件
-            temp_file = file_path + ".tmp"
-            with open(temp_file, 'w', encoding='utf-8') as f:
-                json.dump(data, ensure_ascii=False, indent=2, fp=f)
-            # 然后原子性地重命名为目标文件
-            if os.path.exists(file_path):
-                # 在Windows上需要先删除现有文件
-                try:
-                    os.remove(file_path)
-                except Exception as e:
-                    current_app.logger.error(f"删除现有文件失败: {str(e)}")
-                    if original_content:
-                        current_app.logger.error(f"删除失败前的文件内容: {original_content}")
-            os.rename(temp_file, file_path)
+            if os.name == 'nt': 
+                # 先写入临时文件
+                temp_file = file_path + ".tmp"
+                with open(temp_file, 'w', encoding='utf-8') as f:
+                    json.dump(data, ensure_ascii=False, indent=2, fp=f)
+                # 然后原子性地重命名为目标文件
+                if os.path.exists(file_path):
+                    # 在Windows上需要先删除现有文件
+                    try:
+                        os.remove(file_path)
+                    except Exception as e:
+                        current_app.logger.error(f"删除现有文件失败: {str(e)}")
+                os.rename(temp_file, file_path)
+            else:
+                # 非Windows系统直接写入
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    json.dump(data, ensure_ascii=False, indent=2, fp=f)
             # 记录写入成功
             current_app.logger.info(f"成功写入文件: {file_path}")
         except Exception as e:
             current_app.logger.error(f"写入JSON文件时出错 ({file_path}): {str(e)}")
-            if original_content:
-                current_app.logger.error(f"写入失败前的文件内容: {original_content}")
-            # 如果重命名失败，尝试直接写入
-            try:
-                with open(file_path, 'w', encoding='utf-8') as f:
-                    json.dump(data, ensure_ascii=False, indent=2, fp=f)
-            except Exception as write_error:
-                current_app.logger.error(f"直接写入也失败了: {str(write_error)}")
-                raise
     
     def format_timestamp(self, timestamp):
         """将时间戳格式化为 yyyy-MM-dd HH:mm:ss 格式"""
