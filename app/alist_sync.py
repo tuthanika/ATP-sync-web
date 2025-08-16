@@ -385,10 +385,9 @@ class AlistSync:
     def _recursive_copy(self, src_dir: str, dst_dir: str) -> bool:
         """递归复制目录内容"""
         try:
-            for exclude_item in self.exclude_list:
-                if src_dir.startswith(exclude_item) and exclude_item != '':
-                    logger.info(f"排除目录: {src_dir}, 跳过同步")
-                    return True
+            if self.is_path_excluded(src_dir):
+                logger.info(f"排除目录: {src_dir}, 跳过同步")
+                return True
             logger.info(f"开始递归复制 - 源目录: {src_dir}, 目标目录: {dst_dir}")
             src_contents = self.get_directory_contents(src_dir)
             if not src_contents:
@@ -453,6 +452,11 @@ class AlistSync:
                 logger.info("差异项处理策略：删除目标目录多余项")
                 
             for name in to_delete:
+                full_dst_path = f"{dst_dir.rstrip('/')}/{name}".replace("//", "/")
+                if self.is_path_excluded(full_dst_path):
+                    logger.info(f"排除目录: {full_dst_path}, 跳过删除")
+                    continue
+
                 if self.sync_delete_action == "move":
                     logger.info(f"处理移动项目: {name}")
                     trash_dir = self._get_trash_dir(dst_dir)
@@ -500,12 +504,19 @@ class AlistSync:
             if not item_name:
                 logger.error("项目名称为空")
                 return False
+                
+            src_path = f"{src_dir}/{item_name}".replace("//", "/")
+            dst_path = f"{dst_dir}/{item_name}".replace("//", "/")
+
+            if self.is_path_excluded(src_path) or self.is_path_excluded(dst_path):
+                logger.info(f"排除路径: {src_path} 或 {dst_path}, 跳过处理")
+                return True
+
+            if not item_name:
+                logger.error("项目名称为空")
+                return False
 
             logger.info(f"处理项目: {item_name}")
-            for exclude_item in self.exclude_list:
-                if src_dir.startswith(exclude_item) and exclude_item != '':
-                    logger.info(f"排除目录: {src_dir}, 跳过同步")
-                    return True
 
             # 处理文件
             src_path = f"{src_dir}/{item_name}".replace('//', '/')
@@ -600,7 +611,16 @@ class AlistSync:
         except Exception as e:
             logger.error(f"复制项目时发生错误: {str(e)}")
             return False
-
+    def is_path_excluded(self, path: str) -> bool:
+        """Kiểm tra xem path có nằm trong hoặc bên dưới bất kỳ thư mục loại trừ nào"""
+        if not path or not self.exclude_list:
+            return False
+        normalized_path = path.rstrip("/")
+        for exclude in self.exclude_list:
+            exclude = exclude.rstrip("/")
+            if normalized_path == exclude or normalized_path.startswith(exclude + "/"):
+                return True
+        return False
 
 def get_dir_pairs_from_env() -> List[str]:
     """从环境变量获取目录对列表"""

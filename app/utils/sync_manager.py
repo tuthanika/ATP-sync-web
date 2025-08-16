@@ -431,9 +431,11 @@ class SyncManager:
                 if task.get("exclude_dirs"):
                     excludes = task.get("exclude_dirs").split(",")
                     for exclude in excludes:
-                        exclude_dir = f"{source_pair}/{exclude}".replace('//', '/')
-                        exclude_dirs.append(exclude_dir)
-            
+                        exclude = exclude.strip().lstrip("/")
+                        exclude_src = f"{source_pair.rstrip('/')}/{exclude}".replace("//", "/")
+                        exclude_dst = f"{target_pair.rstrip('/')}/{exclude}".replace("//", "/")
+                        exclude_dirs.extend([exclude_src, exclude_dst])
+        
             if dir_pairs:
                 os.environ["DIR_PAIRS"] = ";".join(dir_pairs)
                 data_manager._append_task_log(task_id, instance_id, f"设置同步目录对: {os.environ['DIR_PAIRS']}")
