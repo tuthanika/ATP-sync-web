@@ -3,12 +3,12 @@
 [![Star History Chart](https://api.star-history.com/svg?repos=xjxjin/alist-sync&type=Date)](https://star-history.com/#xjxjin/alist-sync&Date)
 # Alist-Sync
 
-一个基于 Web 界面的 Alist 存储同步工具，支持多任务管理、定时同步、差异处理等功能。
+Dựa trên một Web Giao diện Alist Công cụ đồng bộ hóa lưu trữ，Hỗ trợ quản lý đa nhiệm vụ、Đồng bộ hóa thời gian、Xử lý khác biệt và các chức năng khác。
 
 <div align="center">
   
 [![github tag][gitHub-tag-image]][github-url] [![docker pulls][docker-pulls-image]][docker-url] [![docker image size][docker-image-size-image]][docker-url]  
-**如果好用，请Star！非常感谢！**  [GitHub](https://github.com/xjxjin/alist-sync) [Gitee](https://gitee.com/xjxjin/alist-sync) [DockerHub](https://hub.docker.com/r/xjxjin/alist-sync)
+**Nếu nó dễ sử dụng，Xin vui lòngStar！Cảm ơn bạn rất nhiều！**  [GitHub](https://github.com/xjxjin/alist-sync) [Gitee](https://gitee.com/xjxjin/alist-sync) [DockerHub](https://hub.docker.com/r/xjxjin/alist-sync)
 ---
 
 [gitHub-tag-image]: https://img.shields.io/github/v/tag/xjxjin/alist-sync
@@ -20,33 +20,33 @@
 
 
 
-## 功能特点
+## Các tính năng chức năng
 
-- 📱 美观的 Web 管理界面
-- 🔄 支持多任务管理
-- ⏰ 支持 Cron 定时任务
-- 📂 支持数据同步和文件同步两种模式
-- 🗑️ 支持多种差异处理策略（保留/移动到回收站/删除）
-- 📝 详细的同步日志记录
-- 🔒 支持用户认证和密码管理
-- 🐳 支持 Docker 部署
-- 🐉 支持青龙面板定时任务
-
-
+- 📱 Xinh đẹp Web Giao diện quản lý
+- 🔄 Hỗ trợ quản lý đa nhiệm vụ
+- ⏰ ủng hộ Cron Nhiệm vụ thời gian
+- 📂 Hỗ trợ hai chế độ: đồng bộ hóa dữ liệu và đồng bộ hóa tệp
+- 🗑️ Hỗ trợ nhiều chiến lược xử lý khác biệt（dự trữ/Di chuyển đến thùng tái chế/xóa bỏ）
+- 📝 Ghi nhật ký đồng bộ chi tiết
+- 🔒 Hỗ trợ xác thực người dùng và quản lý mật khẩu
+- 🐳 ủng hộ Docker triển khai
+- 🐉 Hỗ trợ các nhiệm vụ thời gian của bảng điều khiển Qinglong
 
 
 
-## 快速开始
 
-### Docker 部署（推荐）
 
-1. 创建必要的目录：
+## Bắt đầu nhanh chóng
+
+### Docker triển khai（gợi ý）
+
+1. Tạo thư mục cần thiết：
 
 ```bash
 mkdir -p /DATA/AppData/alist-sync-web/data 
 ```
 
-2. 创建 docker-compose.yml：
+2. tạo nên docker-compose.yml：
 
 ```bash
 version: '3'
@@ -64,125 +64,125 @@ services:
       - TZ=Asia/Shanghai 
 ```
 
-3. 启动服务：
+3. Bắt đầu dịch vụ：
 
 ```bash
 docker-compose up -d
 ```
 
-4. 访问 Web 界面：
+4. truy cập Web giao diện：
 
 http://localhost:52441
 
-默认登录账号：
-- 用户名：admin
-- 密码：admin
+Tài khoản đăng nhập mặc định：
+- Tên người dùng：admin
+- mật khẩu：admin
 
-## 使用说明
+## Hướng dẫn sử dụng
 
-### 1. 基础配置
+### 1. Cấu hình cơ bản
 
-首次使用需要配置 Alist 的基本连接信息：
-- 服务地址：Alist 服务的访问地址
-- 用户名：Alist 管理员账号
-- 密码：Alist 管理员密码
-- 令牌：Alist 令牌
+Có thể định cấu hình cho lần sử dụng đầu tiên Alist Thông tin kết nối cơ bản：
+- Địa chỉ dịch vụ：Alist Địa chỉ truy cập của dịch vụ
+- Tên người dùng：Alist Tài khoản quản trị viên
+- mật khẩu：Alist 管理员mật khẩu
+- Mã thông báo：Alist Mã thông báo
 
-### 2. 同步任务配置
+### 2. Đồng bộ hóa cấu hình tác vụ
 
-支持两种同步模式：
+Hỗ trợ hai chế độ đồng bộ hóa：
 
-#### 数据同步模式
-- 各个网盘之间同目录数据备份
-- 选择源存储器和目标存储器
-- 配置同步目录
-- 支持排除目录
-- 支持多目标存储同步
-- 参照最后图片
+#### Chế độ đồng bộ hóa dữ liệu
+- Sao lưu dữ liệu của cùng một thư mục giữa mỗi đĩa mạng
+- Chọn nguồn và bộ nhớ đích
+- Định cấu hình thư mục đồng bộ hóa
+- Hỗ trợ thư mục loại trừ
+- Hỗ trợ đồng bộ hóa lưu trữ đa mục tiêu
+- Tham khảo hình ảnh cuối cùng
 
-#### 文件同步模式
-- 需要填写全路径
-- 手动配置源路径和目标路径
-- 支持多个路径对
-- 支持排除目录
-- 参照最后图片
+#### Chế độ đồng bộ hóa tệp
+- Bạn cần điền vào con đường đầy đủ
+- Cấu hình thủ công các đường dẫn nguồn và đích
+- Hỗ trợ nhiều cặp đường dẫn
+- Hỗ trợ thư mục loại trừ
+- Tham khảo hình ảnh cuối cùng
 
-#### 文件移动模式
-- 需要填写全路径
-- 手动配置源路径和目标路径
-- 支持多个路径对
-- 支持排除目录
-- 注：文件移动实现方式是先复制到目标路径，然后在下次自动执行任务时，判断目标路径是否已存在文件，如果存在则删除源路径文件
+#### Chế độ di chuyển tập tin
+- Bạn cần điền vào con đường đầy đủ
+- Cấu hình thủ công các đường dẫn nguồn và đích
+- Hỗ trợ nhiều cặp đường dẫn
+- Hỗ trợ thư mục loại trừ
+- Ghi chú：Phương thức chuyển động tệp là sao chép vào đường dẫn đích trước，Sau đó, lần tới khi bạn tự động hóa nhiệm vụ，Xác định xem đường dẫn đích đã có tệp không，Nếu nó tồn tại, hãy xóa tệp đường dẫn nguồn
 
 
-### 3. 差异处理策略
+### 3. Chiến lược xử lý khác biệt
 
-提供三种差异处理方式：
-- 不处理：保留目标目录中的差异文件
-- 移动到回收站：将差异文件移动到目标存储的回收站(trash)
-- 删除：直接删除目标目录中的差异文件
-- 移动/删除 在有的存储源会失效欢迎提交Issue，我反馈到 Alist 作者
+Cung cấp ba phương pháp điều trị khác biệt：
+- Không được xử lý：Giữ các tệp vi sai trong thư mục đích
+- Di chuyển đến thùng tái chế：Di chuyển tệp diff đến thùng rác của lưu trữ mục tiêu(trash)
+- xóa bỏ：直接xóa bỏ目标目录中的差异文件
+- di chuyển/xóa bỏ Một số nguồn lưu trữ sẽ thất bại. Chào mừng bạn đến gửiIssue，Tôi đã báo cáo Alist tác giả
 
-### 4. 定时任务
+### 4. Nhiệm vụ thời gian
 
-- 支持 Cron 表达式配置定时任务
-- 可查看未来 5 次执行时间
-- 支持立即执行功能
+- ủng hộ Cron Các tác vụ thời gian cấu hình biểu thức
+- Xem tương lai 5 Thời gian thực hiện
+- Hỗ trợ chức năng thực thi ngay lập tức
 
-### 5. 日志查看
+### 5. Xem nhật ký
 
-- 支持查看当前日志
-- 支持查看历史日志
-- 日志自动按天切割
+- Hỗ trợ xem nhật ký hiện tại
+- Hỗ trợ xem các bản ghi lịch sử
+- Nhật ký được tự động cắt theo ngày
 
-## 配置文件说明
+## Mô tả tệp cấu hình
 
-所有配置文件存储在 `data/config` 目录：
-- `alist_sync_base_config.json`：基础连接配置
-- `alist_sync_sync_config.json`：同步任务配置
-- `alist_sync_users_config.json`：用户认证配置
+Tất cả các tệp cấu hình được lưu trữ trong `data/config` Mục lục：
+- `alist_sync_base_config.json`：Cấu hình kết nối cơ bản
+- `alist_sync_sync_config.json`：Đồng bộ hóa cấu hình tác vụ
+- `alist_sync_users_config.json`：Cấu hình xác thực người dùng
 
-日志文件存储在 `data/log` 目录：
-- `alist_sync.log`：当前日志
-- `alist_sync.log.YYYY-MM-DD`：历史日志
+Các tệp nhật ký được lưu trữ trong `data/log` Mục lục：
+- `alist_sync.log`：Nhật ký hiện tại
+- `alist_sync.log.YYYY-MM-DD`：Nhật ký lịch sử
 
-## 注意事项
+## Những điều cần lưu ý
 
-1. 首次使用请修改默认登录密码
-2. 建议定期备份配置文件
-3. 请确保 Alist 服务正常可访问
-4. 建议先测试连接再保存配置
-5. 可以通过日志查看同步执行情况
+1. Vui lòng sửa đổi mật khẩu đăng nhập mặc định lần đầu tiên
+2. Bạn nên sao lưu các tệp cấu hình thường xuyên
+3. Hãy chắc chắn Alist Dịch vụ thường có thể truy cập được
+4. Nên kiểm tra kết nối trước khi lưu cấu hình
+5. Bạn có thể xem thực thi đồng bộ thông qua nhật ký
 
-## 青龙使用
+## Được sử dụng bởi Thanh Đổ
 
 <details>
-    <summary>点击这里展开/折叠内容</summary>
+    <summary>Bấm vào đây để mở rộng/Gấp nội dung</summary>
 
-### 参数
+### tham số
 
 ```bash
-BASE_URL: 服务器基础URL(结尾不带/)
-USERNAME: 用户名
-PASSWORD: 密码
-TOKEN: 令牌
-DIR_PAIRS: 源目录和目标目录的配对(源目录和目标目录的配对，用分号隔开，冒号分隔)
-CRON_SCHEDULE: 调度日期，参考cron语法   "分 时 日 月 周" 非必填，不填为一次调度
---以下参数用于目标目录有，但源目录不存在的文件处理，可选参数--
-SYNC_DELETE_ACTION: 同步删除动作，可选值为move,delete。
-当SYNC_DELETE_ACTION设置为move时，文件将移动到trash目录下；比如存储器目录为 /dav/quark，则源目录多余的文件将会移动到/dav/quark/trash 目录下
-EXCLUDE_DIRS: 排除目录
-MOVE_FILE: 是否移动文件，会删除源目录，且与SYNC_DELETE_ACTION 不能同时生效
-REGEX_PATTERNS: 用于匹配文件名的正则表达式
+BASE_URL: Máy chủ cơ bảnURL(Không có kết thúc/)
+USERNAME: Tên người dùng
+PASSWORD: mật khẩu
+TOKEN: Mã thông báo
+DIR_PAIRS: Ghép đôi thư mục nguồn và thư mục đích(Ghép đôi thư mục nguồn và thư mục đích，Tách biệt với dấu chấm phẩy，Tách đại tràng)
+CRON_SCHEDULE: Ngày lập lịch，Tham khảocronngữ pháp   "điểm giờ ngày mặt trăng tuần" Không yêu cầu，Đừng điền vào như một lịch trình
+--Các tham số sau được sử dụng trong thư mục đích:，Nhưng thư mục nguồn không tồn tại trong xử lý tệp，Tham số tùy chọn--
+SYNC_DELETE_ACTION: Hành động xóa đồng bộ，Giá trị tùy chọn làmove,delete。
+khiSYNC_DELETE_ACTIONĐặt nhưmovegiờ，Tệp sẽ được chuyển sangtrashTrong thư mục；Ví dụ, thư mục bộ nhớ là /dav/quark，Sau đó các tệp dư thừa trong thư mục nguồn sẽ được chuyển sang/dav/quark/trash Trong thư mục
+EXCLUDE_DIRS: Loại trừ thư mục
+MOVE_FILE: Có di chuyển tệp không，Thư mục nguồn sẽ bị xóa，Và vớiSYNC_DELETE_ACTION Không thể có hiệu lực cùng một lúc
+REGEX_PATTERNS: Biểu thức thông thường được sử dụng để khớp với tên tệp
 
 ```
 
-国内执行
+Thực thi trong nước
 
 ```bash
 ql raw https://gitee.com/xjxjin/alist-sync/raw/main/alist-sync-ql.py
 ```
-国际执行
+Thực thi quốc tế
 
 ```bash
 ql raw https://github.com/xjxjin/alist-sync/raw/main/alist-sync-ql.py
@@ -190,79 +190,79 @@ ql raw https://github.com/xjxjin/alist-sync/raw/main/alist-sync-ql.py
 
 </details>
 
-## 更新记录
+## Cập nhật hồ sơ
 ### v1.1.5
 - 2025-03-15
-- 修复正则表达式为空报错问题
+- Đã sửa lỗi báo cáo lỗi cho các biểu thức thông thường khi chúng trống
 
 ### v1.1.4
 - 2025-02-21
-- 修复正则表达式为空报错问题
+- Đã sửa lỗi báo cáo lỗi cho các biểu thức thông thường khi chúng trống
 
 ### v1.1.3
 - 2025-02-18
-- 新增正则表达式功能
-- 优化版本号展示
+- Đã thêm chức năng biểu thức chính quy
+- Hiển thị số phiên bản được tối ưu hóa
 
 ### v1.1.2
 - 2025-02-08
-- 优化文件移动模式下保留源目录
+- Tối ưu hóa chế độ chuyển động tệp để giữ lại thư mục nguồn
 
 ### v1.1.1
 - 2025-02-06
-- 修复 docker 镜像打包文件缺失
+- Sửa chữa docker Tệp gói gương bị thiếu
 
 ### v1.1.0
 - 2025-02-06
-- 新增文件移动功能，由【[kuke2733](https://github.com/kuke2733)】小哥提供
-- 新增版本号展示
-- 执行前会重新执行失败任务
-- 执行中排除已创建任务文件
-- 修复排除目录会在目标目录创建 bug
+- Đã thêm chức năng di chuyển tệp，Phụ thuộc vào【[kuke2733](https://github.com/kuke2733)】Được cung cấp bởi anh chàng
+- Đã thêm hiển thị số phiên bản
+- Nhiệm vụ thất bại sẽ được thực hiện lại trước khi thực hiện
+- Loại trừ các tệp tác vụ đã tạo trong quá trình thực thi
+- Đã sửa lỗi thư mục loại trừ được tạo trong thư mục đích bug
 
 ### v1.0.8
 - 2025-01-09
-- 修复源目录不存在 bug
-- 修复删除模式下目标目录为空判断报错异常
-- 修复页面刷新任务展示异常
+- Đã sửa lỗi thư mục nguồn không tồn tại bug
+- Đã sửa lỗi ngoại lệ lỗi khi thư mục đích trống trong chế độ xóa
+- Khắc phục trang RELENSE RENSH HIỂN THỊ EXCEP
 
 ### v1.0.7
 - 2025-01-08
-- 新增令牌验证
-- 新增导入导出配置文件功能
-- 修复登录后无法显示存储器下拉列表
-- 修改配置文件以 alist_sync开头
+- Đã thêm xác minh mã thông báo
+- Đã thêm chức năng tệp cấu hình nhập và xuất
+- Đã sửa danh sách thả xuống bộ nhớ không được hiển thị sau khi đăng nhập
+- Sửa đổi tệp cấu hình thành alist_syncbắt đầu
 
 ### v1.0.6
 - 2025-01-07
-- 在删除模式下，修复源目录为空，目标目录多余文件不能正确删除问题
-- 简单适配移动端 UI
+- Trong chế độ xóa，Đã sửa thư mục nguồn để trống，Vấn đề của các tệp dự phòng trong thư mục đích không bị xóa chính xác
+- Thích ứng đơn giản với thiết bị đầu cuối di động UI
 
 ### v1.0.5
 - 2025-01-05
-- 初始UI版本发布
-- 支持基础的同步功能
-- 支持 Web 界面管理
+- ban đầuUIPhiên bản phát hành
+- Hỗ trợ các chức năng đồng bộ hóa cơ bản
+- ủng hộ Web Quản lý giao diện
 
 
-### 2024-12-16更新
-- 当源文件和目标文件大小不一致时，如果目标文件修改时间晚于源文件，则跳过覆盖
+### 2024-12-16gia hạn
+- Khi kích thước của các tệp nguồn và mục tiêu không nhất quán，Nếu tệp đích được sửa đổi muộn hơn tệp nguồn，Bỏ qua ghi đè
 
-### 2024-11-13更新
+### 2024-11-13gia hạn
 
-- 修复删除目标目录多余文件重复删除问题 
-- 优化移动目标目录多余文件到存储器根目录
-- 优化设置多目录，一个目录失败导致所有目录失败问题
+- Đã sửa lỗi xóa các tệp không cần thiết trong thư mục đích 
+- Tối ưu hóa các tệp dự phòng của thư mục đích đến thư mục gốc bộ nhớ
+- Tối ưu hóa cài đặt cho nhiều thư mục，Một thư mục không thành công, khiến tất cả các thư mục thất bại
 
 
-### 2024-09-06更新
-- 新增参数，处理目标目录有多的文件或者文件夹，但是源目录没有的处理方式,功能由【[RWDai](https://github.com/RWDai)】小哥提供 
-- none 什么也不做 
-- move 移动到目标目录下的trash目录 
-- delete 真实删除 
+### 2024-09-06gia hạn
+- Đã thêm tham số，Xử lý nhiều tệp hoặc thư mục trong thư mục đích，Nhưng thư mục nguồn không có phương pháp xử lý,Chức năng bởi【[RWDai](https://github.com/RWDai)】Được cung cấp bởi anh chàng 
+- none Không làm gì cả 
+- move Di chuyển đến thư mục đíchtrashMục lục 
+- delete Xóa thực sự 
 
-### 2024-06-29更新
-- 新增DIR_PAIRS参数个数,最多到50，参数内容和之前一致(源目录和目标目录的配对(源目录和目标目录的配对，用分号隔开，冒号分隔)),参数格式为
+### 2024-06-29gia hạn
+- MớiDIR_PAIRSSố lượng tham số,Nhiều nhất50，Các tham số phù hợp với cái trước(Ghép đôi thư mục nguồn và thư mục đích(Ghép đôi thư mục nguồn và thư mục đích，Tách biệt với dấu chấm phẩy，Tách đại tràng)),Định dạng tham số là
 - ```bash
     DIR_PAIRS
     DIR_PAIRS1
@@ -272,39 +272,39 @@ ql raw https://github.com/xjxjin/alist-sync/raw/main/alist-sync-ql.py
     DIR_PAIRS50
     ```
   
-### 2024-05-23更新
-- 新增青龙调度
+### 2024-05-23gia hạn
+- Công văn Qinglong mới
 
-### 2024-05-13更新
-- 1.新增文件存在判断逻辑
-  - 文件名称 
-  - 文件大小
-- 2.CRON_SCHEDULE 变更为参数可选
-  - 当参数不传变更为一次调度，可以配合青龙远程调度
-
-
-## 问题反馈
-
-如果您在使用过程中遇到任何问题，请提交 Issue。
+### 2024-05-13gia hạn
+- 1.Logic của sự phán xét tồn tại cho các tệp mới
+  - Tên tập tin 
+  - Kích thước tập tin
+- 2.CRON_SCHEDULE Thay đổi thành tham số thành tùy chọn
+  - Thay đổi theo lịch trình nếu tham số không được truyền，Có thể hợp tác với công văn từ xa Qinglong
 
 
-## 警告
-* **在两个目录相互备份的情况下使用删除功能时请格外谨慎。可能导致文件永久丢失，后果自负。**
+## Câu hỏi Phản hồi
+
+Nếu bạn có bất kỳ vấn đề nào trong quá trình sử dụng，Vui lòng gửi Issue。
+
+
+## cảnh báo
+* **Vui lòng thận trọng hơn khi sử dụng chức năng xóa khi hai thư mục được sao lưu với nhau。Có thể gây mất tệp vĩnh viễn，Không có nguy cơ của riêng bạn。**
 
 
 
 ## Tips
-- 前端页面均为 AI 生成，使用过程中可能有小瑕疵，欢迎前端大神提交代码修复
-- 初次使用，保存基础配置后，可以点击添加任务，刷新源存储器和目标存储器下拉列表
-- 如果忘记密码，请删除data/config/alist_sync_users_config.json 文件，会默认变成 admin/admin
-- 令牌从 Alist 的 管理-设置-其他 获取，获取后不要重置令牌
-- 有其他新增功能欢迎提交 Issue。
-- 文件同步填写全目录，参照最后面图片
-- 如果无法获取docker镜像，可以参考以下脚本换源，国内执行如下代码
+- Các trang đầu tiên là AI phát ra，Có thể có những sai sót nhỏ trong khi sử dụng，Chào mừng bạn đến để gửi sửa chữa mã cho Master Front-end
+- Lần đầu tiên sử dụng，Sau khi lưu cấu hình cơ bản，Bạn có thể nhấp để thêm một tác vụ，Làm mới danh sách thả xuống nguồn và bộ nhớ đích
+- Nếu bạn quên mật khẩu của mình，Vui lòng xóadata/config/alist_sync_users_config.json tài liệu，Sẽ được thay đổi theo mặc định admin/admin
+- Mã thông báo từ Alist của quản lý-cài đặt-khác Lấy，Lấy后不要重置令牌
+- Có những tính năng mới khác chào mừng bạn gửi Issue。
+- Điền vào thư mục đầy đủ trong tệp đồng bộ，Tham khảo hình ảnh cuối cùng
+- Nếu nó không thể lấy đượcdockerGương，Bạn có thể tham khảo tập lệnh sau để thay đổi nguồn，Thực hiện mã sau ở Trung Quốc
 ```bash
 bash <(curl -sSL https://gitee.com/xjxjin/scripts/raw/main/check_docker_registry.sh)
 ```
-- 国际执行如下代码
+- Thực thi mã quốc tế
 ```bash
 bash <(curl -sSL https://github.com/xjxjin/scripts/raw/main/check_docker_registry.sh)
 ```
@@ -315,17 +315,17 @@ bash <(curl -sSL https://github.com/xjxjin/scripts/raw/main/check_docker_registr
 MIT License
 
 
-## 数据同步
-<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/数据同步.png" width="700" alt="数据同步">
+## Đồng bộ hóa dữ liệu
+<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Đồng bộ hóa dữ liệu.png" width="700" alt="Đồng bộ hóa dữ liệu">
 
-## 文件同步
-<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/文件同步.png" width="700" alt="文件同步">
+## Tệp đồng bộ hóa
+<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Tệp đồng bộ hóa.png" width="700" alt="Tệp đồng bộ hóa">
 
-## 文件移动
-<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/文件移动.png" width="700" alt="文件移动">
+## Chuyển động tập tin
+<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Chuyển động tập tin.png" width="700" alt="Chuyển động tập tin">
 
-## 令牌获取
-<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/令牌.png" width="700" alt="令牌获取">
+## Mua lại mã thông báo
+<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Mã thông báo.png" width="700" alt="Mã thông báo获取">
 
-## 查看任务进度
-<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/查看任务进度.png" width="700" alt="查看任务进度">
+## Kiểm tra tiến độ nhiệm vụ
+<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Kiểm tra tiến độ nhiệm vụ.png" width="700" alt="Kiểm tra tiến độ nhiệm vụ">
