@@ -1,3 +1,3 @@
 ### v1.1.5
 - 2025-03-15
-- 修复正则表达式为空报错问题
+- Đã sửa lỗi báo cáo lỗi cho các biểu thức thông thường khi chúng trống
