@@ -4,6 +4,6 @@ import os
 app = create_app()
 
 if __name__ == '__main__':
-    # 启动应用
+    # Bắt đầu ứng dụng
     port = int(os.environ.get('PORT', 52441))
     app.run(host='0.0.0.0', port=port) 

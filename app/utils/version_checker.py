@@ -5,7 +5,7 @@ import requests
 import logging
 from datetime import datetime, timedelta
 
-# 版本缓存文件
+# Phiên bản tập tin cache
 VERSION_CACHE_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 
                                'data/config/version_cache.json')
 
@@ -13,7 +13,7 @@ VERSION_CACHE_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirnam
 GITHUB_API_URL = "https://api.github.com/repos/xjxjin/alist-sync/releases/latest"
 
 def get_current_version():
-    """获取当前系统版本"""
+    """Nhận phiên bản hệ thống hiện tại"""
     try:
         version_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'VERSION')
         
@@ -22,26 +22,26 @@ def get_current_version():
                 version = f.read().strip()
                 return version
     except Exception as e:
-        logging.error(f"获取当前版本失败: {str(e)}")
+        logging.error(f"Không nhận được phiên bản hiện tại: {str(e)}")
     
-    return "未知"
+    return "không xác định"
 
 def get_latest_version():
-    """从GitHub获取最新版本"""
-    # 检查是否存在缓存
+    """từGitHubNhận phiên bản mới nhất"""
+    # Kiểm tra xem có bộ đệm không
     if os.path.exists(VERSION_CACHE_FILE):
         try:
             with open(VERSION_CACHE_FILE, 'r') as f:
                 cache_data = json.load(f)
                 
-                # 检查缓存是否过期（24小时）
+                # Kiểm tra xem bộ đệm có hết hạn không（24Giờ）
                 cache_time = datetime.fromisoformat(cache_data.get('timestamp'))
                 if datetime.now() - cache_time < timedelta(hours=24):
                     return cache_data.get('version'), cache_data.get('download_url', "")
         except Exception as e:
-            logging.error(f"读取版本缓存失败: {str(e)}")
+            logging.error(f"Không đọc được phiên bản bộ nhớ cache: {str(e)}")
     
-    # 缓存不存在或已过期，从GitHub获取
+    # Bộ đệm không tồn tại hoặc đã hết hạn，từGitHubLấy
     try:
         response = requests.get(GITHUB_API_URL, timeout=5)
         if response.status_code == 200:
@@ -49,7 +49,7 @@ def get_latest_version():
             latest_version = release_data.get('tag_name', '').lstrip('v')
             download_url = release_data.get('html_url', '')
             
-            # 更新缓存
+            # Cập nhật bộ đệm
             cache_data = {
                 'version': latest_version,
                 'download_url': download_url,
@@ -62,9 +62,9 @@ def get_latest_version():
             
             return latest_version, download_url
     except Exception as e:
-        logging.error(f"获取GitHub最新版本失败: {str(e)}")
+        logging.error(f"LấyGitHubPhiên bản mới nhất không thành công: {str(e)}")
     
-    # 如果获取失败但有缓存，返回缓存中的版本
+    # Nếu việc mua lại thất bại nhưng có bộ đệm，Trở lại phiên bản được lưu trong bộ nhớ cache
     if os.path.exists(VERSION_CACHE_FILE):
         try:
             with open(VERSION_CACHE_FILE, 'r') as f:
@@ -76,14 +76,14 @@ def get_latest_version():
     return None, ""
 
 def has_new_version():
-    """检查是否有新版本"""
+    """Kiểm tra xem có phiên bản mới không"""
     current = get_current_version()
     latest, _ = get_latest_version()
     
     if not latest:
         return False, current, None
     
-    # 版本比较
+    # So sánh phiên bản
     current_parts = current.split('.')
     latest_parts = latest.split('.')
     

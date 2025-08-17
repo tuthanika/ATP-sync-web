@@ -14,10 +14,10 @@ import traceback
 from app.utils.notifier import Notifier
 
 class SyncManager:
-    """同步管理器，负责执行同步任务"""
+    """Trình quản lý đồng bộ hóa，Chịu trách nhiệm thực hiện các nhiệm vụ đồng bộ hóa"""
     
     def __init__(self):
-        # 初始化带有时区的调度器
+        # Khởi tạo một bộ lập lịch với múi giờ
         self.scheduler = BackgroundScheduler(timezone=timezone('Asia/Shanghai'))
         self.scheduler.start()
         self.running_tasks = {}
@@ -26,101 +26,101 @@ class SyncManager:
         self.notifier = Notifier()
     
     def initialize_scheduler(self):
-        """初始化调度器，加载所有任务"""
+        """Khởi tạo bộ lập lịch，Tải tất cả các nhiệm vụ"""
         if self.is_initialized:
-            current_app.logger.info("调度器已经初始化，跳过")
+            current_app.logger.info("Bộ lập lịch đã được khởi tạo，hãy bỏ qua")
             return
             
-        current_app.logger.info("开始初始化任务调度器...")
+        current_app.logger.info("Bắt đầu khởi tạo Trình lập lịch tác vụ...")
         
         try:
             data_manager = current_app.config['DATA_MANAGER']
             tasks = data_manager.get_tasks()
             
-            # 移除所有现有任务
+            # Xóa tất cả các nhiệm vụ hiện có
             for job in self.scheduler.get_jobs():
                 self.scheduler.remove_job(job.id)
-                current_app.logger.debug(f"移除旧任务: {job.id}")
+                current_app.logger.debug(f"Loại bỏ các nhiệm vụ cũ: {job.id}")
             
             task_count = 0
             for task in tasks:
                 if task.get("enabled", True) and task.get("schedule"):
-                    # 检查任务是否处于启用状态且有调度计划
+                    # Kiểm tra xem nhiệm vụ có được bật không và có lịch trình theo lịch trình không
                     try:
                         self.schedule_task(task)
                         task_count += 1
                     except Exception as e:
-                        current_app.logger.error(f"添加任务 {task.get('name', task.get('id'))} 失败: {str(e)}")
+                        current_app.logger.error(f"Thêm nhiệm vụ {task.get('name', task.get('id'))} thất bại: {str(e)}")
                     
-            current_app.logger.info(f"已加载 {task_count} 个定时任务到调度器")
+            current_app.logger.info(f"{task_count} tác vụ theo lịch trình đã được tải vào trình lập lịch")
             
-            # 更新所有任务的下次运行时间
+            # Cập nhật thời gian chạy tiếp theo của tất cả các tác vụ
             self._update_all_next_run_times()
             
-            # 输出当前所有已计划任务
+            # Đầu ra tất cả các nhiệm vụ hiện đang được lên lịch
             jobs = self.scheduler.get_jobs()
-            current_app.logger.info(f"调度器中共有 {len(jobs)} 个任务")
+            current_app.logger.info(f"Bộ lập lịch có {len(jobs)} nhiệm vụ")
             for job in jobs:
-                current_app.logger.info(f"已计划任务: {job.id}, 调度: {job.trigger}, 下次运行时间: {job.next_run_time}")
+                current_app.logger.info(f"Nhiệm vụ theo lịch trình: {job.id}, Lập kế hoạch: {job.trigger}, Thời gian chạy tiếp theo: {job.next_run_time}")
             
-            # 标记初始化完成
+            # Khởi tạo thẻ đã hoàn thành
             self.is_initialized = True
             
         except Exception as e:
-            current_app.logger.error(f"初始化调度器失败: {str(e)}")
+            current_app.logger.error(f"Bộ lập lịch khởi tạo không thành công: {str(e)}")
             current_app.logger.error(traceback.format_exc())
             
     def _update_all_next_run_times(self):
-        """更新所有任务的下次运行时间"""
+        """Cập nhật thời gian chạy tiếp theo của tất cả các tác vụ"""
         try:
             data_manager = current_app.config['DATA_MANAGER']
             jobs = self.scheduler.get_jobs()
             updated_count = 0
             
-            current_app.logger.info(f"正在更新 {len(jobs)} 个任务的下次运行时间")
+            current_app.logger.info(f"Cập nhật {len(jobs)} Lần sau khi chạy nhiệm vụ")
             
             for job in jobs:
-                # 从job ID中提取任务ID
+                # từ job ID Trích xuất nhiệm vụID
                 if job.id.startswith('task_'):
                     task_id = int(job.id.replace('task_', ''))
                     
-                    # 获取任务
+                    # Nhận nhiệm vụ
                     task = data_manager.get_task(task_id)
                     if task and job.next_run_time:
-                        # 更新任务的下次运行时间
+                        # Cập nhật thời gian chạy tiếp theo của nhiệm vụ
                         next_run_timestamp = int(job.next_run_time.timestamp())
                         data_manager.update_task_status(task_id, task.get("status", "pending"), next_run=next_run_timestamp)
                         updated_count += 1
-                        current_app.logger.debug(f"已更新任务 {task_id} 的下次运行时间: {job.next_run_time}")
+                        current_app.logger.debug(f"Cập nhật nhiệm vụ {task_id} Thời gian chạy tiếp theo: {job.next_run_time}")
             
-            current_app.logger.info(f"已成功更新 {updated_count} 个任务的下次运行时间")
+            current_app.logger.info(f"Cập nhật thành công {updated_count} Lần sau khi chạy nhiệm vụ")
             return updated_count
             
         except Exception as e:
-            current_app.logger.error(f"更新任务的下次运行时间失败: {str(e)}")
+            current_app.logger.error(f"Thời gian chạy tiếp theo của tác vụ cập nhật không thành công: {str(e)}")
             current_app.logger.error(traceback.format_exc())
             return 0
     
     def schedule_task(self, task):
-        """添加任务到调度器"""
+        """Thêm tác vụ vào Lập lịch"""
         task_id = task["id"]
         schedule = task.get("schedule")
         
         if not schedule or not schedule.strip():
-            current_app.logger.warning(f"任务 {task_id} 没有有效的调度计划，跳过")
+            current_app.logger.warning(f"Nhiệm vụ {task_id} Không có kế hoạch lập lịch hiệu quả，hãy bỏ qua")
             return
         
-        # 从调度器中移除已有任务（如果存在）
+        # Xóa các tác vụ hiện có khỏi trình lập lịch（Nếu có）
         job_id = f"task_{task_id}"
         if self.scheduler.get_job(job_id):
             self.scheduler.remove_job(job_id)
-            current_app.logger.debug(f"已移除现有任务: {job_id}")
+            current_app.logger.debug(f"Các nhiệm vụ hiện có bị xóa: {job_id}")
         
         try:
-            # 解析cron表达式
+            # Phân tíchBiểu thức cron
             cron_parts = self._parse_cron_expression(schedule)
             
-            # 添加新任务
+            # Thêm một tác vụ mới
             job = self.scheduler.add_job(
                 self.run_task,
                 'cron',
@@ -128,40 +128,40 @@ class SyncManager:
                 args=[task_id],
                 **cron_parts,
                 replace_existing=True,
-                misfire_grace_time=3600  # 允许1小时的错过执行宽限期
+                misfire_grace_time=3600  # cho phép1Bỏ lỡ giờ thực hiện thời gian ân hạn
             )
             
-            # 记录调度信息
+            # Ghi lại thông tin lập lịch
             cron_readable = f"{cron_parts.get('minute')} {cron_parts.get('hour')} {cron_parts.get('day')} {cron_parts.get('month')} {cron_parts.get('day_of_week')}"
-            current_app.logger.info(f"已添加任务 {job_id}({task.get('name')}) 到调度器，调度: {cron_readable}, 下次运行: {job.next_run_time}")
+            current_app.logger.info(f"Nhiệm vụ được Thêm  {job_id}({task.get('name')}) Cho người lập lịch，Lập kế hoạch: {cron_readable}, Chạy lần sau: {job.next_run_time}")
             
-            # 更新任务的下次运行时间
+            # Cập nhật thời gian chạy tiếp theo của nhiệm vụ
             try:
                 if hasattr(current_app, 'config') and 'DATA_MANAGER' in current_app.config:
                     data_manager = current_app.config['DATA_MANAGER']
                     if job.next_run_time:
                         next_run_timestamp = int(job.next_run_time.timestamp())
                         data_manager.update_task_status(task_id, task.get("status", "pending"), next_run=next_run_timestamp)
-                        current_app.logger.debug(f"已更新任务 {task_id} 的下次运行时间: {job.next_run_time}")
+                        current_app.logger.debug(f"Cập nhật nhiệm vụ {task_id} Thời gian chạy tiếp theo: {job.next_run_time}")
             except Exception as e:
                 import traceback
                 error_details = traceback.format_exc()
-                current_app.logger.error(f"更新任务 {task_id} 的下次运行时间失败: {str(e)}")
-                current_app.logger.error(f"详细错误: {error_details}")
+                current_app.logger.error(f"Cập nhật nhiệm vụ {task_id} Thời gian chạy tiếp theo không thành công: {str(e)}")
+                current_app.logger.error(f"Lỗi chi tiết: {error_details}")
                 
         except Exception as e:
             import traceback
             error_details = traceback.format_exc()
-            current_app.logger.error(f"添加任务 {task_id} 到调度器失败: {str(e)}")
-            current_app.logger.error(f"详细错误: {error_details}")
+            current_app.logger.error(f"Thêm nhiệm vụ {task_id} Không lập lịch: {str(e)}")
+            current_app.logger.error(f"Lỗi chi tiết: {error_details}")
     
     def _parse_cron_expression(self, cron_expr):
-        """解析 cron 表达式"""
+        """Phân tích cron sự biểu lộ"""
         parts = cron_expr.split()
         if len(parts) != 5:
-            raise ValueError(f"无效的 cron 表达式: {cron_expr}，应为5个部分")
+            raise ValueError(f"Không hợp lệ cron sự biểu lộ: {cron_expr}，Nên được5Các bộ phận")
         
-        # 记录解析结果
+        # Ghi lại kết quả phân tích
         result = {
             'minute': parts[0],
             'hour': parts[1],
@@ -169,60 +169,60 @@ class SyncManager:
             'month': parts[3],
             'day_of_week': parts[4]
         }
-        current_app.logger.debug(f"解析 cron 表达式: {cron_expr} -> {result}")
+        current_app.logger.debug(f"Phân tích cron sự biểu lộ: {cron_expr} -> {result}")
         return result
     
     def run_task(self, task_id):
-        """运行同步任务"""
-        # 获取Flask应用实例
+        """Chạy một tác vụ đồng bộ hóa"""
+        # LấyFlaskPhiên bản ứng dụng
         from flask import current_app, Flask
         
-        # 如果当前没有应用上下文，尝试创建一个
+        # Nếu không có ngữ cảnh ứng dụng，Hãy thử tạo một
         app = None
         app_context = None
         
         try:
-            # 尝试获取当前应用
+            # Cố gắng lấy ứng dụng hiện tại
             app = current_app._get_current_object()
         except RuntimeError:
-            # 如果没有当前应用上下文，尝试从配置中获取
+            # Nếu không có ngữ cảnh ứng dụng hiện tại，Cố gắng đi từ cấu hình
             try:
-                # 尝试使用全局应用实例
+                # Hãy thử sử dụng một thể hiện ứng dụng toàn cầu
                 from app import flask_app
                 if flask_app:
                     app = flask_app
                     app_context = app.app_context()
                     app_context.push()
-                    print(f"使用全局应用实例为任务 {task_id} 创建上下文")
+                    print(f"Sử dụng các trường hợp ứng dụng toàn cầu làm nhiệm vụ {task_id} Tạo ra một ngữ cảnh")
                 else:
-                    # 如果没有全局应用实例，创建一个新的
+                    # Nếu không có trường hợp ứng dụng toàn cầu，Tạo một mới
                     from app import create_app
                     app = create_app()
                     app_context = app.app_context()
                     app_context.push()
-                    print(f"为任务 {task_id} 创建了新的应用上下文")
+                    print(f"Cho nhiệm vụ {task_id} Đã tạo ra một ngữ cảnh ứng dụng mới")
             except Exception as e:
-                print(f"创建应用上下文失败: {str(e)}")
+                print(f"Không tạo ra một ngữ cảnh ứng dụng: {str(e)}")
                 import traceback
                 print(traceback.format_exc())
-                return {"status": "error", "message": f"无法创建应用上下文: {str(e)}"}
+                return {"status": "error", "message": f"Không thể tạo ngữ cảnh ứng dụng: {str(e)}"}
         
         try:
-            # 获取数据管理器
+            # Nhận Trình quản lý dữ liệu
             data_manager = app.config['DATA_MANAGER']
             task = data_manager.get_task(task_id)
             
             if not task:
-                return {"status": "error", "message": "任务不存在"}
+                return {"status": "error", "message": "Nhiệm vụ không tồn tại"}
             
-            # 检查任务是否正在运行
+            # Kiểm tra xem nhiệm vụ có đang chạy không
             with self.lock:
                 if task_id in self.running_tasks:
-                    return {"status": "error", "message": "任务已在运行中"}
+                    return {"status": "error", "message": "Nhiệm vụ đang chạy"}
                 self.running_tasks[task_id] = time.time()
             
             try:
-                # 创建任务实例记录
+                # Tạo bản ghi phiên bản tác vụ
                 task_instance = data_manager.add_task_instance(task_id, {
                     "sync_type": task.get("sync_type", "file_sync"),
                     "source_path": task.get("source_path", "/"),
@@ -231,68 +231,68 @@ class SyncManager:
                 
                 instance_id = task_instance["task_instances_id"]
                 
-                # 更新任务状态
+                # Cập nhật trạng thái tác vụ
                 current_time = int(time.time())
                 data_manager.update_task_status(task_id, "running", last_run=current_time)
                 
-                # 记录开始日志
+                # Nhật ký nhật ký bắt đầu
                 data_manager.add_log({
                     "task_id": task_id,
                     "instance_id": instance_id,
                     "level": "INFO",
-                    "message": f"开始执行任务: {task.get('name', f'任务 {task_id}')}",
+                    "message": f"Bắt đầu thực hiện các tác vụ: {task.get('name', f'Nhiệm vụ {task_id}')}",
                     "details": {"instance_id": instance_id}
                 })
                 
-                # 记录实例日志
-                data_manager._append_task_log(task_id, instance_id, "准备执行任务")
+                # Ghi lại nhật ký thể hiện
+                data_manager._append_task_log(task_id, instance_id, "Chuẩn bị thực hiện các nhiệm vụ")
                 
-                # 执行同步操作
+                # Thực hiện thao tác đồng bộ hóa
                 result = self._execute_task_with_alist_sync(task, task_id, instance_id)
                 
-                # 更新任务状态
+                # Cập nhật trạng thái tác vụ
                 status = "completed" if result.get("status") == "success" else "failed"
                 data_manager.update_task_status(task_id, status, last_run=current_time)
                 
-                # 更新任务实例状态
+                # Cập nhật trạng thái phiên bản tác vụ
                 data_manager.update_task_instance(instance_id, status, result)
                 
-                # 记录完成日志
+                # Ghi lại nhật ký hoàn thành
                 data_manager.add_log({
                     "task_id": task_id,
                     "instance_id": instance_id,
                     "level": "INFO" if status == "completed" else "ERROR",
-                    "message": f"任务执行{('成功' if status == 'completed' else '失败')}: {task.get('name', f'任务 {task_id}')}",
+                    "message": f"Thực thi nhiệm vụ {('thành công' if status == 'completed' else 'thất bại')}: {task.get('name', f'Nhiệm vụ {task_id}')}",
                     "details": result
                 })
                 
-                # 记录实例日志
+                # Ghi lại nhật ký thể hiện
                 data_manager._append_task_log(
                     task_id, 
                     instance_id, 
-                    f"任务执行{('成功' if status == 'completed' else '失败')}: {json.dumps(result, ensure_ascii=False)}"
+                    f"Thực thi nhiệm vụ {('thành công' if status == 'completed' else 'thất bại')}: {json.dumps(result, ensure_ascii=False)}"
                 )
                 
-                # 发送通知
+                # Gửi thông báo
                 task_duration = int(time.time()) - current_time
-                notification_title = f"任务执行{'成功' if status == 'completed' else '失败'}"
+                notification_title = f"Thực thi nhiệm vụ {'thành công' if status == 'completed' else 'thất bại'}"
                 notification_content = result.get("message", "")
                 
-                # 添加任务信息
+                # Thêm thông tin nhiệm vụ
                 task_info = {
                     "id": task_id,
-                    "name": task.get('name', f'任务 {task_id}'),
+                    "name": task.get('name', f'Nhiệm vụ {task_id}'),
                     "status": status,
-                    "duration": f"{task_duration}秒",
+                    "duration": f"{task_duration} s",
                     "instance_id": instance_id
                 }
                 
-                # 发送通知
+                # Gửi thông báo
                 self.notifier.send_notification(notification_title, notification_content, task_info)
                 
                 return {
                     "status": "success",
-                    "message": "任务已完成执行", 
+                    "message": "Nhiệm vụ đã được thực hiện", 
                     "instance_id": instance_id,
                     "result": result
                 }
@@ -301,41 +301,41 @@ class SyncManager:
                 import traceback
                 error_details = traceback.format_exc()
                 
-                # 发生异常，更新任务状态为失败
+                # Một ngoại lệ đã xảy ra，Cập nhật trạng thái tác vụ không thành công
                 data_manager.update_task_status(task_id, "failed", last_run=int(time.time()))
                 
-                # 如果已创建实例，更新实例状态
+                # Nếu một thể hiện đã được tạo，Cập nhật trạng thái thể hiện
                 if 'instance_id' in locals():
                     error_result = {"status": "error", "message": str(e)}
                     data_manager.update_task_instance(instance_id, "failed", error_result)
-                    data_manager._append_task_log(task_id, instance_id, f"任务执行异常: {str(e)}\n{error_details}")
+                    data_manager._append_task_log(task_id, instance_id, f"Ngoại lệ thực thi nhiệm vụ: {str(e)}\n{error_details}")
                 
-                # 记录错误日志
+                #Nhật ký yêu cầu ghi âm
                 data_manager.add_log({
                     "task_id": task_id,
                     "level": "ERROR",
-                    "message": f"任务执行异常: {task.get('name', f'任务 {task_id}')}",
+                    "message": f"Ngoại lệ thực thi nhiệm vụ: {task.get('name', f'Nhiệm vụ {task_id}')}",
                     "details": {"error": str(e)}
                 })
                 
-                # 发送通知
+                # Gửi thông báo
                 task_duration = 0
                 if 'current_time' in locals():
                     task_duration = int(time.time()) - current_time
                     
-                notification_title = f"任务执行失败"
-                notification_content = f"执行出错: {str(e)}"
+                notification_title = f"Thực thi nhiệm vụ không thành công"
+                notification_content = f"Một lỗi thực thi: {str(e)}"
                 
-                # 添加任务信息
+                # Thêm thông tin nhiệm vụ
                 task_info = {
                     "id": task_id,
-                    "name": task.get('name', f'任务 {task_id}'),
+                    "name": task.get('name', f'Nhiệm vụ {task_id}'),
                     "status": "failed",
-                    "duration": f"{task_duration}秒",
+                    "duration": f"{task_duration}s",
                     "instance_id": instance_id if 'instance_id' in locals() else None
                 }
                 
-                # 发送通知
+                # Gửi thông báo
                 self.notifier.send_notification(notification_title, notification_content, task_info)
                 
                 return {"status": "error", "message": str(e)}
@@ -343,88 +343,88 @@ class SyncManager:
         except Exception as e:
             import traceback
             error_details = traceback.format_exc()
-            print(f"任务执行时发生未捕获的异常: {str(e)}\n{error_details}")
-            return {"status": "error", "message": f"任务执行时发生未捕获的异常: {str(e)}"}
+            print(f"Một ngoại lệ chưa được thực hiện xảy ra trong khi nhiệm vụ được thực hiện: {str(e)}\n{error_details}")
+            return {"status": "error", "message": f"Một ngoại lệ chưa được thực hiện xảy ra trong khi nhiệm vụ được thực hiện: {str(e)}"}
             
         finally:
-            # 任务完成，从运行列表中移除
+            # Hoàn thành nhiệm vụ，Xóa khỏi danh sách chạy
             with self.lock:
                 if task_id in self.running_tasks:
                     del self.running_tasks[task_id]
             
-            # 如果创建了新的应用上下文，需要释放它
+            # Nếu ngữ cảnh ứng dụng mới được tạo，Cần phát hành nó
             if app_context:
                 app_context.pop()
     
     def _execute_task_with_alist_sync(self, task, task_id, instance_id):
-        """使用AlistSync执行任务"""
+        """sử dụngAlistSyncThực hiện các nhiệm vụ"""
         from app.alist_sync import main as alist_sync_main
         from app.alist_sync import logger as alist_sync_logger
         
-        # 获取数据管理器
+        # Nhận Trình quản lý dữ liệu
         data_manager = current_app.config['DATA_MANAGER']
         
         try:
-            # 获取连接信息
+            # Nhận thông tin kết nối
             connection_id = task.get("connection_id")
             if not connection_id:
-                raise ValueError("任务未指定连接ID")
+                raise ValueError("Nhiệm vụ không được chỉ định cho kết nốiID")
             
             connection = data_manager.get_connection(connection_id)
             if not connection:
-                raise ValueError(f"找不到ID为{connection_id}的连接")
+                raise ValueError(f"Không tìm thấyIDvì{connection_id}Sự liên quan")
             
-            data_manager._append_task_log(task_id, instance_id, f"使用连接 {connection.get('name', connection_id)} 执行任务")
+            data_manager._append_task_log(task_id, instance_id, f"Sử dụng kết nối {connection.get('name', connection_id)} Thực hiện các nhiệm vụ")
             
-            # 准备参数
+            # Chuẩn bị các tham số
             sync_type = task.get("sync_type", "file_sync")
             source_connection_id = task.get("source_connection_id")
             target_connection_ids = task.get("target_connection_ids", [])
             source_path = task.get("source_path", "/")
             target_path = task.get("target_path", "/")
             
-            # 设置环境变量，确保使用正确的连接信息
+            # Đặt các biến môi trường，Đảm bảo sử dụng thông tin kết nối chính xác
             os.environ["BASE_URL"] = connection.get("server", "")
             os.environ["USERNAME"] = connection.get("username", "")
             os.environ["PASSWORD"] = connection.get("password", "")
             os.environ["TOKEN"] = connection.get("token", "")
             
-            data_manager._append_task_log(task_id, instance_id, f"设置连接: 服务器={os.environ['BASE_URL']}, 用户名={os.environ['USERNAME']}")
+            data_manager._append_task_log(task_id, instance_id, f"Thiết lập kết nối: máy chủ={os.environ['BASE_URL']}, Tên người dùng={os.environ['USERNAME']}")
             
-            # 根据任务类型决定操作
+            # Xác định các hoạt động dựa trên loại nhiệm vụ
             if sync_type == "file_move":
                 os.environ["MOVE_FILE"] = "true"
-                data_manager._append_task_log(task_id, instance_id, "设置为文件移动模式")
+                data_manager._append_task_log(task_id, instance_id, "Đặt thành chế độ di chuyển tệp")
             else:
                 os.environ["MOVE_FILE"] = "false"
-                data_manager._append_task_log(task_id, instance_id, "设置为文件同步模式")
+                data_manager._append_task_log(task_id, instance_id, "Đặt thành chế độ đồng bộ hóa tệp")
             
-            # 设置删除差异项行为
+            # Đặt hành vi xóa mục khác biệt
             os.environ["SYNC_DELETE_ACTION"] = task.get("sync_diff_action", "none")
-            data_manager._append_task_log(task_id, instance_id, f"设置差异项处理方式: {os.environ['SYNC_DELETE_ACTION']}")
+            data_manager._append_task_log(task_id, instance_id, f"Đặt phương thức xử lý mục khác biệt: {os.environ['SYNC_DELETE_ACTION']}")
             
-            # 设置同步目录
+            # Thiết lập một thư mục đồng bộ
             dir_pairs = []
             exclude_dirs = []
             for target_id in target_connection_ids:
-                # 修复source_connection_id和target_connection_ids为路径格式的情况
+                # Sửa chữasource_connection_idVàtarget_connection_idsTình hình của định dạng đường dẫn
                 source_pair = source_connection_id
                 if isinstance(source_connection_id, str) and not source_connection_id.isdigit():
-                    # 如果source_connection_id是路径格式，则直接使用
+                    # nếu nhưsource_connection_idĐó là định dạng đường dẫn，Sử dụng trực tiếp
                     source_pair = f"{source_connection_id}"
                 else:
-                    # 否则添加"/"前缀
+                    # Nếu không thì thêm"/"Tiền tố
                     source_pair = f"/{source_connection_id}"
                 
                 target_pair = target_id
                 if isinstance(target_id, str) and not target_id.isdigit():
-                    # 如果target_id是路径格式，则直接使用
+                    # nếu nhưtarget_idĐó là định dạng đường dẫn，Sử dụng trực tiếp
                     target_pair = f"{target_id}"
                 else:
-                    # 否则添加"/"前缀
+                    # Nếu không thì thêm"/"Tiền tố
                     target_pair = f"/{target_id}"
                 
-                # 构建完整的目录对
+                # Xây dựng một cặp thư mục hoàn chỉnh
                 dir_pair = f"/{source_pair}/{source_path}:/{target_pair}/{target_path}".replace('//', '/')
                 dir_pairs.append(dir_pair)
 
@@ -438,91 +438,91 @@ class SyncManager:
         
             if dir_pairs:
                 os.environ["DIR_PAIRS"] = ";".join(dir_pairs)
-                data_manager._append_task_log(task_id, instance_id, f"设置同步目录对: {os.environ['DIR_PAIRS']}")
+                data_manager._append_task_log(task_id, instance_id, f"Thiết lập một cặp thư mục đồng bộ: {os.environ['DIR_PAIRS']}")
                 
-                # 设置排除目录
+                # Đặt thư mục loại trừ
                 if exclude_dirs:
                     os.environ["EXCLUDE_DIRS"] = ",".join(exclude_dirs)
-                    data_manager._append_task_log(task_id, instance_id, f"设置排除目录: {os.environ['EXCLUDE_DIRS']}")
+                    data_manager._append_task_log(task_id, instance_id, f"Đặt thư mục loại trừ: {os.environ['EXCLUDE_DIRS']}")
                 
-                # 设置排除文件
+                # Đặt tệp loại trừ
                 if task.get("file_filter"):
                     os.environ["REGEX_PATTERNS"] = task.get("file_filter")
-                    data_manager._append_task_log(task_id, instance_id, f"设置文件过滤: {os.environ['REGEX_PATTERNS']}")
+                    data_manager._append_task_log(task_id, instance_id, f"Đặt bộ lọc tệp: {os.environ['REGEX_PATTERNS']}")
                 
-                # 设置最小/最大文件大小
+                # Đặt tối thiểu/Kích thước tệp tối đa
                 if task.get("size_min"):
                     os.environ["SIZE_MIN"] = str(task.get("size_min"))
-                    data_manager._append_task_log(task_id, instance_id, f"设置最小文件大小: {os.environ['SIZE_MIN']}")
+                    data_manager._append_task_log(task_id, instance_id, f"Đặt kích thước tệp tối thiểu: {os.environ['SIZE_MIN']}")
 
                 if task.get("size_max"):
                     os.environ["SIZE_MAX"] = str(task.get("size_max"))
-                    data_manager._append_task_log(task_id, instance_id, f"设置最大文件大小: {os.environ['SIZE_MAX']}")
+                    data_manager._append_task_log(task_id, instance_id, f"Đặt kích thước tệp tối đa: {os.environ['SIZE_MAX']}")
                 
-                # 执行主函数
-                data_manager._append_task_log(task_id, instance_id, "开始执行同步...")
+                # Thực hiện chức năng chính
+                data_manager._append_task_log(task_id, instance_id, "Bắt đầu thực hiện đồng bộ hóa...")
                 
-                # 创建一个自定义日志处理器，将日志输出到任务日志文件
+                # Tạo bộ xử lý nhật ký tùy chỉnh，Nhật ký đầu ra vào tệp nhật ký tác vụ
                 class TaskLogHandler(logging.Handler):
                     def emit(self, record):
                         log_message = self.format(record)
                         data_manager._append_task_log(task_id, instance_id, log_message)
                 
-                # 获取alist_sync的logger并添加自定义处理器
+                # Lấyalist_synccủaloggerVà thêm bộ xử lý tùy chỉnh
                 if alist_sync_logger:
                     task_log_handler = TaskLogHandler()
                     formatter = logging.Formatter('%(message)s')
                     task_log_handler.setFormatter(formatter)
                     alist_sync_logger.addHandler(task_log_handler)
                 
-                # 执行主函数
+                # Thực hiện chức năng chính
                 alist_sync_main()
                 
-                # 如果有添加自定义处理器，需要移除
+                # Nếu bạn đã thêm một bộ xử lý tùy chỉnh，Cần phải được gỡ bỏ
                 if alist_sync_logger and 'task_log_handler' in locals():
                     alist_sync_logger.removeHandler(task_log_handler)
                 
-                return {"status": "success", "message": "同步任务执行成功", "dir_pairs": dir_pairs}
+                return {"status": "success", "message": "Thực thi nhiệm vụ đồng bộ thành công", "dir_pairs": dir_pairs}
             else:
-                return {"status": "error", "message": "未配置有效的目录对"}
+                return {"status": "error", "message": "Không có cặp thư mục hợp lệ nào được cấu hình"}
                 
         except Exception as e:
             import traceback
             error_details = traceback.format_exc()
-            data_manager._append_task_log(task_id, instance_id, f"执行出错: {str(e)}\n{error_details}")
+            data_manager._append_task_log(task_id, instance_id, f"Một lỗi thực thi: {str(e)}\n{error_details}")
             raise
     
     def _one_way_sync(self, source_conn, target_conn, source_path, target_path, task):
-        """执行单向同步"""
-        # 模拟同步过程
+        """Thực hiện đồng bộ hóa một chiều"""
+        # Mô phỏng quá trình đồng bộ hóa
         data_manager = current_app.config['DATA_MANAGER']
         settings = data_manager.get_settings()
         
-        # 列出源目录文件
+        # Liệt kê các tệp thư mục nguồn
         source_files = self._list_files(source_conn, source_path)
         if source_files.get("status") != "success":
             return source_files
         
-        # 列出目标目录文件
+        # Liệt kê tệp thư mục đích
         target_files = self._list_files(target_conn, target_path)
         if target_files.get("status") != "success":
             return target_files
         
-        # 比较文件列表，找出需要同步的文件
+        # So sánh danh sách tệp，Tìm ra các tệp cần được đồng bộ hóa
         to_sync = []
         source_file_dict = {f["name"]: f for f in source_files.get("data", [])}
         target_file_dict = {f["name"]: f for f in target_files.get("data", [])}
         
         for name, source_file in source_file_dict.items():
             if source_file["type"] == "folder":
-                # 如果是文件夹且目标不存在，创建文件夹
+                # Nếu đó là một thư mục và mục tiêu không tồn tại，Tạo một thư mục
                 if name not in target_file_dict:
                     to_sync.append({
                         "action": "create_folder",
                         "path": os.path.join(target_path, name)
                     })
             else:
-                # 如果是文件，检查是否需要同步
+                # Nếu đó là một tệp，Kiểm tra xem cần đồng bộ hóa
                 if name not in target_file_dict or target_file_dict[name]["size"] != source_file["size"]:
                     to_sync.append({
                         "action": "sync_file",
@@ -531,7 +531,7 @@ class SyncManager:
                         "size": source_file["size"]
                     })
         
-        # 执行同步
+        # Thực hiện đồng bộ hóa
         success_count = 0
         error_count = 0
         
@@ -551,17 +551,17 @@ class SyncManager:
                 success_count += 1
             else:
                 error_count += 1
-                # 记录错误日志
+                #Nhật ký yêu cầu ghi âm
                 data_manager.add_log({
                     "task_id": task["id"],
                     "level": "ERROR",
-                    "message": f"同步项目失败: {item['source_path'] if 'source_path' in item else item['path']}",
+                    "message": f"Dự án đồng bộ hóa thất bại: {item['source_path'] if 'source_path' in item else item['path']}",
                     "details": result.get("message")
                 })
         
-        # 返回结果摘要
+        # Tóm tắt kết quả trả về
         total = len(to_sync)
-        message = f"同步完成，共 {total} 项，成功 {success_count} 项，失败 {error_count} 项"
+        message = f"Đồng bộ hóa đã hoàn tất, tổng cộng {total} mục, {success_count} mục đã thành công, {error_count} mục đã thất bại"
         
         return {
             "status": "success" if error_count == 0 else "partial",
@@ -574,27 +574,27 @@ class SyncManager:
         }
     
     def _list_files(self, connection, path):
-        """列出指定路径的文件和文件夹"""
-        # 模拟 API 调用
-        # 实际项目中应通过 Alist API 获取文件列表
+        """Liệt kê các tệp và thư mục với các đường dẫn được chỉ định"""
+        # mô phỏng API Gọi
+        # Nó nên được thông qua trong các dự án thực tế Alist API Nhận danh sách tệp
         
-        # 简单模拟返回一些文件
+        # Mô phỏng đơn giản để trả về một số tệp
         if path == "/":
             return {
                 "status": "success",
                 "data": [
-                    {"name": "文档", "type": "folder", "size": 0},
-                    {"name": "图片", "type": "folder", "size": 0},
-                    {"name": "视频", "type": "folder", "size": 0},
-                    {"name": "测试文件.txt", "type": "file", "size": 1024}
+                    {"name": "tài liệu", "type": "folder", "size": 0},
+                    {"name": "hình ảnh", "type": "folder", "size": 0},
+                    {"name": "băng hình", "type": "folder", "size": 0},
+                    {"name": "Kiểm tra tệp.txt", "type": "file", "size": 1024}
                 ]
             }
-        elif path == "/文档":
+        elif path == "/tài liệu":
             return {
                 "status": "success",
                 "data": [
-                    {"name": "报告.docx", "type": "file", "size": 15360},
-                    {"name": "数据.xlsx", "type": "file", "size": 8192}
+                    {"name": "Báo cáo.docx", "type": "file", "size": 15360},
+                    {"name": "dữ liệu.xlsx", "type": "file", "size": 8192}
                 ]
             }
         else:
@@ -604,93 +604,93 @@ class SyncManager:
             }
     
     def _create_folder(self, connection, path):
-        """在目标连接上创建文件夹"""
-        # 模拟创建文件夹
-        return {"status": "success", "message": f"文件夹创建成功: {path}"}
+        """Tạo một thư mục trên kết nối đích"""
+        # Mô phỏng việc tạo thư mục
+        return {"status": "success", "message": f"Sáng tạo thư mục thành công: {path}"}
     
     def _sync_file(self, source_conn, target_conn, source_path, target_path, size):
-        """同步单个文件"""
-        # 模拟文件同步过程
-        # 这里应该实现实际的文件传输逻辑，包括下载和上传
+        """Đồng bộ hóa một tệp duy nhất"""
+        # Mô phỏng quá trình đồng bộ hóa tệp
+        # Logic truyền tệp thực tế nên được thực hiện tại đây，Bao gồm tải xuống và tải lên
         
-        # 简单模拟一个耗时操作
+        # Mô phỏng đơn giản của một hoạt động tốn thời gian
         time.sleep(0.5)
         
-        return {"status": "success", "message": f"文件同步成功: {source_path} -> {target_path}"}
+        return {"status": "success", "message": f"Đồng bộ hóa tệp thành công: {source_path} -> {target_path}"}
     
     def stop_task(self, task_id):
-        """停止正在运行的任务"""
+        """Ngừng chạy nhiệm vụ"""
         with self.lock:
             if task_id in self.running_tasks:
-                # 实际项目中，应该有机制中断正在运行的任务
+                # Trong các dự án thực tế，Cần có một cơ chế để làm gián đoạn các nhiệm vụ chạy
                 del self.running_tasks[task_id]
                 
-                # 更新任务状态
+                # Cập nhật trạng thái tác vụ
                 data_manager = current_app.config['DATA_MANAGER']
                 data_manager.update_task_status(task_id, "stopped")
                 
-                return {"status": "success", "message": "任务已停止"}
+                return {"status": "success", "message": "Nhiệm vụ đã được dừng lại"}
             else:
-                return {"status": "error", "message": "任务未在运行"}
+                return {"status": "error", "message": "Nhiệm vụ không chạy"}
     
     def reload_scheduler(self):
-        """重新加载调度器中的所有任务"""
+        """Tải lại tất cả các tác vụ trong Trình lập lịch"""
         try:
-            current_app.logger.info("开始重新加载调度器...")
+            current_app.logger.info("Bắt đầu tải lại bộ lập lịch...")
             
-            # 获取数据管理器
+            # Nhận Trình quản lý dữ liệu
             data_manager = current_app.config['DATA_MANAGER']
             
-            # 获取所有任务
+            # Nhận tất cả các nhiệm vụ
             tasks = data_manager.get_tasks()
             
-            # 清除现有的所有任务，但保留日志清理等系统任务
+            # Xóa tất cả các nhiệm vụ hiện có，Nhưng hãy tiếp tục làm sạch nhật ký và các nhiệm vụ hệ thống khác
             jobs = self.scheduler.get_jobs()
             for job in jobs:
                 if job.id.startswith('task_'):
                     self.scheduler.remove_job(job.id)
-                    current_app.logger.debug(f"已移除任务: {job.id}")
+                    current_app.logger.debug(f"Nhiệm vụ bị xóa: {job.id}")
             
-            # 重新加载所有启用的任务
+            # Tải lại tất cả các tác vụ được bật
             loaded_count = 0
             for task in tasks:
                 if task.get("enabled", True):
                     self.schedule_task(task)
                     loaded_count += 1
             
-            current_app.logger.info(f"已重新加载 {loaded_count} 个任务到调度器")
+            current_app.logger.info(f"Tải lại {loaded_count} Nhiệm vụ để lập lịch")
             
-            # 更新所有任务的下次运行时间
+            # Cập nhật thời gian chạy tiếp theo của tất cả các tác vụ
             self._update_all_next_run_times()
             
-            # 列出当前所有计划任务
+            # Liệt kê tất cả các nhiệm vụ theo lịch trình hiện tại
             job_info = []
             for job in self.scheduler.get_jobs():
                 job_info.append({
                     "id": job.id,
                     "next_run": str(job.next_run_time) if job.next_run_time else None
                 })
-                current_app.logger.info(f"计划任务: {job.id}, 下次运行: {job.next_run_time or '未计划'}")
+                current_app.logger.info(f"Kế hoạch nhiệm vụ: {job.id}, Chạy lần sau: {job.next_run_time or 'Không có kế hoạch'}")
             
             return {
                 "status": "success",
-                "message": "调度器已重新加载",
+                "message": "Bộ lập lịch đã được tải lại",
                 "loaded_tasks": loaded_count,
                 "jobs": job_info
             }
         except Exception as e:
             import traceback
             error_details = traceback.format_exc()
-            current_app.logger.error(f"重新加载调度器失败: {str(e)}")
+            current_app.logger.error(f"Tải lại lịch trình không thành công: {str(e)}")
             current_app.logger.error(error_details)
             raise
     
     def reload_tasks(self):
-        """reload_tasks方法（兼容性别名），重新加载任务列表"""
-        # 这个方法是reload_scheduler的别名，提供向后兼容性
-        current_app.logger.info("调用reload_tasks()方法（别名），将重定向到reload_scheduler()")
+        """reload_tasksPhương thức（Bí danh tương thích），Tải lại danh sách tác vụ"""
+        # Phương thức này làreload_schedulerBí danh của，Cung cấp khả năng tương thích ngược
+        current_app.logger.info("Gọireload_tasks()Phương thức（Bí danh），Chuyển hướng đếnreload_scheduler()")
         return self.reload_scheduler()
     
     def shutdown(self):
-        """关闭调度器"""
+        """Tắt bộ lập lịch"""
         self.scheduler.shutdown() 

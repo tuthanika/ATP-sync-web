@@ -9,26 +9,26 @@ from pathlib import Path
 from flask import current_app
 
 class DataManager:
-    """数据管理器，负责处理JSON文件的读写操作"""
+    """Trình quản lý dữ liệu，Chịu trách nhiệm xử lýJSONĐọc và ghi tệp"""
     
     def __init__(self, data_dir=None):
-        """初始化数据管理器"""
-        # 获取项目根目录
+        """Khởi tạo Trình quản lý dữ liệu"""
+        # Nhận thư mục gốc dự án
         project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         
-        # 设置数据目录
+        # Thiết lập thư mục dữ liệu
         self.data_dir = data_dir or os.path.join(project_root, "data")
         os.makedirs(self.data_dir, exist_ok=True)
         
-        # 设置配置文件目录
+        # Đặt thư mục tệp cấu hình
         self.config_dir = os.path.join(self.data_dir, "config")
         os.makedirs(self.config_dir, exist_ok=True)
         
-        # 设置日志目录
+        # Thiết lập thư mục nhật ký
         self.log_dir = os.path.join(self.data_dir, "log")
         os.makedirs(self.log_dir, exist_ok=True)
         
-        # 定义数据文件路径
+        # Xác định đường dẫn tệp dữ liệu
         self.users_file = os.path.join(self.config_dir, "users.json")
         self.connections_file = os.path.join(self.config_dir, "connections.json")
         self.tasks_file = os.path.join(self.config_dir, "tasks.json")
@@ -36,11 +36,11 @@ class DataManager:
         self.logs_file = os.path.join(self.log_dir, "logs.json")
         self.task_instances_file = os.path.join(self.config_dir, "task_instances.json")
         
-        # 确保任务日志目录存在
+        # Đảm bảo thư mục nhật ký tác vụ tồn tại
         self.task_logs_dir = os.path.join(self.log_dir, "task_logs")
         os.makedirs(self.task_logs_dir, exist_ok=True)
         
-        # 创建初始数据文件（如果不存在）
+        # Tạo một tệp dữ liệu ban đầu（Nếu nó không tồn tại）
         self._ensure_file_exists(self.users_file, self._get_default_users())
         self._ensure_file_exists(self.connections_file, [])
         self._ensure_file_exists(self.tasks_file, [])
@@ -49,12 +49,12 @@ class DataManager:
         self._ensure_file_exists(self.task_instances_file, [])
     
     def _get_default_settings(self):
-        """获取默认设置"""
+        """Nhận cài đặt mặc định"""
         return {
             "theme": "dark",
             "language": "zh_CN",
             "refresh_interval": 60,
-            "keep_log_days": 7,  # 默认保留日志天数为7天
+            "keep_log_days": 7,  # Số ngày mặc định để giữ nhật ký là7bầu trời
             "max_concurrent_tasks": 3,
             "default_retry_count": 3,
             "default_block_size": 10485760,  # 10MB
@@ -71,13 +71,13 @@ class DataManager:
         }
     
     def _ensure_file_exists(self, file_path, default_data):
-        """确保文件存在，如果不存在则创建"""
+        """Đảm bảo rằng tệp tồn tại，Tạo nếu nó không tồn tại"""
         if not os.path.exists(file_path):
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(default_data, ensure_ascii=False, indent=2, fp=f)
                 
     def _get_default_users(self):
-        """获取默认用户"""
+        """Nhận người dùng mặc định"""
         return [
             {
                 "id": 1,
@@ -89,30 +89,30 @@ class DataManager:
         ]
     
     def _read_json(self, file_path):
-        """读取 JSON 文件"""
+        """Đọc JSON tài liệu"""
         max_retries = 3
         retry_delay = 1
         for attempt in range(max_retries):
             try:
-                # 尝试读取文件内容
+                # Cố gắng đọc nội dung tệp
                 content = None
                 with open(file_path, 'r', encoding='utf-8') as f:
                     content = f.read()
-                    # 检查文件是否为空
+                    # Kiểm tra xem tệp có trống không
                     if not content:
-                        raise ValueError("文件内容为空")
-                    # 尝试解析JSON
+                        raise ValueError("Nội dung tệp trống")
+                    # Cố gắng phân tíchJSON
                     json_content = json.loads(content)
                     if isinstance(json_content, list) and not json_content:
-                        raise ValueError("文件内容为空数组")
+                        raise ValueError("Nội dung tệp là một mảng trống")
                     return json_content
             except Exception as e:
                 if attempt < max_retries - 1:
-                    current_app.logger.error(f"读取JSON文件时出错 ({file_path}): {str(e)}，尝试第 {attempt + 1} 次重试")
+                    current_app.logger.error(f"ĐọcJSONXảy ra lỗi trong khi tệp ({file_path}): {str(e)}，Hãy thử đầu tiên {attempt + 1} Hãy thử lại")
                     time.sleep(retry_delay)
                 else:
-                    current_app.logger.error(f"读取JSON文件时出错 ({file_path}): {str(e)}，达到最大重试次数，将返回默认值")
-            # 返回默认值
+                    current_app.logger.error(f"ĐọcJSONXảy ra lỗi trong khi tệp ({file_path}): {str(e)}，Số lượng thử lại tối đa đạt được，Sẽ trả về giá trị mặc định")
+            # Quay trở lại giá trị mặc định
             if "logs.json" in file_path:
                 return []
             elif "users.json" in file_path:
@@ -123,49 +123,49 @@ class DataManager:
                 return []
     
     def _write_json(self, file_path, data):
-        """写入 JSON 文件"""
-        # 校验数据不能是空数组（特定文件除外）
+        """Viết JSON tài liệu"""
+        # Dữ liệu xác minh không thể là một mảng trống（Ngoại trừ các tệp cụ thể）
         if isinstance(data, list) and not data and not ("logs.json" in file_path or "task_instances.json" in file_path):
-            current_app.logger.warning(f"尝试写入空数组到文件: {file_path}，拒绝写入")
+            current_app.logger.warning(f"Thử viết một mảng trống vào một tệp: {file_path}，Từ chối viết")
             return
         try:
-            # 确保目录存在
+            # Đảm bảo thư mục tồn tại
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
             if os.name == 'nt': 
-                # 先写入临时文件
+                # Ghi vào tệp tạm thời trước
                 temp_file = file_path + ".tmp"
                 with open(temp_file, 'w', encoding='utf-8') as f:
                     json.dump(data, ensure_ascii=False, indent=2, fp=f)
-                # 然后原子性地重命名为目标文件
+                # Sau đó đổi tên nguyên tử thành tệp đích
                 if os.path.exists(file_path):
-                    # 在Windows上需要先删除现有文件
+                    # hiện hữuWindowsBạn cần xóa các tệp hiện có trước tiên
                     try:
                         os.remove(file_path)
                     except Exception as e:
-                        current_app.logger.error(f"删除现有文件失败: {str(e)}")
+                        current_app.logger.error(f"Không xóa các tệp hiện có: {str(e)}")
                 os.rename(temp_file, file_path)
             else:
-                # 非Windows系统直接写入
+                # KHÔNGWindowsViết trực tiếp vào hệ thống
                 with open(file_path, 'w', encoding='utf-8') as f:
                     json.dump(data, ensure_ascii=False, indent=2, fp=f)
-            # 记录写入成功
-            current_app.logger.info(f"成功写入文件: {file_path}")
+            # Viết hồ sơ đã thành công
+            current_app.logger.info(f"Ghi thành công vào tệp: {file_path}")
         except Exception as e:
-            current_app.logger.error(f"写入JSON文件时出错 ({file_path}): {str(e)}")
+            current_app.logger.error(f"ViếtJSONXảy ra lỗi trong khi tệp ({file_path}): {str(e)}")
     
     def format_timestamp(self, timestamp):
-        """将时间戳格式化为 yyyy-MM-dd HH:mm:ss 格式"""
+        """Định dạng dấu thời gian là yyyy-MM-dd HH:mm:ss Định dạng"""
         if not timestamp:
             return ""
         return dt.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
     
-    # 用户管理
+    # Quản lý người dùng
     def get_users(self):
-        """获取所有用户"""
+        """Nhận tất cả người dùng"""
         return self._read_json(self.users_file)
     
     def get_user(self, username):
-        """通过用户名获取用户"""
+        """Nhận người dùng thông qua tên người dùng"""
         users = self.get_users()
         for user in users:
             if user["username"] == username:
@@ -173,16 +173,16 @@ class DataManager:
         return None
     
     def authenticate_user(self, username, password):
-        """验证用户名和密码"""
+        """Xác minh tên người dùng và mật khẩu"""
         user = self.get_user(username)
         if user and user["password"] == password:
-            # 更新最后登录时间
+            # Cập nhật thời gian đăng nhập cuối cùng
             self.update_last_login(username)
             return user
         return None
     
     def update_user_password(self, username, new_password):
-        """更新用户密码"""
+        """Cập nhật mật khẩu người dùng"""
         users = self.get_users()
         for i, user in enumerate(users):
             if user["username"] == username:
@@ -193,9 +193,9 @@ class DataManager:
         return False
     
     def update_username(self, old_username, new_username):
-        """更新用户名"""
+        """Cập nhật tên người dùng"""
         if self.get_user(new_username):
-            return False  # 新用户名已存在
+            return False  # Tên người dùng mới đã tồn tại
             
         users = self.get_users()
         for i, user in enumerate(users):
@@ -207,7 +207,7 @@ class DataManager:
         return False
     
     def update_last_login(self, username):
-        """更新用户最后登录时间"""
+        """Cập nhật thời gian đăng nhập cuối cùng của người dùng"""
         users = self.get_users()
         for i, user in enumerate(users):
             if user["username"] == username:
@@ -216,13 +216,13 @@ class DataManager:
                 return True
         return False
     
-    # 连接管理
+    # Quản lý kết nối
     def get_connections(self):
-        """获取所有连接"""
+        """Nhận tất cả các kết nối"""
         return self._read_json(self.connections_file)
     
     def get_connection(self, conn_id):
-        """获取单个连接"""
+        """Nhận một kết nối duy nhất"""
         connections = self.get_connections()
         for conn in connections:
             if conn["connection_id"] == conn_id:
@@ -230,9 +230,9 @@ class DataManager:
         return None
     
     def add_connection(self, connection_data):
-        """添加连接"""
+        """Thêm một kết nối"""
         connections = self.get_connections()
-        # 生成新ID
+        # Tạo mớiID
         next_id = 1
         if connections:
             next_id = max(conn["connection_id"] for conn in connections) + 1
@@ -246,7 +246,7 @@ class DataManager:
         return next_id
     
     def update_connection(self, conn_id, connection_data):
-        """更新连接"""
+        """Cập nhật kết nối"""
         connections = self.get_connections()
         for i, conn in enumerate(connections):
             if conn["connection_id"] == conn_id:
@@ -259,18 +259,18 @@ class DataManager:
         return False
     
     def delete_connection(self, conn_id):
-        """删除连接"""
+        """Xóa kết nối"""
         connections = self.get_connections()
         connections = [conn for conn in connections if conn["connection_id"] != conn_id]
         self._write_json(self.connections_file, connections)
     
-    # 任务管理
+    # Quản lý nhiệm vụ
     def get_tasks(self):
-        """获取所有任务"""
+        """Nhận tất cả các nhiệm vụ"""
         return self._read_json(self.tasks_file)
     
     def get_task(self, task_id):
-        """获取单个任务"""
+        """Nhận nhiệm vụ duy nhất"""
         tasks = self.get_tasks()
         for task in tasks:
             if task["id"] == task_id:
@@ -278,9 +278,9 @@ class DataManager:
         return None
     
     def add_task(self, task_data):
-        """添加任务"""
+        """Thêm nhiệm vụ"""
         tasks = self.get_tasks()
-        # 生成新ID
+        # Tạo mớiID
         next_id = 1
         if tasks:
             next_id = max(task["id"] for task in tasks) + 1
@@ -297,14 +297,14 @@ class DataManager:
         return next_id
     
     def update_task(self, task_id, task_data):
-        """更新任务"""
+        """Cập nhật nhiệm vụ"""
         tasks = self.get_tasks()
         for i, task in enumerate(tasks):
             if task["id"] == task_id:
                 task_data["id"] = task_id
                 task_data["created_at"] = task.get("created_at")
                 task_data["updated_at"] = self.format_timestamp(int(time.time()))
-                # 保留其他状态字段
+                # Giữ các trường trạng thái khác
                 for field in ["status", "last_run", "next_run"]:
                     if field in task and field not in task_data:
                         task_data[field] = task[field]
@@ -315,13 +315,13 @@ class DataManager:
         return False
     
     def delete_task(self, task_id):
-        """删除任务"""
+        """Xóa nhiệm vụ"""
         tasks = self.get_tasks()
         tasks = [task for task in tasks if task["id"] != task_id]
         self._write_json(self.tasks_file, tasks)
     
     def update_task_status(self, task_id, status, last_run=None, next_run=None):
-        """更新任务状态"""
+        """Cập nhật trạng thái tác vụ"""
         tasks = self.get_tasks()
         for i, task in enumerate(tasks):
             if task["id"] == task_id:
@@ -329,119 +329,119 @@ class DataManager:
                 if last_run:
                     task["last_run"] = self.format_timestamp(last_run)
                 if next_run:
-                    # 如果提供的是数字时间戳，则格式化为字符串
+                    # Nếu dấu thời gian số được cung cấp，Được định dạng dưới dạng chuỗi
                     task["next_run"] = self.format_timestamp(next_run)
-                    current_app.logger.debug(f"已更新任务 {task_id} 的下次运行时间: {task['next_run']}")
+                    current_app.logger.debug(f"Cập nhật nhiệm vụ {task_id} Thời gian chạy tiếp theo: {task['next_run']}")
                 tasks[i] = task
                 self._write_json(self.tasks_file, tasks)
                 return True
         return False
     
-    # 设置管理
+    # Quản lý cài đặt
     def get_settings(self):
-        """获取设置"""
+        """Nhận cài đặt"""
         return self._read_json(self.settings_file)
     
     def update_settings(self, settings_data):
-        """更新设置"""
+        """Cập nhật cài đặt"""
         current_settings = self.get_settings()
         current_settings.update(settings_data)
         self._write_json(self.settings_file, current_settings)
     
-    # 日志管理
+    # Quản lý nhật ký
     def get_logs(self, limit=100):
-        """获取最新日志"""
+        """Nhận nhật ký mới nhất"""
         try:
             logs = self._read_json(self.logs_file)
             
-            # 确保logs是一个列表
+            # Hãy chắc chắnlogsĐó là một danh sách
             if not isinstance(logs, list):
-                print(f"日志文件内容不是有效的列表，重置为空列表")
+                print(f"Nội dung tệp nhật ký không phải là một danh sách hợp lệ，Đặt lại vào danh sách trống")
                 logs = []
                 self._write_json(self.logs_file, logs)
                 
             logs_sorted = sorted(logs, key=lambda x: x.get("timestamp", 0), reverse=True)[:limit]
             
-            # 格式化时间戳和添加缺失的任务名称
+            # Định dạng dấu thời gian và thêm tên tác vụ bị thiếu
             for log in logs_sorted:
                 if "timestamp" in log:
                     log["timestamp_formatted"] = self.format_timestamp(log["timestamp"])
                 
-                # 确保所有包含 task_id 的日志都有 task_name
+                # Đảm bảo tất cả bao gồm task_id Tất cả các bản ghi là task_name
                 if "task_id" in log and (not log.get("task_name") or log.get("task_name") == ""):
                     task = self.get_task(log["task_id"])
                     if task:
-                        log["task_name"] = task.get("name", f"任务 {log['task_id']}")
+                        log["task_name"] = task.get("name", f"Nhiệm vụ {log['task_id']}")
                     else:
-                        # 如果找不到对应的任务，使用任务ID作为备用显示
-                        log["task_name"] = f"任务 {log['task_id']}"
+                        # Nếu không thể tìm thấy nhiệm vụ tương ứng，Nhiệm vụ sử dụngIDNhư một màn hình sao lưu
+                        log["task_name"] = f"Nhiệm vụ {log['task_id']}"
             
             return logs_sorted
             
         except Exception as e:
-            print(f"获取日志时出错: {str(e)}")
-            # 如果出错，返回空列表
+            print(f"Xảy ra lỗi trong khi có được nhật ký: {str(e)}")
+            # Nếu có sự cố xảy ra，Quay trở lại danh sách trống
             return []
     
     def add_log(self, log_data):
-        """添加日志"""
+        """Thêm nhật ký"""
         try:
             logs = self._read_json(self.logs_file)
             timestamp = int(time.time())
             log_data["timestamp"] = timestamp
             log_data["timestamp_formatted"] = self.format_timestamp(timestamp)
             
-            # 如果日志包含 task_id 但没有 task_name，尝试添加任务名称
+            # Nếu nhật ký chứa task_id Nhưng không task_name，Thử thêm tên tác vụ
             if "task_id" in log_data and "task_name" not in log_data:
                 task = self.get_task(log_data["task_id"])
                 if task:
-                    log_data["task_name"] = task.get("name", "未知任务")
+                    log_data["task_name"] = task.get("name", "Nhiệm vụ không xác định")
             
-            # 确保logs是一个列表
+            # Hãy chắc chắnlogsĐó là một danh sách
             if not isinstance(logs, list):
                 logs = []
                 
-            # 限制日志数量为最新的 1000 条
+            # Giới hạn số lượng nhật ký mới nhất 1000 dải
             logs.append(log_data)
             logs = sorted(logs, key=lambda x: x.get("timestamp", 0), reverse=True)[:1000]
             
-            # 写入日志前打印调试信息
-            print(f"正在写入日志，当前日志条数: {len(logs)}")
+            # In thông tin gỡ lỗi trước khi ghi vào nhật ký
+            print(f"Nhật ký viết，Số lượng nhật ký hiện tại: {len(logs)}")
             try:
                 self._write_json(self.logs_file, logs)
-                print(f"日志写入成功 - {log_data.get('message', '无消息')}")
+                print(f"Nhật ký viết thành công - {log_data.get('message', 'Không có tin tức')}")
             except Exception as e:
-                print(f"写入日志时发生错误: {str(e)}")
-                # 尝试重新创建日志文件
+                print(f"Xảy ra lỗi khi viết vào nhật ký: {str(e)}")
+                # Cố gắng tạo lại tệp nhật ký
                 with open(self.logs_file, 'w', encoding='utf-8') as f:
                     json.dump(logs, ensure_ascii=False, indent=2, fp=f)
         except Exception as e:
-            print(f"添加日志失败: {str(e)}")
-            # 确保日志文件存在并有效
+            print(f"Không thể thêm nhật ký: {str(e)}")
+            # Đảm bảo tệp nhật ký tồn tại và hợp lệ
             self._ensure_file_exists(self.logs_file, [])
     
     def clear_old_logs(self, days=None):
-        """清理旧日志"""
+        """Làm sạch các bản ghi cũ"""
         if days is None:
             settings = self.get_settings()
             days = settings.get("keep_log_days", 7)
         
         logs = self._read_json(self.logs_file)
         current_time = int(time.time())
-        cutoff_time = current_time - (days * 86400)  # 一天有 86400 秒
+        cutoff_time = current_time - (days * 86400)  # Có một ngày 86400 s
         
         logs = [log for log in logs if log.get("timestamp", 0) > cutoff_time]
         self._write_json(self.logs_file, logs)
     
-    # 任务实例管理
+    # Quản lý phiên nhiệm vụ
     def get_task_instances(self, task_id=None, limit=50):
-        """获取任务实例列表，可以按任务ID筛选"""
+        """Nhận danh sách các phiên bản nhiệm vụ，Có thể được giao nhiệm vụIDlọc"""
         instances = self._read_json(self.task_instances_file)
         
-        # 按时间戳降序排序
+        # Sắp xếp theo dấu thời gian giảm dần
         instances = sorted(instances, key=lambda x: x.get("start_time", 0), reverse=True)
         
-        # 如果指定了任务ID，则只返回该任务的实例
+        # Nếu nhiệm vụ được chỉ địnhID，Sau đó, chỉ có trường hợp của nhiệm vụ được trả về
         if task_id:
             instances = [inst for inst in instances if inst.get("task_id") == task_id]
         
@@ -449,7 +449,7 @@ class DataManager:
         return instances[:limit]
     
     def get_task_instance(self, instance_id):
-        """获取单个任务实例"""
+        """Nhận một phiên bản tác vụ duy nhất"""
         instances = self._read_json(self.task_instances_file)
         for instance in instances:
             if instance.get("task_instances_id") == instance_id:
@@ -457,26 +457,26 @@ class DataManager:
         return None
     
     def add_task_instance(self, task_id, start_params=None):
-        """添加新的任务实例记录"""
+        """Thêm một bản ghi phiên bản nhiệm vụ mới"""
         instances = self._read_json(self.task_instances_file)
         task = self.get_task(task_id)
         
         if not task:
             return None
         
-        # 生成新ID
+        # Tạo mớiID
         next_id = 1
         if instances:
             next_id = max(instance.get("task_instances_id", 0) for instance in instances) + 1
         
-        # 获取当前时间戳
+        # Nhận dấu thời gian hiện tại
         start_time = int(time.time())
         
-        # 创建任务实例记录
+        # Tạo bản ghi phiên bản tác vụ
         instance = {
             "task_instances_id": next_id,
             "task_id": task_id,
-            "task_name": task.get("name", f"任务 {task_id}"),
+            "task_name": task.get("name", f"Nhiệm vụ {task_id}"),
             "start_time": start_time,
             "start_time_formatted": self.format_timestamp(start_time),
             "end_time": 0,
@@ -489,13 +489,13 @@ class DataManager:
         instances.append(instance)
         self._write_json(self.task_instances_file, instances)
         
-        # 创建任务日志文件
-        self._create_task_log_file(task_id, instance["task_instances_id"], f"开始执行任务: {instance['task_name']}")
+        # Tạo tệp nhật ký tác vụ
+        self._create_task_log_file(task_id, instance["task_instances_id"], f"Bắt đầu thực hiện các tác vụ: {instance['task_name']}")
         
         return instance
     
     def update_task_instance(self, instance_id, status, result=None, end_time=None):
-        """更新任务实例状态"""
+        """Cập nhật trạng thái phiên bản tác vụ"""
         instances = self._read_json(self.task_instances_file)
         
         for i, instance in enumerate(instances):
@@ -512,11 +512,11 @@ class DataManager:
                 
                 self._write_json(self.task_instances_file, instances)
                 
-                # 更新任务日志
+                # Cập nhật nhật ký tác vụ
                 self._append_task_log(
                     instance.get("task_id"), 
                     instance_id, 
-                    f"任务状态更新为: {status}" + (f", 结果: {json.dumps(result, ensure_ascii=False)}" if result else "")
+                    f"Trạng thái nhiệm vụ được cập nhật để: {status}" + (f", kết quả: {json.dumps(result, ensure_ascii=False)}" if result else "")
                 )
                 
                 return True
@@ -524,19 +524,19 @@ class DataManager:
         return False
     
     def clear_old_task_instances(self, days=None):
-        """清理旧的任务实例记录"""
+        """Làm sạch hồ sơ phiên bản nhiệm vụ cũ"""
         if days is None:
             settings = self.get_settings()
             days = settings.get("keep_log_days", 7)
         
         instances = self._read_json(self.task_instances_file)
         current_time = int(time.time())
-        cutoff_time = current_time - (days * 86400)  # 一天有 86400 秒
+        cutoff_time = current_time - (days * 86400)  # Có một ngày 86400 s
         
-        # 保留较新的任务实例
+        # Giữ các trường hợp nhiệm vụ mới hơn
         new_instances = [inst for inst in instances if inst.get("start_time", 0) > cutoff_time]
         
-        # 删除旧实例对应的日志文件
+        # Xóa tệp nhật ký tương ứng với thể hiện cũ
         old_instances = [inst for inst in instances if inst.get("start_time", 0) <= cutoff_time]
         for instance in old_instances:
             log_file = self._get_task_log_file_path(instance.get("task_id"), instance.get("task_instances_id"))
@@ -549,54 +549,54 @@ class DataManager:
         self._write_json(self.task_instances_file, new_instances)
     
     def clear_main_log_files(self, days=None):
-        """清理主日志文件alist_sync.log的历史备份
-        每天轮换的日志文件格式为 alist_sync.log.YYYY-MM-DD
+        """Làm sạch tệp nhật ký chínhalist_sync.logSao lưu lịch sử
+        Định dạng tệp nhật ký được xoay mỗi ngày là alist_sync.log.YYYY-MM-DD
         """
         if days is None:
             settings = self.get_settings()
             days = settings.get("keep_log_days", 7)
         
-        # 计算截止日期
+        # Tính thời hạn
         cutoff_date = dt.now() - timedelta(days=days)
         
-        # 获取所有日志文件
+        # Nhận tất cả các tệp nhật ký
         log_files = glob.glob(os.path.join(self.log_dir, "alist_sync.log.*"))
         
-        # 遍历所有日志文件
+        # Lặp lại thông qua tất cả các tệp nhật ký
         for log_file in log_files:
             try:
-                # 提取日期部分
+                # Trích xuất phần ngày
                 file_name = os.path.basename(log_file)
-                date_part = file_name.split('.')[-1]  # 获取日期部分 YYYY-MM-DD
+                date_part = file_name.split('.')[-1]  # Nhận phần ngày YYYY-MM-DD
                 
-                # 解析日期
+                # Phân tích ngày
                 file_date = dt.strptime(date_part, "%Y-%m-%d")
                 
-                # 如果日期早于保留期限，则删除
+                # Nếu ngày sớm hơn thời gian lưu，Xóa bỏ
                 if file_date < cutoff_date:
                     os.remove(log_file)
-                    logging.info(f"已删除过期日志文件: {file_name}")
+                    logging.info(f"Đã xóa tệp nhật ký đã hết hạn: {file_name}")
             except Exception as e:
-                logging.error(f"处理日志文件 {log_file} 时出错: {str(e)}")
+                logging.error(f"Xử lý tệp nhật ký {log_file} Xảy ra lỗi trong khi: {str(e)}")
     
-    # 任务日志管理
+    # Quản lý nhật ký nhiệm vụ
     def _get_task_log_file_path(self, task_id, instance_id):
-        """获取任务日志文件路径"""
+        """Nhận đường dẫn tệp nhật ký tác vụ"""
         return os.path.join(self.task_logs_dir, f"task_{task_id}_instance_{instance_id}.log")
     
     def _create_task_log_file(self, task_id, instance_id, initial_message=None):
-        """创建任务日志文件"""
+        """Tạo tệp nhật ký tác vụ"""
         log_file = self._get_task_log_file_path(task_id, instance_id)
         
         with open(log_file, 'w', encoding='utf-8') as f:
             timestamp = self.format_timestamp(int(time.time()))
-            f.write(f"[{timestamp}] 任务实例启动\n")
+            f.write(f"[{timestamp}] Khởi động phiên bản tác vụ\n")
             
             if initial_message:
                 f.write(f"[{timestamp}] {initial_message}\n")
     
     def _append_task_log(self, task_id, instance_id, message):
-        """向任务日志文件追加内容"""
+        """Nối nội dung vào tệp nhật ký tác vụ"""
         log_file = self._get_task_log_file_path(task_id, instance_id)
         
         with open(log_file, 'a', encoding='utf-8') as f:
@@ -604,7 +604,7 @@ class DataManager:
             f.write(f"[{timestamp}] {message}\n")
     
     def get_task_log(self, task_id, instance_id):
-        """获取任务日志内容"""
+        """Nhận nội dung nhật ký tác vụ"""
         log_file = self._get_task_log_file_path(task_id, instance_id)
         
         if not os.path.exists(log_file):
@@ -613,13 +613,13 @@ class DataManager:
         with open(log_file, 'r', encoding='utf-8') as f:
             log_content = f.read()
             
-        # 将日志文本转换为列表
+        # Chuyển đổi văn bản nhật ký thành danh sách
         log_lines = log_content.split('\n')
         return [line for line in log_lines if line.strip()]
     
-    # 导入导出功能
+    # Hàm nhập và xuất
     def export_data(self):
-        """导出所有数据为一个字典"""
+        """Xuất tất cả dữ liệu dưới dạng từ điển"""
         export_data = {
             "users": self._read_json(self.users_file),
             "connections": self._read_json(self.connections_file),
@@ -629,89 +629,89 @@ class DataManager:
         return export_data
     
     def import_data(self, data, backup=True):
-        """导入数据并覆盖现有数据，可选备份原数据
+        """Nhập và ghi đè dữ liệu hiện có，Sao lưu tùy chọn của dữ liệu gốc
         
         Args:
-            data (dict): 包含要导入的数据的字典
-            backup (bool): 是否备份原数据，默认为True
+            data (dict): Từ điển chứa dữ liệu được nhập
+            backup (bool): Có sao lưu dữ liệu gốc không，Mặc định làTrue
             
         Returns:
-            dict: 包含导入结果的字典
+            dict: Từ điển chứa kết quả nhập
         """
-        result = {"success": True, "message": "数据导入成功", "details": {}}
+        result = {"success": True, "message": "Nhập dữ liệu thành công", "details": {}}
         backup_files = {}
         
         try:
-            # 检查数据格式，确定是标准格式还是alist_sync格式
+            # Kiểm tra định dạng dữ liệu，Xác định xem đó là định dạng tiêu chuẩn hayalist_syncĐịnh dạng
             format_type = "unknown"
             
             if isinstance(data, dict):
-                # 检测旧版基本配置格式
+                # Phát hiện phiên bản cũ của định dạng cấu hình cơ bản
                 if "baseUrl" in data and "token" in data:
-                    # 这是alist_sync基本配置格式
+                    # Đây làalist_syncĐịnh dạng cấu hình cơ bản
                     format_type = "alist_sync_base_config"
                     result["details"]["format"] = format_type
                     result["details"]["detected_fields"] = ["baseUrl", "token"]
-                    # 转换为标准格式
+                    # Chuyển đổi sang định dạng tiêu chuẩn
                     data = self._convert_alist_sync_base_config(data)
                 
-                # 检测旧版同步任务配置格式(两种可能的格式)
+                # Phát hiện định dạng cấu hình tác vụ đồng bộ kế thừa(Hai định dạng có thể)
                 elif "tasks" in data and isinstance(data["tasks"], list):
-                    # 检查是旧版格式还是新版格式
+                    # Kiểm tra xem đó là phiên bản cũ hay phiên bản mới
                     if data["tasks"] and all(isinstance(task, dict) for task in data["tasks"]):
                         old_format = any("->" in task.get("syncDirs", "") for task in data["tasks"] if "syncDirs" in task)
                         new_format = any(all(key in task for key in ["sourceStorage", "targetStorages", "syncDirs"]) 
                                         for task in data["tasks"])
                         
                         if old_format or new_format:
-                            # 这是alist_sync同步任务配置格式
+                            # Đây làalist_syncĐịnh dạng cấu hình tác vụ đồng bộ
                             format_type = "alist_sync_sync_config"
                             result["details"]["format"] = format_type
                             result["details"]["task_count"] = len(data["tasks"])
                             
-                            # 标记配置版本
+                            # Phiên bản cấu hình thẻ
                             if new_format:
-                                result["details"]["format_version"] = "新版格式"
+                                result["details"]["format_version"] = "Định dạng phiên bản mới"
                             else:
-                                result["details"]["format_version"] = "旧版格式"
+                                result["details"]["format_version"] = "Định dạng phiên bản cũ"
                             
-                            # 转换为标准格式
+                            # Chuyển đổi sang định dạng tiêu chuẩn
                             data = self._convert_alist_sync_sync_config(data)
                         else:
-                            # 检查是否是标准格式
+                            # Kiểm tra xem nó ở định dạng tiêu chuẩn
                             if all(key in data for key in ["users", "connections", "tasks", "settings"]):
                                 format_type = "standard"
                                 result["details"]["format"] = format_type
                             else:
-                                # 无法识别的格式
-                                raise ValueError("无法识别的任务数据格式，缺少必要字段")
+                                # Định dạng không được công nhận
+                                raise ValueError("Định dạng dữ liệu nhiệm vụ không được công nhận，Các trường cần thiết bị thiếu")
                     else:
-                        # 可能是标准格式或无效格式
+                        # Nó có thể là một định dạng tiêu chuẩn hoặc định dạng không hợp lệ
                         if all(key in data for key in ["users", "connections", "tasks", "settings"]):
                             format_type = "standard"
                             result["details"]["format"] = format_type
                         else:
-                            # 无法识别的格式
-                            raise ValueError("无法识别的数据格式，缺少必要字段")
+                            # Định dạng không được công nhận
+                            raise ValueError("无法识别的数据格式，Các trường cần thiết bị thiếu")
                 else:
-                    # 可能是标准格式
+                    # Có thể là một định dạng tiêu chuẩn
                     if all(key in data for key in ["users", "connections", "tasks", "settings"]):
                         format_type = "standard"
                         result["details"]["format"] = format_type
                     else:
-                        # 无法识别的格式
+                        # Định dạng không được công nhận
                         missing_keys = [k for k in ["users", "connections", "tasks", "settings"] if k not in data]
-                        raise ValueError(f"数据格式无效，缺少必要字段: {', '.join(missing_keys)}")
+                        raise ValueError(f"Định dạng dữ liệu không hợp lệ，Các trường cần thiết bị thiếu: {', '.join(missing_keys)}")
             else:
-                raise ValueError("导入数据必须是有效的JSON对象")
+                raise ValueError("Dữ liệu nhập phải có giá trịJSONSự vật")
             
-            # 先进行备份
+            # Tạo sao chép lưu trước
             if backup:
                 timestamp = int(time.time())
                 backup_dir = os.path.join(self.data_dir, f"backup_{timestamp}")
                 os.makedirs(backup_dir, exist_ok=True)
                 
-                # 备份文件
+                # Tệp sao lưu
                 for file_name, json_file in [
                     ("users", self.users_file),
                     ("connections", self.connections_file),
@@ -729,7 +729,7 @@ class DataManager:
                 result["details"]["backup_files"] = backup_files
                 result["details"]["backup_timestamp"] = self.format_timestamp(timestamp)
             
-            # 处理导入数据
+            # Xử lý dữ liệu nhập
             for data_type, file_path in [
                 ("users", self.users_file),
                 ("connections", self.connections_file),
@@ -739,27 +739,27 @@ class DataManager:
                 if data_type in data:
                     self._write_json(file_path, data[data_type])
                     if isinstance(data[data_type], list):
-                        result["details"][data_type] = f"导入成功，共{len(data[data_type])}条记录"
+                        result["details"][data_type] = f"nhập thành công，chung{len(data[data_type])}Ghi"
                     else:
-                        result["details"][data_type] = "导入成功"
+                        result["details"][data_type] = "Nhập thành công"
                 else:
-                    result["details"][data_type] = "未提供数据，保持不变"
+                    result["details"][data_type] = "Không có dữ liệu được cung cấp，Không thay đổi"
             
-            # 添加额外的统计信息
+            # Thêm số liệu thống kê
             if format_type == "alist_sync_base_config":
-                result["message"] = "成功导入AList-Sync基本配置，已更新连接信息"
+                result["message"] = "Nhập thành côngAList-SyncCấu hình cơ bản，Cập nhật thông tin kết nối"
             elif format_type == "alist_sync_sync_config":
                 task_count = len(data.get("tasks", []))
-                result["message"] = f"成功导入AList-Sync同步任务配置，共{task_count}个任务（已覆盖原有任务）"
+                result["message"] = f"Nhập thành côngAList-SyncĐồng bộ hóa cấu hình tác vụ，chung{task_count}nhiệm vụ（Nhiệm vụ ban đầu đã được bảo hiểm）"
             else:
-                # 标准格式，添加统计信息
-                result["message"] = "成功导入系统数据，已覆盖原有配置"
+                # Định dạng tiêu chuẩn，Thêm số liệu thống kê
+                result["message"] = "Dữ liệu hệ thống được nhập thành công，Cấu hình ban đầu đã bị ghi đè"
             
             return result
         except Exception as e:
             result["success"] = False
-            result["message"] = f"导入失败: {str(e)}"
-            # 如果导入失败，尝试恢复备份
+            result["message"] = f"nhập không thành công: {str(e)}"
+            # Nếu nhập không thành công，Cố gắng khôi phục sao chép lưu
             if backup and backup_files:
                 try:
                     for data_type, backup_file in backup_files.items():
@@ -767,26 +767,26 @@ class DataManager:
                         with open(backup_file, 'r', encoding='utf-8') as src, \
                              open(dest_file, 'w', encoding='utf-8') as dst:
                             dst.write(src.read())
-                    result["details"]["recovery"] = "已从备份恢复"
+                    result["details"]["recovery"] = "Phục hồi từ sao chép lưu"
                 except Exception as recovery_error:
                     result["details"]["recovery_error"] = str(recovery_error)
             return result
     
     def _convert_alist_sync_base_config(self, config):
-        """将alist_sync基本配置转换为标准格式
+        """Sẽalist_syncChuyển đổi cấu hình cơ bản thành định dạng tiêu chuẩn
         
         Args:
-            config (dict): alist_sync基本配置
+            config (dict): alist_syncCấu hình cơ bản
             
         Returns:
-            dict: 标准格式的配置数据
+            dict: Dữ liệu cấu hình ở định dạng tiêu chuẩn
         """
-        # 读取现有数据作为基础
+        # Đọc dữ liệu hiện có làm cơ sở
         users = self._read_json(self.users_file)
         tasks = self._read_json(self.tasks_file)
         settings = self._read_json(self.settings_file)
         
-        # 创建新的连接数据，完全覆盖现有连接
+        # Tạo dữ liệu kết nối mới，Hoàn toàn bao gồm các kết nối hiện có
         connections = [{
             "connection_id": 1,
             "name": "alist",
@@ -810,81 +810,81 @@ class DataManager:
         }
     
     def _convert_alist_sync_sync_config(self, config):
-        """将alist_sync同步任务配置转换为标准格式
+        """Sẽalist_syncChuyển đổi cấu hình tác vụ đồng bộ thành định dạng tiêu chuẩn
         
         Args:
-            config (dict): alist_sync同步任务配置
+            config (dict): alist_syncĐồng bộ hóa cấu hình tác vụ
             
         Returns:
-            dict: 标准格式的配置数据
+            dict: Dữ liệu cấu hình ở định dạng tiêu chuẩn
         """
-        # 读取现有数据作为基础
+        # Đọc dữ liệu hiện có làm cơ sở
         users = self._read_json(self.users_file)
         connections = self._read_json(self.connections_file)
         settings = self._read_json(self.settings_file)
         
-        # 获取所有存储路径（用于正确识别路径前缀）
+        # Nhận tất cả các đường dẫn lưu trữ（Được sử dụng để xác định chính xác các tiền tố đường dẫn）
         storage_paths = self._get_storage_paths()
         
-        # 转换任务列表
+        # Chuyển đổi danh sách nhiệm vụ
         converted_tasks = []
         
-        # 处理每个同步任务
+        # Xử lý từng nhiệm vụ đồng bộ hóa
         for i, sync_task in enumerate(config.get("tasks", [])):
-            # 任务名称(如果没有则生成默认名称)
-            task_name = sync_task.get("taskName") or f"同步任务 {i+1}"
+            # Tên nhiệm vụ(Nếu không, tên mặc định sẽ được tạo)
+            task_name = sync_task.get("taskName") or f"Đồng bộ hóa các nhiệm vụ {i+1}"
             
-            # 获取同步模式和差异项处理策略
+            # Nhận chế độ đồng bộ hóa và Chính sách xử lý mục khác biệt
             sync_mode = sync_task.get("syncMode", "data")
             sync_del_action = sync_task.get("syncDelAction", "none")
             
-            # 映射旧格式同步模式到新格式
-            sync_type = "file_sync"  # 默认为文件同步
+            # Ánh xạ chế độ đồng bộ định dạng cũ sang định dạng mới
+            sync_type = "file_sync"  # Mặc định là đồng bộ hóa tệp
             if sync_mode == "data" or sync_mode == "file":
                 sync_type = "file_sync"
             elif sync_mode == "file_move":
                 sync_type = "file_move"
             
-            # 获取计划和文件过滤器
+            # Nhận gói và bộ lọc tệp
             schedule = self._convert_cron_format(sync_task.get("cron", ""))
             file_filter = sync_task.get("regexPatterns", "")
             exclude_dirs = sync_task.get("excludeDirs", "")
             
-            # --------- 处理不同的路径格式 ---------
+            # --------- Xử lý các định dạng đường dẫn khác nhau ---------
             
-            # 检查是否是包含paths数组的格式
+            # Kiểm tra xem nó có được bao gồm khôngpathsĐịnh dạng của mảng
             if "paths" in sync_task and isinstance(sync_task["paths"], list):
-                # 处理包含多个源目标路径对的任务
+                # Xử lý các tác vụ chứa nhiều cặp đường dẫn đích nguồn
                 for path_idx, path_item in enumerate(sync_task["paths"]):
-                    # 处理常规路径对
+                    # Xử lý các cặp đường dẫn thông thường
                     src_path = None
                     dst_path = None
                     
-                    # 检查是否是移动模式的路径对
+                    # Kiểm tra xem nó có phải là cặp đường dẫn trong chế độ di động không
                     if "srcPathMove" in path_item and "dstPathMove" in path_item:
                         src_path = path_item.get("srcPathMove", "").strip()
                         dst_path = path_item.get("dstPathMove", "").strip()
-                    # 检查是否是常规路径对
+                    # Kiểm tra xem đó có phải là cặp đường dẫn thông thường không
                     elif "srcPath" in path_item and "dstPath" in path_item:
                         src_path = path_item.get("srcPath", "").strip()
                         dst_path = path_item.get("dstPath", "").strip()
                         
-                    # 如果无法获取有效路径，跳过
+                    # Nếu đường dẫn hợp lệ không thể lấy được，hãy bỏ qua
                     if not src_path or not dst_path:
                         continue
                         
-                    # 组装任务
-                    path_task_name = f"{task_name} - 路径{path_idx+1}" if len(sync_task["paths"]) > 1 else task_name
+                    # Nhiệm vụ lắp ráp
+                    path_task_name = f"{task_name} - con đường{path_idx+1}" if len(sync_task["paths"]) > 1 else task_name
                     
-                    # 智能拆分源路径和目标路径
+                    # Các đường dẫn nguồn phân chia thông minh và đường dẫn đích
                     src_conn_id, src_real_path = self._split_path_with_storage_list(src_path, storage_paths)
                     dst_conn_id, dst_real_path = self._split_path_with_storage_list(dst_path, storage_paths)
                     
-                    # 创建任务数据
+                    # Tạo dữ liệu nhiệm vụ
                     task_data = {
-                        "id": len(converted_tasks) + 1,  # 确保ID唯一
+                        "id": len(converted_tasks) + 1,  # Hãy chắc chắnIDchỉ một
                         "name": path_task_name,
-                        "connection_id": 1,  # 默认连接ID
+                        "connection_id": 1,  # Kết nối mặc địnhID
                         "source_connection_id": src_conn_id,
                         "source_connection_name": src_conn_id,
                         "target_connection_ids": [dst_conn_id],
@@ -906,7 +906,7 @@ class DataManager:
                     
                     converted_tasks.append(task_data)
                     
-            # 处理旧格式: syncDirs包含"源目录->目标目录"格式
+            # Xử lý các định dạng cũ: syncDirsBao gồm"Thư mục nguồn->Thư mục mục tiêu"Định dạng
             elif "syncDirs" in sync_task and "->" in sync_task.get("syncDirs", ""):
                 dirs = sync_task.get("syncDirs", "").strip()
                 if not dirs:
@@ -919,11 +919,11 @@ class DataManager:
                 source_dir = parts[0].strip()
                 dst_dir = parts[1].strip()
                 
-                # 创建任务
+                # Tạo nhiệm vụ
                 task_data = {
                     "id": len(converted_tasks) + 1,
                     "name": task_name,
-                    "connection_id": 1,  # 默认连接ID
+                    "connection_id": 1,  # Kết nối mặc địnhID
                     "source_connection_id": "",
                     "source_connection_name": "",
                     "target_connection_ids": [""],
@@ -945,34 +945,34 @@ class DataManager:
                 
                 converted_tasks.append(task_data)
                 
-            # 处理标准格式: 有sourceStorage和targetStorages
+            # Xử lý định dạng tiêu chuẩn: cósourceStorageVàtargetStorages
             elif "syncDirs" in sync_task and "sourceStorage" in sync_task and "targetStorages" in sync_task:
                 source_storage = sync_task.get("sourceStorage", "").strip()
                 sync_dirs = sync_task.get("syncDirs", "").strip()
                 
-                # 如果没有源存储或同步目录，跳过
+                # Nếu không có lưu trữ nguồn hoặc thư mục đồng bộ，hãy bỏ qua
                 if not source_storage or not sync_dirs:
                     continue
                 
-                # 获取目标存储列表，忽略空值
+                # Nhận danh sách lưu trữ mục tiêu，Bỏ qua các giá trị trống
                 target_storages = [
                     storage for storage in sync_task.get("targetStorages", [])
                     if storage and storage.strip()
                 ]
                 
-                # 如果没有目标存储，跳过
+                # Nếu không có lưu trữ mục tiêu，hãy bỏ qua
                 if not target_storages:
                     continue
                 
-                # 创建单个任务包含所有目标存储
-                # 格式化源路径
+                # Tạo một tác vụ duy nhất chứa tất cả lưu trữ mục tiêu
+                # Định dạng đường dẫn nguồn
                 source_path = sync_dirs
                 
-                # 创建任务数据
+                # Tạo dữ liệu nhiệm vụ
                 task_data = {
-                    "id": len(converted_tasks) + 1,  # 确保ID唯一
+                    "id": len(converted_tasks) + 1,  # Hãy chắc chắnIDchỉ một
                     "name": task_name,
-                    "connection_id": 1,  # 默认连接ID
+                    "connection_id": 1,  # Kết nối mặc địnhID
                     "source_connection_id": source_storage,
                     "source_connection_name": source_storage,
                     "target_connection_ids": target_storages,
@@ -1002,24 +1002,24 @@ class DataManager:
         }
     
     def _get_storage_paths(self):
-        """获取所有存储路径列表，用于智能拆分导入路径
+        """Nhận danh sách tất cả các đường dẫn lưu trữ，Được sử dụng để phân chia thông minh các đường dẫn nhập
         
         Returns:
-            list: 存储路径列表，按照长度从长到短排序
+            list: Danh sách đường dẫn lưu trữ，Sắp xếp từ dài đến ngắn theo chiều dài
         """
-        # 从配置文件获取已保存的连接信息
+        # Nhận thông tin kết nối được lưu từ tệp cấu hình
         connections = self._read_json(self.connections_file)
         if not connections:
             return []
             
-        # 收集所有可能的存储路径
+        # Thu thập tất cả các đường dẫn lưu trữ có thể
         all_storage_paths = []
         
-        # 从连接中获取存储路径
+        # Nhận đường dẫn lưu trữ từ một kết nối
         from app.alist_sync import AlistSync
         for conn in connections:
             try:
-                # 创建AlistSync实例
+                # Tạo một phiên bản AlistSync
                 alist = AlistSync(
                     conn.get('server'),
                     conn.get('username'),
@@ -1027,70 +1027,70 @@ class DataManager:
                     conn.get('token')
                 )
                 
-                # 尝试登录
+                # Cố gắng đăng nhập
                 if alist.login():
-                    # 获取存储列表
+                    # Nhận danh sách lưu trữ
                     storage_list = alist.get_storage_list()
                     if isinstance(storage_list, list):
                         all_storage_paths.extend(storage_list)
                 
-                # 关闭连接
+                # Đóng kết nối
                 alist.close()
             except Exception as e:
-                # 忽略连接错误，继续处理其他连接
+                # Bỏ qua lỗi kết nối，Tiếp tục xử lý các kết nối khác
                 continue
         
-        # 删除重复项
+        # Xóa các sao chép
         all_storage_paths = list(set(all_storage_paths))
         
-        # 按长度从长到短排序，以确保匹配最具体的路径
+        # Sắp xếp từ dài đến ngắn theo chiều dài，Để đảm bảo đường dẫn cụ thể nhất được khớp
         all_storage_paths.sort(key=len, reverse=True)
         
         return all_storage_paths
         
     def _split_path_with_storage_list(self, full_path, storage_paths):
-        """使用存储路径列表智能拆分完整路径
+        """Tách thông minh các đường dẫn đầy đủ bằng cách sử dụng Danh sách đường dẫn lưu trữ
         
         Args:
-            full_path (str): 完整路径
-            storage_paths (list): 存储路径列表
+            full_path (str): Hoàn thành đường dẫn
+            storage_paths (list): Danh sách đường dẫn lưu trữ
             
         Returns:
-            tuple: (存储路径, 实际路径)
+            tuple: (Đường dẫn lưu trữ, đường dẫn thực tế)
         """
-        # 默认使用简单拆分方式（/dav/xxx/）
-        # 先尝试匹配存储路径
+        # Phương thức phân tách đơn giản được sử dụng theo mặc định（/dav/xxx/）
+        # Thử khớp đường dẫn lưu trữ trước tiên
         if storage_paths:
             for storage in storage_paths:
                 if full_path.startswith(storage):
-                    # 找到匹配的存储路径
+                    # Tìm đường dẫn lưu trữ phù hợp
                     real_path = full_path[len(storage):] if full_path.startswith(storage) else full_path
-                    # 确保实际路径前面有斜杠
+                    # Đảm bảo đường dẫn thực tế được bắt đầu bằng dấu gạch chéo
                     if not real_path.startswith('/'):
                         real_path = '/' + real_path
                     return storage, real_path
         
-        # 如果没有匹配到存储路径，使用默认的拆分方式
+        # Nếu không có đường dẫn lưu trữ được khớp，Sử dụng phương thức phân chia mặc định
         parts = full_path.split('/', 2)
-        if len(parts) >= 3:  # 格式应该是 /dav/xxx/actual_path
+        if len(parts) >= 3:  # Định dạng phải là /dav/xxx/actual_path
             storage_path = f"/{parts[1]}/{parts[2]}" if parts[1] and parts[2] else ""
             actual_path = f"/{parts[3]}" if len(parts) > 3 and parts[3] else "/"
             return storage_path, actual_path
         
-        # 无法拆分，返回整个路径作为存储路径，根目录作为实际路径
+        # Không thể chia，Trả lại toàn bộ đường dẫn dưới dạng đường dẫn lưu trữ，Thư mục gốc được sử dụng làm đường dẫn thực tế
         return full_path, "/"
     
     def _convert_cron_format(self, cron_str):
-        """转换cron表达式格式，确保兼容性
+        """Chuyển thànhcronĐịnh dạng biểu thức，Đảm bảo khả năng tương thích
         
         Args:
-            cron_str (str): 原始cron表达式
+            cron_str (str): Biểu thức cron raw
             
         Returns:
-            str: 转换后的cron表达式
+            str: Biểu thức cron đã chuyển đổi
         """
         if not cron_str:
             return ""
             
-        # alist_sync通常使用标准cron表达式，可以直接使用
+        # alist_syncThông thường sử dụng biểu thức cron chuẩn, bạn có thể sử dụng trực tiếp
         return cron_str 

@@ -6,25 +6,25 @@ from app.routes import main_bp, api_bp, auth_bp
 from app.utils.data_manager import DataManager
 from functools import wraps
 
-# 全局应用实例，用于调度器在无上下文时访问
+# Phiên bản ứng dụng toàn cầu, được bộ lập lịch sử dụng để truy cập khi không có ngữ cảnh
 flask_app = None
 
 def init_logger():
-    """配置日志记录器"""
-    # 获取当前根目录
+    """Định cấu hình logger"""
+    # Nhận thư mục gốc hiện tại
     root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     
-    # 确保日志目录存在
+    # Đảm bảo thư mục nhật ký tồn tại
     log_dir = os.path.join(root_dir, 'data/log')
     os.makedirs(log_dir, exist_ok=True)
     
-    # 设置日志文件路径
+    # Đặt đường dẫn tệp nhật ký
     log_file = os.path.join(log_dir, 'alist_sync.log')
     
-    # 创建日志格式
+    # Tạo định dạng nhật ký
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     
-    # 文件处理器 - 按天轮换
+    # Bộ xử lý tập tin - Xoay theo ngày
     file_handler = TimedRotatingFileHandler(
         filename=log_file,
         when='midnight',
@@ -34,69 +34,69 @@ def init_logger():
     )
     file_handler.setFormatter(formatter)
     
-    # 控制台处理器
+    # Bộ xử lý giao diện điều khiển
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     
-    # 配置根日志记录器
+    # Định cấu hình logger gốc
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
-    logger.handlers.clear()  # 清除已有处理器
+    logger.handlers.clear()  # Xóa bộ xử lý hiện có
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
     
     return logger
 
 def create_app():
-    """创建并配置应用"""
+    """Tạo và định cấu hình ứng dụng"""
     global flask_app
     
     from flask import Flask
     import os
     
-    # 创建Flask应用实例
+    # Tạo một phiên bản ứng dụng Flask
     app = Flask(__name__, static_folder='static')
     
-    # 使用内部配置而不是从外部模块导入
+    # Sử dụng cấu hình nội bộ thay vì nhập từ các mô -đun bên ngoài
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'dev-key-for-alist-sync'
     app.config['SESSION_TYPE'] = 'filesystem'
-    app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 会话有效期 24 小时
+    app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # Thời gian hiệu lực phiên 24 Giờ
     app.config['DEBUG'] = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
     
-    # 初始化日志
+    # Nhật ký khởi tạo
     logger = init_logger()
     app.logger = logger
-    app.logger.info("应用初始化开始...")
+    app.logger.info("Khởi tạo ứng dụng bắt đầu...")
     
-    # 初始化数据管理器
+    # Khởi tạo Trình quản lý dữ liệu
     data_manager = DataManager()
     app.config['DATA_MANAGER'] = data_manager
     
-    # 初始化应用(包括调度器)
+    # Khởi tạo ứng dụng(Bao gồm cả lịch trình)
     from app.app import init_app
     init_app(app)
     
-    # 注册蓝图
+    # Đăng ký một kế hoạch chi tiết
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix='/api')
     app.register_blueprint(auth_bp, url_prefix='/auth')
     
-    # 添加登录检查中间件
+    # Thêm đăng nhập Kiểm tra phần mềm trung gian
     @app.before_request
     def check_login():
-        # 定义无需登录的路径
+        # Xác định một đường dẫn không yêu cầu đăng nhập
         exempt_routes = ['/auth/login', '/static', '/api']
         
-        # 检查路径是否需要登录验证
+        # Kiểm tra xem đường dẫn yêu cầu xác minh đăng nhập
         if any(request.path.startswith(path) for path in exempt_routes):
             return
         
-        # 验证登录状态
+        # Xác minh trạng thái đăng nhập
         if 'logged_in' not in session or not session['logged_in']:
             return redirect(url_for('auth.login'))
     
-    # 保存全局应用实例
+    # Lưu phiên bản ứng dụng toàn cầu
     flask_app = app
     
-    app.logger.info("应用初始化完成")
+    app.logger.info("Khởi tạo ứng dụng đã hoàn thành")
     return app 

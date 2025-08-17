@@ -10,76 +10,76 @@ import pytz
 import traceback
 
 def init_app(app):
-    """初始化应用"""
-    # 配置日志
+    """Khởi tạo ứng dụng"""
+    # Nhật ký cấu hình
     logger = logging.getLogger()
     app.logger = logger
-    logger.info("初始化应用...")
+    logger.info("Khởi tạo ứng dụng...")
     
-    # 初始化数据管理器(如果尚未初始化)
+    # Khởi tạo Trình quản lý dữ liệu(Nếu không được khởi tạo)
     if 'DATA_MANAGER' not in app.config:
         data_manager = DataManager()
         app.config['DATA_MANAGER'] = data_manager
     else:
         data_manager = app.config['DATA_MANAGER']
     
-    # 初始化并保存同步管理器
-    app.logger.info("初始化同步管理器...")
+    # Khởi tạo và lưu Trình quản lý đồng bộ hóa
+    app.logger.info("Khởi tạo Trình quản lý đồng bộ hóa...")
     
-    # 必须在应用上下文中创建SyncManager实例
+    # Phiên bản SyncManager phải được tạo trong ngữ cảnh ứng dụng
     with app.app_context():
         sync_manager = SyncManager()
         app.config['SYNC_MANAGER'] = sync_manager
         
-        # 初始化同步管理器的调度器
-        app.logger.info("正在加载任务到调度器...")
+        # Khởi tạo bộ lập lịch cho Trình quản lý đồng bộ hóa
+        app.logger.info("Đang tải các nhiệm vụ vào Lập lịch...")
         try:
             sync_manager.initialize_scheduler()
-            app.logger.info("任务调度器初始化完成")
+            app.logger.info("Khởi tạo lập lịch tác vụ đã hoàn thành")
         except Exception as e:
-            app.logger.error(f"初始化任务调度器失败: {str(e)}")
+            app.logger.error(f"Khởi tạo Trình lập lịch tác vụ không thành công: {str(e)}")
             app.logger.error(traceback.format_exc())
     
-        # 将日志清理任务也加入到同步管理器的调度器中，避免使用两个调度器
+        # Thêm các tác vụ làm sạch nhật ký vào bộ lập lịch của Trình quản lý đồng bộ hóa，Tránh sử dụng hai lịch trình
         try:
-            # 创建日志清理的调度任务
+            # Tạo nhiệm vụ theo lịch trình để làm sạch nhật ký
             @sync_manager.scheduler.scheduled_job('cron', hour=3, minute=0, id='log_cleanup_job')
             def clean_old_logs():
-                """定期清理过期日志"""
-                # 确保在应用上下文中运行
+                """Làm sạch nhật ký hết hạn thường xuyên"""
+                # Đảm bảo chạy trong ngữ cảnh ứng dụng
                 with app.app_context():
-                    app.logger.info("开始清理过期日志...")
+                    app.logger.info("Bắt đầu làm sạch nhật ký hết hạn...")
                     
                     try:
-                        # 获取日志保留天数
+                        # Nhận số ngày lưu giữ nhật ký
                         settings = data_manager.get_settings()
                         keep_log_days = settings.get("keep_log_days", 7)
                         
-                        # 清理系统日志
+                        # Làm sạch nhật ký hệ thống
                         data_manager.clear_old_logs(keep_log_days)
-                        app.logger.info(f"系统日志清理完成，保留{keep_log_days}天内的日志")
+                        app.logger.info(f"Làm sạch nhật ký hệ thống đã hoàn thành，dự trữ{keep_log_days}Nhật ký trong ngày")
                         
-                        # 清理任务实例和任务日志
+                        # Làm sạch các phiên bản nhiệm vụ và nhật ký nhiệm vụ
                         data_manager.clear_old_task_instances(keep_log_days)
-                        app.logger.info(f"任务实例和任务日志清理完成，保留{keep_log_days}天内的记录")
+                        app.logger.info(f"Các phiên tác vụ và nhật ký tác vụ được dọn dẹp, lưu giữ hồ sơ trong {keep_log_days} ngày")
                         
-                        # 清理主日志文件 alist_sync.log
+                        # Làm sạch tệp nhật ký chính alist_sync.log
                         data_manager.clear_main_log_files(keep_log_days)
-                        app.logger.info(f"主日志文件清理完成，保留{keep_log_days}天内的日志")
+                        app.logger.info(f"Làm sạch tệp nhật ký chính được hoàn thành，dự trữ{keep_log_days}Nhật ký trong ngày")
                         
                     except Exception as e:
-                        app.logger.error(f"清理日志时出错: {str(e)}")
+                        app.logger.error(f"Xảy ra lỗi trong khi làm sạch nhật ký: {str(e)}")
                         app.logger.error(traceback.format_exc())
             
-            app.logger.info("日志清理任务已添加到调度器")
+            app.logger.info("Nhiệm vụ làm sạch nhật ký đã được Thêm  Lập lịch")
             
-            # 输出所有已计划任务的状态
+            # Trạng thái đầu ra của tất cả các tác vụ theo lịch trình
             jobs = sync_manager.scheduler.get_jobs()
             for job in jobs:
-                app.logger.info(f"计划任务: {job.id}, 下次运行: {job.next_run_time}")
+                app.logger.info(f"Kế hoạch nhiệm vụ: {job.id}, Chạy lần sau: {job.next_run_time}")
                 
         except Exception as e:
-            app.logger.error(f"添加日志清理任务失败: {str(e)}")
+            app.logger.error(f"Thêm tác vụ làm sạch nhật ký không thành công: {str(e)}")
             app.logger.error(traceback.format_exc())
     
     return app 

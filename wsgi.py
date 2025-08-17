@@ -3,21 +3,21 @@ import sys
 import logging
 import time
 
-# 设置环境变量
+# Đặt các biến môi trường
 os.environ['TZ'] = 'Asia/Shanghai'
 if hasattr(time, 'tzset'):
     time.tzset()
 
-# 设置Python路径
+# Thiết lập đường dẫn Python
 root_dir = os.path.dirname(os.path.abspath(__file__))
 if root_dir not in sys.path:
     sys.path.insert(0, root_dir)
 
-# 创建应用实例
+# Tạo một phiên bản ứng dụng
 from app import create_app
 application = app = create_app()
 
-# 应用环境信息
+# Thông tin môi trường ứng dụng
 env = os.environ.get('FLASK_ENV', 'production')
 port = int(os.environ.get('PORT', 5000))
 
