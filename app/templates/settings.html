@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}系统设置 - Alist-Sync{% endblock %}
+{% block title %}Cài đặt hệ thống - Alist-Sync{% endblock %}
 
-{% block page_title %}系统设置{% endblock %}
+{% block page_title %}Cài đặt hệ thống{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -11,143 +11,143 @@
             <div class="card-body">
                 <form id="settingsForm">
                     <div class="row mb-4">
-                        <h5 class="border-bottom pb-2">性能配置</h5>
+                        <h5 class="border-bottom pb-2">Cấu hình hiệu suất</h5>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="maxConcurrentTasks" class="form-label">最大并发任务数</label>
+                            <label for="maxConcurrentTasks" class="form-label">Số lượng tác vụ đồng thời tối đa</label>
                             <input type="number" class="form-control bg-dark text-light" id="maxConcurrentTasks" 
                                 value="{{ settings.max_concurrent_tasks }}" min="1" max="10">
-                            <div class="form-text">同时执行的最大任务数量，建议根据系统性能设置</div>
+                            <div class="form-text">Số lượng tác vụ tối đa được thực hiện đồng thời，Nên đặt hiệu suất hệ thống</div>
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="defaultRetryCount" class="form-label">默认重试次数</label>
+                            <label for="defaultRetryCount" class="form-label">Số lượng thử lại mặc định</label>
                             <input type="number" class="form-control bg-dark text-light" id="defaultRetryCount" 
                                 value="{{ settings.default_retry_count }}" min="0" max="10">
-                            <div class="form-text">连接失败后的重试次数</div>
+                            <div class="form-text">Số lần thử lại sau khi kết nối thất bại</div>
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="defaultBlockSize" class="form-label">文件块大小 (字节)</label>
+                            <label for="defaultBlockSize" class="form-label">Kích thước khối tệp (Byte)</label>
                             <input type="number" class="form-control bg-dark text-light" id="defaultBlockSize" 
                                 value="{{ settings.default_block_size }}" min="1048576" step="1048576">
-                            <div class="form-text">大文件传输时的块大小，默认 10MB (10485760 字节)</div>
+                            <div class="form-text">Kích thước khối trong quá trình truyền tệp lớn，mặc định 10MB (10485760 Byte)</div>
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="bandwidthLimit" class="form-label">带宽限制 (KB/s)</label>
+                            <label for="bandwidthLimit" class="form-label">Giới hạn băng thông (KB/s)</label>
                             <input type="number" class="form-control bg-dark text-light" id="bandwidthLimit" 
                                 value="{{ settings.bandwidth_limit }}" min="0" step="1024">
-                            <div class="form-text">0 表示无限制，建议在有多个任务时设置限制</div>
+                            <div class="form-text">0 Cho biết không có giới hạn，Nên đặt các hạn chế khi có nhiều tác vụ</div>
                         </div>
                     </div>
                     
                     <div class="row mb-4">
-                        <h5 class="border-bottom pb-2">日志设置</h5>
+                        <h5 class="border-bottom pb-2">Cài đặt nhật ký</h5>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="logLevel" class="form-label">日志级别</label>
+                            <label for="logLevel" class="form-label">Mức độ nhật ký</label>
                             <select class="form-select bg-dark text-light" id="logLevel">
                                 <option value="DEBUG" {% if settings.log_level == 'DEBUG' %}selected{% endif %}>DEBUG</option>
                                 <option value="INFO" {% if settings.log_level == 'INFO' %}selected{% endif %}>INFO</option>
                                 <option value="WARN" {% if settings.log_level == 'WARN' %}selected{% endif %}>WARN</option>
                                 <option value="ERROR" {% if settings.log_level == 'ERROR' %}selected{% endif %}>ERROR</option>
                             </select>
-                            <div class="form-text">控制记录的日志详细程度</div>
+                            <div class="form-text">Kiểm soát chi tiết nhật ký của bản ghi</div>
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="keepLogDays" class="form-label">任务日志保留天数</label>
+                            <label for="keepLogDays" class="form-label">Ngày lưu giữ nhật ký tác vụ</label>
                             <input type="number" class="form-control bg-dark text-light" id="keepLogDays" 
                                 value="{{ settings.keep_log_days }}" min="1" max="30">
-                            <div class="form-text">超过此天数的日志将被自动清理</div>
+                            <div class="form-text">Nhật ký vượt quá số ngày này sẽ được làm sạch tự động</div>
                         </div>
                     </div>
                     
                     <div class="row mb-4">
-                        <h5 class="border-bottom pb-2">高级选项</h5>
+                        <h5 class="border-bottom pb-2">Tùy chọn nâng cao</h5>
                         
                         <div class="col-md-12 mb-3">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="debugMode" 
                                     {% if settings.debug_mode %}checked{% endif %}>
-                                <label class="form-check-label" for="debugMode">调试模式</label>
+                                <label class="form-check-label" for="debugMode">Chế độ gỡ lỗi</label>
                             </div>
-                            <div class="form-text">启用调试模式会记录更详细的信息</div>
+                            <div class="form-text">Bật chế độ gỡ lỗi sẽ ghi lại thông tin chi tiết hơn</div>
                         </div>
                         
                         <div class="col-md-12 mb-3">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="enableWebhook" 
                                     {% if settings.enable_webhook %}checked{% endif %}>
-                                <label class="form-check-label" for="enableWebhook">启用通知</label>
+                                <label class="form-check-label" for="enableWebhook">Cho phép thông báo</label>
                             </div>
-                            <div class="form-text">任务完成后发送通知</div>
+                            <div class="form-text">Gửi thông báo sau khi hoàn thành tác vụ</div>
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="notificationType" class="form-label">通知方式</label>
+                            <label for="notificationType" class="form-label">Phương pháp thông báo</label>
                             <select class="form-select bg-dark text-light" id="notificationType">
-                                <option value="webhook" {% if settings.notification_type == 'webhook' %}selected{% endif %}>自定义 Webhook</option>
-                                <option value="feishu" {% if settings.notification_type == 'feishu' %}selected{% endif %}>飞书机器人</option>
-                                <option value="dingtalk" {% if settings.notification_type == 'dingtalk' %}selected{% endif %}>钉钉机器人</option>
-                                <option value="wecom" {% if settings.notification_type == 'wecom' %}selected{% endif %}>企业微信机器人</option>
+                                <option value="webhook" {% if settings.notification_type == 'webhook' %}selected{% endif %}>Tùy chỉnh Webhook</option>
+                                <option value="feishu" {% if settings.notification_type == 'feishu' %}selected{% endif %}>Robot Feishu</option>
+                                <option value="dingtalk" {% if settings.notification_type == 'dingtalk' %}selected{% endif %}>Robot Dingtalk</option>
+                                <option value="wecom" {% if settings.notification_type == 'wecom' %}selected{% endif %}>Enterprise WeChat Robot</option>
                                 <option value="bark" {% if settings.notification_type == 'bark' %}selected{% endif %}>Bark</option>
                                 <option value="pushplus" {% if settings.notification_type == 'pushplus' %}selected{% endif %}>PushPlus</option>
                                 <option value="telegram" {% if settings.notification_type == 'telegram' %}selected{% endif %}>Telegram</option>
                             </select>
-                            <div class="form-text">选择通知发送方式</div>
+                            <div class="form-text">Chọn phương thức gửi thông báo</div>
                         </div>
                         
                         <div class="col-md-12 mb-3 webhook-settings">
                             <label for="webhookUrl" class="form-label">Webhook URL</label>
                             <input type="url" class="form-control bg-dark text-light" id="webhookUrl" 
                                 value="{{ settings.webhook_url }}" placeholder="https://your-webhook-url.com">
-                            <div class="form-text">Webhook接口地址</div>
+                            <div class="form-text">WebhookĐịa chỉ giao diện</div>
                         </div>
                         
-                        <!-- 钉钉特有设置 -->
+                        <!-- Cài đặt dingtalent -->
                         <div class="col-md-12 mb-3 dingtalk-settings" style="display: none;">
-                            <label for="dingtalkSecret" class="form-label">钉钉加签密钥</label>
+                            <label for="dingtalkSecret" class="form-label">Phím ký DingTalk</label>
                             <input type="text" class="form-control bg-dark text-light" id="dingtalkSecret" 
                                 value="{{ settings.dingtalk_secret }}" placeholder="SEC000000000000000000000">
-                            <div class="form-text">钉钉机器人安全设置中的加签密钥，如未启用加签可留空</div>
+                            <div class="form-text">KEY đăng ký trong các cài đặt bảo mật robot dingding，Nếu đăng ký không được bật, hãy để trống</div>
                         </div>
                         
-                        <!-- Bark特有设置 -->
+                        <!-- BarkCài đặt đặc biệt -->
                         <div class="col-md-12 mb-3 bark-settings" style="display: none;">
-                            <label for="barkSound" class="form-label">Bark提示音</label>
+                            <label for="barkSound" class="form-label">BarkÂm thanh nhanh chóng</label>
                             <input type="text" class="form-control bg-dark text-light" id="barkSound" 
                                 value="{{ settings.bark_sound|default('default') }}" placeholder="default">
-                            <div class="form-text">Bark通知的提示音，默认为default</div>
+                            <div class="form-text">BarkThông báo âm thanh nhắc nhở，Mặc định làdefault</div>
                         </div>
                         
-                        <!-- Telegram特有设置 -->
+                        <!-- TelegramCài đặt đặc biệt -->
                         <div class="telegram-settings" style="display: none;">
                             <div class="col-md-12 mb-3">
                                 <label for="telegramBotToken" class="form-label">Telegram Bot Token</label>
                                 <input type="text" class="form-control bg-dark text-light" id="telegramBotToken" 
                                     value="{{ settings.telegram_bot_token }}" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ">
-                                <div class="form-text">通过 BotFather 创建的机器人Token</div>
+                                <div class="form-text">vượt qua BotFather Robot được tạo raToken</div>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="telegramChatId" class="form-label">Telegram Chat ID</label>
                                 <input type="text" class="form-control bg-dark text-light" id="telegramChatId" 
                                     value="{{ settings.telegram_chat_id }}" placeholder="-123456789">
-                                <div class="form-text">接收消息的聊天ID，可通过 @userinfobot 获取</div>
+                                <div class="form-text">Các cuộc trò chuyện nhận được tin nhắnID，Có sẵn @userinfobot Lấy</div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="refreshInterval" class="form-label">刷新间隔 (秒)</label>
+                        <label for="refreshInterval" class="form-label">Làm mới khoảng thời gian (Thứ hai)</label>
                         <input type="number" class="form-control bg-dark text-light" id="refreshInterval" value="{{ settings.refresh_interval|default(60) }}">
-                        <div class="form-text text-muted">仪表盘自动刷新间隔，设为0禁用自动刷新</div>
+                        <div class="form-text text-muted">Khoảng thời gian làm mới bảng điều khiển tự động，Đặt như0Tắt tự động làm mới</div>
                     </div>
                     
                     <div class="d-flex justify-content-between mt-4">
-                        <button type="button" class="btn btn-danger" id="resetSettingsBtn">恢复默认设置</button>
-                        <button type="button" class="btn btn-primary" id="saveSettingsBtn">保存设置</button>
+                        <button type="button" class="btn btn-danger" id="resetSettingsBtn">Khôi phục cài đặt mặc định</button>
+                        <button type="button" class="btn btn-primary" id="saveSettingsBtn">Lưu cài đặt</button>
                     </div>
                 </form>
             </div>
@@ -155,20 +155,20 @@
     </div>
 </div>
 
-<!-- 确认重置模态框 -->
+<!-- Xác nhận đặt lại hộp phương thức đặt lại -->
 <div class="modal fade" id="confirmResetModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content bg-dark text-light">
             <div class="modal-header">
-                <h5 class="modal-title">确认重置</h5>
+                <h5 class="modal-title">Xác nhận đặt lại</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>确定要将所有设置恢复为默认值吗？该操作不可恢复。</p>
+                <p>Bạn có chắc là bạn muốn khôi phục tất cả các cài đặt về giá trị mặc định?？Hoạt động này không được khôi phục。</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-danger" id="confirmResetBtn">确认重置</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-danger" id="confirmResetBtn">Xác nhận đặt lại</button>
             </div>
         </div>
     </div>
@@ -178,19 +178,19 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 根据通知类型显示相应的配置选项
+        // Hiển thị các tùy chọn cấu hình tương ứng theo loại thông báo
         function updateNotificationSettings() {
             const notificationType = document.getElementById('notificationType').value;
             
-            // 隐藏所有特定设置
+            // Ẩn tất cả các cài đặt cụ thể
             document.querySelectorAll('.webhook-settings, .dingtalk-settings, .bark-settings, .telegram-settings').forEach(el => {
                 el.style.display = 'none';
             });
             
-            // 显示通用设置
+            // Hiển thị các cài đặt chung
             document.querySelector('.webhook-settings').style.display = 'block';
             
-            // 显示特定设置
+            // Hiển thị các cài đặt cụ thể
             if (notificationType === 'dingtalk') {
                 document.querySelector('.dingtalk-settings').style.display = 'block';
             } else if (notificationType === 'bark') {
@@ -200,15 +200,15 @@
             }
         }
         
-        // 初始化显示
+        // Khởi tạo màn hình
         updateNotificationSettings();
         
-        // 监听选择变化
+        // Thay đổi lựa chọn nghe
         document.getElementById('notificationType').addEventListener('change', updateNotificationSettings);
         
-        // 保存设置
+        // Lưu cài đặt
         document.getElementById('saveSettingsBtn').addEventListener('click', function() {
-            // 收集表单数据
+            // Thu thập dữ liệu biểu mẫu
             const settings = {
                 max_concurrent_tasks: parseInt(document.getElementById('maxConcurrentTasks').value),
                 default_retry_count: parseInt(document.getElementById('defaultRetryCount').value),
@@ -227,18 +227,18 @@
                 refresh_interval: parseInt(document.getElementById('refreshInterval').value)
             };
             
-            // 进行简单验证
+            // Thực hiện xác minh đơn giản
             if (settings.max_concurrent_tasks < 1 || settings.max_concurrent_tasks > 10) {
-                alert('最大并发任务数应在 1-10 之间');
+                alert('Số lượng tác vụ đồng thời tối đa nên 1-10 giữa');
                 return;
             }
             
             if (settings.enable_webhook && !settings.webhook_url) {
-                alert('启用 Webhook 时必须提供 URL');
+                alert('Cho phép Webhook Phải được cung cấp khi URL');
                 return;
             }
             
-            // 发送到服务器
+            // Gửi đến máy chủ
             fetch('/api/settings', {
                 method: 'PUT',
                 headers: {
@@ -249,26 +249,26 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    alert('设置已保存');
+                    alert('Cài đặt được lưu');
                 } else {
-                    alert('保存设置失败: ' + data.message);
+                    alert('Lưu cài đặt không thành công: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error('保存设置错误:', error);
-                alert('保存设置失败，请检查网络连接');
+                console.error('Lưu lỗi cài đặt:', error);
+                alert('Lưu cài đặt không thành công，Vui lòng kiểm tra kết nối mạng');
             });
         });
         
-        // 重置设置
+        // Đặt lại cài đặt
         document.getElementById('resetSettingsBtn').addEventListener('click', function() {
-            // 显示确认对话框
+            // Hiển thị hộp thoại xác nhận
             new bootstrap.Modal(document.getElementById('confirmResetModal')).show();
         });
         
-        // 确认重置
+        // Xác nhận đặt lại
         document.getElementById('confirmResetBtn').addEventListener('click', function() {
-            // 模拟重置操作
+            // Mô phỏng hoạt động đặt lại
             document.getElementById('maxConcurrentTasks').value = '3';
             document.getElementById('defaultRetryCount').value = '3';
             document.getElementById('defaultBlockSize').value = '10485760';
@@ -285,11 +285,11 @@
             document.getElementById('telegramChatId').value = '-123456789';
             document.getElementById('refreshInterval').value = '60';
             
-            // 隐藏模态框
+            // Ẩn hộp phương thức
             bootstrap.Modal.getInstance(document.getElementById('confirmResetModal')).hide();
             
-            // 提示成功
-            alert('设置已重置为默认值');
+            // Thành công nhanh chóng
+            alert('Cài đặt đã được đặt lại về giá trị mặc định');
         });
     });
 </script>

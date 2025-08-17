@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}主面板 - Alist-Sync{% endblock %}
+{% block title %}Bảng chính - Alist-Sync{% endblock %}
 
-{% block page_title %}系统控制面板{% endblock %}
+{% block page_title %}Bảng điều khiển hệ thống{% endblock %}
 
 {% block content %}
 <div class="row g-4">
-    <!-- 统计卡片 -->
+    <!-- Thẻ thống kê -->
     <div class="col-md-3">
         <div class="card bg-primary bg-gradient text-white">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h5 class="card-title">连接数</h5>
+                        <h5 class="card-title">Số lượng kết nối</h5>
                         <h2 class="display-5 fw-bold" id="connection-count">0</h2>
                     </div>
                     <div class="stat-icon">
@@ -28,7 +28,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h5 class="card-title">任务数</h5>
+                        <h5 class="card-title">Số lượng tác vụ</h5>
                         <h2 class="display-5 fw-bold" id="task-count">0</h2>
                     </div>
                     <div class="stat-icon">
@@ -44,7 +44,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h5 class="card-title">活跃任务</h5>
+                        <h5 class="card-title">tác vụ tích cực</h5>
                         <h2 class="display-5 fw-bold" id="active-task-count">0</h2>
                     </div>
                     <div class="stat-icon">
@@ -60,7 +60,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h5 class="card-title">总同步文件</h5>
+                        <h5 class="card-title">Tổng số tập tin đồng bộ hóa</h5>
                         <h2 class="display-5 fw-bold" id="synced-files-count">0</h2>
                     </div>
                     <div class="stat-icon">
@@ -71,11 +71,11 @@
         </div>
     </div>
     
-    <!-- 任务状态分布图表 -->
+    <!-- Biểu đồ phân phối trạng thái tác vụ -->
     <div class="col-md-6">
         <div class="card bg-dark-subtle">
             <div class="card-header bg-transparent">
-                <h5 class="card-title mb-0">任务状态分布</h5>
+                <h5 class="card-title mb-0">tác vụ phân phối trạng thái</h5>
             </div>
             <div class="card-body">
                 <canvas id="task-status-chart" height="250"></canvas>
@@ -83,11 +83,11 @@
         </div>
     </div>
     
-    <!-- 连接类型统计图表 -->
+    <!-- Biểu đồ thống kê loại kết nối -->
     <div class="col-md-6">
         <div class="card bg-dark-subtle">
             <div class="card-header bg-transparent">
-                <h5 class="card-title mb-0">连接类型分布</h5>
+                <h5 class="card-title mb-0">Phân phối loại kết nối</h5>
             </div>
             <div class="card-body">
                 <canvas id="connection-type-chart" height="250"></canvas>
@@ -95,11 +95,11 @@
         </div>
     </div>
     
-    <!-- 任务执行时长统计图表 -->
+    <!-- Biểu đồ thống kê thời gian thực hiện tác vụ -->
     <div class="col-md-6">
         <div class="card bg-dark-subtle">
             <div class="card-header bg-transparent">
-                <h5 class="card-title mb-0">任务执行时长统计</h5>
+                <h5 class="card-title mb-0">Thống kê thời gian thực hiện tác vụ</h5>
             </div>
             <div class="card-body">
                 <canvas id="task-duration-chart" height="250"></canvas>
@@ -107,11 +107,11 @@
         </div>
     </div>
     
-    <!-- 任务执行成功率图表 -->
+    <!-- Biểu đồ tỷ lệ thành công thực thi tác vụ -->
     <div class="col-md-6">
         <div class="card bg-dark-subtle">
             <div class="card-header bg-transparent">
-                <h5 class="card-title mb-0">任务执行成功率</h5>
+                <h5 class="card-title mb-0">Tỷ lệ thực hiện tác vụ</h5>
             </div>
             <div class="card-body">
                 <canvas id="task-success-rate-chart" height="250"></canvas>
@@ -119,30 +119,30 @@
         </div>
     </div>
     
-    <!-- 近期任务表格 -->
+    <!-- Mẫu tác vụ gần đây -->
     <div class="col-md-12">
         <div class="card bg-dark-subtle">
             <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">近期任务执行</h5>
-                <a href="{{ url_for('main.tasks') }}" class="btn btn-sm btn-primary">查看全部</a>
+                <h5 class="card-title mb-0">tác vụ gần đây thực hiện</h5>
+                <a href="{{ url_for('main.tasks') }}" class="btn btn-sm btn-primary">Xem tất cả</a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-dark table-hover table-striped mb-0">
                         <thead>
                             <tr>
-                                <th>任务名称</th>
-                                <th>同步类型</th>
-                                <th>源路径</th>
-                                <th>目标路径</th>
-                                <th>状态</th>
-                                <th>最后执行</th>
-                                <th>操作</th>
+                                <th>Tên tác vụ</th>
+                                <th>Loại đồng bộ hóa</th>
+                                <th>Đường dẫn nguồn</th>
+                                <th>Đường dẫn mục tiêu</th>
+                                <th>tình trạng</th>
+                                <th>Thực hiện cuối cùng</th>
+                                <th>vận hành</th>
                             </tr>
                         </thead>
                         <tbody id="recent-tasks">
                             <tr>
-                                <td colspan="7" class="text-center">暂无任务数据</td>
+                                <td colspan="7" class="text-center">Chưa có dữ liệu tác vụ</td>
                             </tr>
                         </tbody>
                     </table>
@@ -156,22 +156,22 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 加载数据
+        // Tải dữ liệu
         loadDashboardData();
         
-        // 设置刷新间隔（从服务器端获取）
+        // Đặt khoảng thời gian làm mới（Lấy nó từ phía máy chủ）
         var refreshInterval = {% if settings and settings.refresh_interval %}{{ settings.refresh_interval }}{% else %}60{% endif %};
         if (refreshInterval > 0) {
             setInterval(loadDashboardData, refreshInterval * 1000);
         }
     });
     
-    // 加载仪表盘数据
+    // Tải dữ liệu bảng điều khiển
     function loadDashboardData() {
         fetch('/api/dashboard/stats')
         .then(response => {
             if (!response.ok) {
-                throw new Error('网络响应错误');
+                throw new Error('Lỗi phản hồi mạng');
             }
             return response.json();
         })
@@ -183,11 +183,11 @@
             }
         })
         .catch(error => {
-            console.error('获取仪表盘数据失败:', error);
+            console.error('Không lấy được dữ liệu bảng điều khiển:', error);
         });
     }
     
-    // 更新统计数据
+    // Cập nhật số liệu thống kê
     function updateDashboardStats(stats) {
         document.getElementById('connection-count').textContent = stats.connection_count || 0;
         document.getElementById('task-count').textContent = stats.task_count || 0;
@@ -195,11 +195,11 @@
         document.getElementById('synced-files-count').textContent = stats.synced_files_count || 0;
     }
     
-    // 更新图表
+    // Cập nhật biểu đồ
     function updateCharts(stats) {
-        // 任务状态图表
+        // Biểu đồ trạng thái tác vụ
         var taskStatusChartData = {
-            labels: ['已完成', '进行中', '失败', '等待中'],
+            labels: ['Hoàn thành', 'Trong tiến trình', 'thất bại', 'Chờ'],
             datasets: [{
                 data: [
                     stats.completed_task_count || 0, 
@@ -208,10 +208,10 @@
                     stats.pending_task_count || 0
                 ],
                 backgroundColor: [
-                    '#198754', // 绿色
-                    '#0d6efd', // 蓝色
-                    '#dc3545', // 红色
-                    '#6c757d'  // 灰色
+                    '#198754', // màu xanh lá
+                    '#0d6efd', // màu xanh da trời
+                    '#dc3545', // màu đỏ
+                    '#6c757d'  // xám
                 ],
                 borderWidth: 0
             }]
@@ -240,17 +240,17 @@
             });
         }
         
-        // 连接类型分布图表
+        // Biểu đồ phân phối loại kết nối
         var connectionTypeChartData = {
-            labels: stats.connection_types || ['阿里云盘', '百度网盘', '夸克网盘', '天翼云盘', 'OneDrive'],
+            labels: stats.connection_types || ['Alibaba Cloud Drive', 'Baidu Netdisk', 'Quark Netdisk', 'Đĩa đám mây Tianyi', 'OneDrive'],
             datasets: [{
                 data: stats.connection_type_counts || [2, 1, 2, 1, 1],
                 backgroundColor: [
-                    '#0d6efd', // 蓝色
-                    '#dc3545', // 红色
-                    '#ffc107', // 黄色
-                    '#198754', // 绿色
-                    '#6f42c1'  // 紫色
+                    '#0d6efd', // màu xanh da trời
+                    '#dc3545', // màu đỏ
+                    '#ffc107', // màu vàng
+                    '#198754', // màu xanh lá
+                    '#6f42c1'  // Màu tím
                 ],
                 borderWidth: 0
             }]
@@ -279,11 +279,11 @@
             });
         }
         
-        // 任务执行时长统计图表
+        // Biểu đồ thống kê thời gian thực hiện tác vụ
         var taskDurationData = {
-            labels: stats.task_duration_labels || ['小于1分钟', '1-5分钟', '5-15分钟', '15-30分钟', '30分钟以上'],
+            labels: stats.task_duration_labels || ['Ít hơn1phút', '1-5phút', '5-15phút', '15-30phút', '30phút以上'],
             datasets: [{
-                label: '任务数量',
+                label: 'Số lượng tác vụ',
                 data: stats.task_duration_counts || [8, 5, 3, 2, 1],
                 backgroundColor: 'rgba(13, 110, 253, 0.7)',
                 borderColor: '#0d6efd',
@@ -324,11 +324,11 @@
             });
         }
         
-        // 任务执行成功率图表
+        // Biểu đồ tỷ lệ thành công thực thi tác vụ
         var successRateData = {
-            labels: stats.success_rate_labels || ['测试1', '测试2', '测试3', '测试4', '测试5'],
+            labels: stats.success_rate_labels || ['Bài kiểm tra1', 'Bài kiểm tra2', 'Bài kiểm tra3', 'Bài kiểm tra4', 'Bài kiểm tra5'],
             datasets: [{
-                label: '成功率 (%)',
+                label: 'Tỷ lệ thành công (%)',
                 data: stats.success_rate_values || [80, 95, 60, 100, 85],
                 backgroundColor: [
                     'rgba(25, 135, 84, 0.7)',
@@ -378,11 +378,11 @@
         }
     }
     
-    // 更新近期任务表格
+    // Cập nhật các bảng tác vụ gần đây
     function updateRecentTasks(tasks) {
         var tableBody = document.getElementById('recent-tasks');
         if (!tasks || tasks.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="7" class="text-center">暂无任务数据</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="7" class="text-center">Chưa có dữ liệu tác vụ</td></tr>';
             return;
         }
         
@@ -394,33 +394,33 @@
             switch(task.status) {
                 case 'completed':
                     statusClass = 'success';
-                    statusText = '已完成';
+                    statusText = 'Hoàn thành';
                     break;
                 case 'running':
                     statusClass = 'primary';
-                    statusText = '运行中';
+                    statusText = 'Đang chạy';
                     break;
                 case 'failed':
                     statusClass = 'danger';
-                    statusText = '失败';
+                    statusText = 'thất bại';
                     break;
                 default:
                     statusClass = 'secondary';
-                    statusText = '等待中';
+                    statusText = 'Chờ';
             }
             
             html += `<tr>
                 <td>${task.name}</td>
-                <td>${task.sync_type === 'file_sync' ? '文件同步' : '其他'}</td>
+                <td>${task.sync_type === 'file_sync' ? 'Tệp đồng bộ hóa' : 'khác'}</td>
                 <td title="${task.source_path}">${task.source_path}</td>
                 <td title="${task.target_path}">${task.target_path}</td>
                 <td><span class="badge bg-${statusClass}">${statusText}</span></td>
                 <td>${task.last_run || '-'}</td>
                 <td>
-                    <a href="/tasks?edit=${task.id}" class="btn btn-sm btn-outline-info me-1" title="编辑">
+                    <a href="/tasks?edit=${task.id}" class="btn btn-sm btn-outline-info me-1" title="biên tập">
                         <i class="bi bi-pencil"></i>
                     </a>
-                    <button class="btn btn-sm btn-outline-success me-1" onclick="runTask(${task.id})" title="立即运行">
+                    <button class="btn btn-sm btn-outline-success me-1" onclick="runTask(${task.id})" title="Chạy ngay">
                         <i class="bi bi-play"></i>
                     </button>
                 </td>
@@ -430,24 +430,24 @@
         tableBody.innerHTML = html;
     }
     
-    // 立即运行任务
+    // Chạy tác vụ ngay bây giờ
     function runTask(taskId) {
-        if (confirm('确定要立即运行这个任务吗？')) {
+        if (confirm('Bạn có chắc là bạn muốn chạy tác vụ này ngay lập tức？')) {
             fetch(`/api/tasks/${taskId}/run`, {
                 method: 'POST'
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    alert('任务已启动');
+                    alert('tác vụ đã được bắt đầu');
                     setTimeout(loadDashboardData, 1000);
                 } else {
-                    alert('启动任务失败: ' + data.message);
+                    alert('Không thể bắt đầu tác vụ: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error('运行任务错误:', error);
-                alert('运行任务失败: ' + error.message);
+                console.error('Chạy lỗi tác vụ:', error);
+                alert('Không chạy tác vụ: ' + error.message);
             });
         }
     }

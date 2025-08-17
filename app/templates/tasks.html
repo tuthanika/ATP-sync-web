@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}任务管理 - Alist-Sync{% endblock %}
+{% block title %}Quản lý tác vụ - Alist-Sync{% endblock %}
 
-{% block page_title %}同步任务管理{% endblock %}
+{% block page_title %}Quản lý tác vụ đồng bộ{% endblock %}
 
 {% block styles %}
 <style>
@@ -17,7 +17,7 @@
     }
     
     .task-row:hover:after {
-        content: "点击查看详情";
+        content: "Bấm để xem chi tiết";
         position: absolute;
         right: 150px;
         top: 50%;
@@ -42,7 +42,7 @@
         border-left: 4px solid #0d6efd;
     }
     
-    /* 添加展开指示器 */
+    /* Thêm một chỉ báo mở rộng */
     .task-row td:first-child::before {
         content: "▶";
         color: #6c757d;
@@ -59,7 +59,7 @@
 {% endblock %}
 
 {% block header_buttons %}
-<!-- 移除重复的添加任务按钮 -->
+<!-- Xóa nút Thêm tác vụ -->
 {% endblock %}
 
 {% block content %}
@@ -67,10 +67,10 @@
     <div class="col-12">
         <div class="card bg-white shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">任务列表</h5>
+                <h5 class="mb-0">Danh sách tác vụ</h5>
                 <div>
                     <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addTaskModal">
-                        <i class="bi bi-plus-lg"></i> 新增任务
+                        <i class="bi bi-plus-lg"></i> Thêm tác vụ
                     </button>
                 </div>
             </div>
@@ -80,15 +80,15 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th class="task-name-column">任务名称</th>
-                                <th>源连接</th>
-                                <th>目标连接</th>
-                                <th>同步模式</th>
-                                <th>创建时间</th>
-                                <th>上次运行</th>
-                                <th>下次运行</th>
-                                <th>状态</th>
-                                <th>操作</th>
+                                <th class="task-name-column">Tên tác vụ</th>
+                                <th>Kết nối nguồn</th>
+                                <th>Kết nối mục tiêu</th>
+                                <th>Chế độ đồng bộ</th>
+                                <th>Thời gian tạo</th>
+                                <th>Lần chạy cuối cùng</th>
+                                <th>Chạy lần sau</th>
+                                <th>tình trạng</th>
+                                <th>vận hành</th>
                             </tr>
                         </thead>
                         <tbody id="tasks-table">
@@ -101,23 +101,23 @@
                                     <td>{{ task.target_connection_names }}</td>
                                     <td>
                                         {% if task.sync_type == 'file_sync' %}
-                                        <span class="badge bg-info">文件同步</span>
+                                        <span class="badge bg-info">Tệp đồng bộ hóa</span>
                                         {% elif task.sync_type == 'file_move' %}
-                                        <span class="badge bg-primary">文件移动</span>
+                                        <span class="badge bg-primary">Di chuyển tập tin</span>
                                         {% endif %}
                                     </td>
                                     <td>{{ task.created_at }}</td>
-                                    <td>{{ task.last_run or "从未" }}</td>
-                                    <td>{{ task.next_run or "未计划" }}</td>
+                                    <td>{{ task.last_run or "Không bao giờ" }}</td>
+                                    <td>{{ task.next_run or "Không có kế hoạch" }}</td>
                                     <td>
                                         {% if task.status == 'running' %}
-                                        <span class="badge bg-primary">运行中</span>
+                                        <span class="badge bg-primary">Đang chạy</span>
                                         {% elif task.status == 'completed' %}
-                                        <span class="badge bg-success">已完成</span>
+                                        <span class="badge bg-success">Hoàn thành</span>
                                         {% elif task.status == 'failed' %}
-                                        <span class="badge bg-danger">失败</span>
+                                        <span class="badge bg-danger">thất bại</span>
                                         {% elif task.status == 'pending' %}
-                                        <span class="badge bg-secondary">等待中</span>
+                                        <span class="badge bg-secondary">Chờ</span>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -141,44 +141,44 @@
                                     <td colspan="10">
                                         <div class="card tech-card mb-0">
                                             <div class="card-body">
-                                                <h5 class="card-title">任务详情</h5>
+                                                <h5 class="card-title">Chi tiết tác vụ</h5>
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="mb-2">
-                                                            <strong>源路径:</strong> {{ task.source_path }}
+                                                            <strong>Đường dẫn nguồn:</strong> {{ task.source_path }}
                                                         </div>
                                                         <div class="mb-2">
-                                                            <strong>目标路径:</strong> {{ task.target_path }}
+                                                            <strong>Đường dẫn mục tiêu:</strong> {{ task.target_path }}
                                                         </div>
                                                         <div class="mb-2">
-                                                            <strong>同步模式:</strong> 
-                                                            {% if task.sync_type == 'file_sync' %}文件同步
-                                                            {% elif task.sync_type == 'file_move' %}文件移动
+                                                            <strong>Chế độ đồng bộ:</strong> 
+                                                            {% if task.sync_type == 'file_sync' %}Tệp đồng bộ hóa
+                                                            {% elif task.sync_type == 'file_move' %}Di chuyển tập tin
                                                             {% endif %}
                                                         </div>
                                                         <div class="mb-2">
-                                                            <strong>差异项处理:</strong> 
-                                                            {% if task.sync_diff_action == 'none' %}不处理
-                                                            {% elif task.sync_diff_action == 'move' %}移至回收站
-                                                            {% elif task.sync_diff_action == 'delete' %}删除
+                                                            <strong>Chính sách xử lý khác biệt:</strong> 
+                                                            {% if task.sync_diff_action == 'none' %}Không được xử lý
+                                                            {% elif task.sync_diff_action == 'move' %}Di chuyển đến trạm tái chế
+                                                            {% elif task.sync_diff_action == 'delete' %}xóa bỏ
                                                             {% endif %}
                                                         </div>
                                                         <div class="mb-2">
-                                                            <strong>排除目录:</strong> {{ task.exclude_dirs or "无" }}
+                                                            <strong>Loại trừ thư mục:</strong> {{ task.exclude_dirs or "không có" }}
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="mb-2">
-                                                            <strong>计划:</strong> {{ task.schedule or "手动执行" }}
+                                                            <strong>kế hoạch:</strong> {{ task.schedule or "Thực thi thủ công" }}
                                                         </div>
                                                         <div class="mb-2">
-                                                            <strong>文件过滤:</strong> {{ task.file_filter or "无" }}
+                                                            <strong>Lọc tệp:</strong> {{ task.file_filter or "không có" }}
                                                         </div>
                                                         <div class="mb-2">
-                                                            <strong>启用状态:</strong> {{ "启用" if task.enabled else "禁用" }}
+                                                            <strong>Đã bật:</strong> {{ "Cho phép" if task.enabled else "Tàn tật" }}
                                                         </div>
                                                         <div class="mb-2">
-                                                            <strong>目标存储数量:</strong> 
+                                                            <strong>Số lượng lưu trữ mục tiêu:</strong> 
                                                             {% if task.target_connection_ids and task.target_connection_ids|length > 0 %}
                                                                 {{ task.target_connection_ids|length }}
                                                             {% else %}
@@ -194,7 +194,7 @@
                                 {% endfor %}
                             {% else %}
                                 <tr>
-                                    <td colspan="10" class="text-center">暂无任务</td>
+                                    <td colspan="10" class="text-center">Chưa có tác vụ</td>
                                 </tr>
                             {% endif %}
                         </tbody>
@@ -205,124 +205,124 @@
     </div>
 </div>
 
-<!-- 添加任务模态框 -->
+<!-- Thêm hộp phương thức tác vụ -->
 <div class="modal fade" id="addTaskModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">添加同步任务</h5>
+                <h5 class="modal-title">Thêm tác vụ đồng bộ hóa</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div id="addTaskModalMessages"></div>
                 <form id="taskForm">
                     <div class="mb-3">
-                        <label for="taskName" class="form-label">任务名称</label>
+                        <label for="taskName" class="form-label">Tên tác vụ</label>
                         <input type="text" class="form-control" id="taskName" required>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="connectionSelector" class="form-label">选择连接器</label>
+                        <label for="connectionSelector" class="form-label">Chọn máy chủ</label>
                         <select class="form-select" id="connectionSelector" required>
-                            <option value="">选择连接器</option>
-                            <!-- 通过JavaScript动态添加连接选项 -->
+                            <option value="">Chọn máy chủ</option>
+                            <!-- vượt quaJavaScriptThêm các tùy chọn kết nối -->
                         </select>
                     </div>
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="sourceConnection" class="form-label">源连接</label>
+                            <label for="sourceConnection" class="form-label">Kết nối nguồn</label>
                             <select class="form-select" id="sourceConnection" required>
-                                <option value="">选择源连接</option>
-                                <!-- 根据选择的连接器动态加载存储列表 -->
+                                <option value="">Chọn Kết nối nguồn</option>
+                                <!-- Tải động danh sách lưu trữ dựa trên đầu nối đã chọn -->
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="targetConnections" class="form-label">目标连接</label>
+                            <label for="targetConnections" class="form-label">Kết nối mục tiêu</label>
                             <select class="form-select" id="targetConnections" multiple required>
-                                <!-- 目标连接为多选 -->
+                                <!-- Kết nối mục tiêu là đa chọn -->
                             </select>
-                            <div class="form-text">按住Ctrl键可多选</div>
+                            <div class="form-text">Nhấn và giữCtrlCó thể chọn nhiều khóa</div>
                         </div>
                     </div>
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="sourcePath" class="form-label">源路径</label>
+                            <label for="sourcePath" class="form-label">Đường dẫn nguồn</label>
                             <input type="text" class="form-control" id="sourcePath" placeholder="/" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="targetPath" class="form-label">目标路径</label>
+                            <label for="targetPath" class="form-label">Đường dẫn mục tiêu</label>
                             <input type="text" class="form-control" id="targetPath" placeholder="/" required>
                         </div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="excludeDirs" class="form-label">排除目录</label>
+                        <label for="excludeDirs" class="form-label">Loại trừ thư mục</label>
                         <input type="text" class="form-control" id="excludeDirs" placeholder="/">
-                        <div class="form-text">相对于源路径，多个目录用英文逗号分隔</div>
+                        <div class="form-text">Liên quan đến đường dẫn nguồn，Nhiều thư mục được phân tách bằng dấu phẩy tiếng Anh</div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="syncType" class="form-label">同步模式</label>
+                        <label for="syncType" class="form-label">Chế độ đồng bộ</label>
                         <select class="form-select" id="syncType" required>
-                            <option value="file_sync">文件同步</option>
-                            <option value="file_move">文件移动</option>
+                            <option value="file_sync">Tệp đồng bộ hóa</option>
+                            <option value="file_move">Di chuyển tập tin</option>
                         </select>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="syncDiffAction" class="form-label">差异项处理策略</label>
+                        <label for="syncDiffAction" class="form-label">Chiến lược xử lý khác biệt</label>
                         <select class="form-select" id="syncDiffAction">
-                            <option value="none">不处理目标目录差异项</option>
-                            <option value="move">移至目标目录回收站</option>
-                            <option value="delete">删除目标目录多余项</option>
+                            <option value="none">Không xử lý sự khác biệt của thư mục đích</option>
+                            <option value="move">Di chuyển đến thư mục trash của đích</option>
+                            <option value="delete">Xóa khác biệt ở thư mục đích</option>
                         </select>
-                        <div class="form-text">注意：选择"文件移动"模式时，差异项处理策略将被禁用</div>
+                        <div class="form-text">Để ý：Chọn chế độ "Di chuyển tập tin"，Chiến lược xử lý mục khác biệt sẽ bị vô hiệu hóa</div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="schedule" class="form-label">计划 (Cron 表达式，留空表示手动)</label>
+                        <label for="schedule" class="form-label">kế hoạch (Biểu thức Cron，Để trống để chạy thủ công)</label>
                         <input type="text" class="form-control" id="schedule" placeholder="*/30 * * * *">
-                        <div class="form-text">示例：*/30 * * * * (每30分钟)</div>
+                        <div class="form-text">Ví dụ：*/30 * * * * (Mọi30phút)</div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="fileFilter" class="form-label">文件过滤 (正则表达式，留空表示无过滤)</label>
+                        <label for="fileFilter" class="form-label">Lọc tệp (Biểu thức regex，Để trống để không lọc)</label>
                         <input type="text" class="form-control" id="fileFilter" placeholder="\.jpg$|\.png$">
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="sizeMin" class="form-label">最小文件大小 (字节, 可选)</label>
-                            <input type="number" class="form-control" id="sizeMin" min="0" placeholder="仅传输大于此大小的文件">
+                            <label for="sizeMin" class="form-label">Kích thước tệp tối thiểu (Byte, Không bắt buộc)</label>
+                            <input type="number" class="form-control" id="sizeMin" min="0" placeholder="Chỉ chuyển các tệp lớn hơn kích thước này">
                         </div>
                         <div class="col-md-6">
-                            <label for="sizeMax" class="form-label">最大文件大小 (字节, 可选)</label>
-                            <input type="number" class="form-control" id="sizeMax" min="0" placeholder="仅传输小于此大小的文件">
+                            <label for="sizeMax" class="form-label">Kích thước tệp tối đa (Byte, Không bắt buộc)</label>
+                            <input type="number" class="form-control" id="sizeMax" min="0" placeholder="Chỉ chuyển các tệp nhỏ hơn kích thước này">
                         </div>
                     </div>
                     
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="taskEnabled" checked>
-                        <label class="form-check-label" for="taskEnabled">启用任务</label>
+                        <label class="form-check-label" for="taskEnabled">Bật tác vụ</label>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="saveTaskBtn">保存任务</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-primary" id="saveTaskBtn">Lưu tác vụ</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 编辑任务模态框 -->
+<!-- Chỉnh sửa hộp phương thức tác vụ -->
 <div class="modal fade" id="editTaskModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">编辑同步任务</h5>
+                <h5 class="modal-title">Chỉnh sửa các tác vụ đồng bộ hóa</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -330,132 +330,132 @@
                 <form id="editTaskForm">
                     <input type="hidden" id="editTaskId">
                     <div class="mb-3">
-                        <label for="editTaskName" class="form-label">任务名称</label>
+                        <label for="editTaskName" class="form-label">Tên tác vụ</label>
                         <input type="text" class="form-control" id="editTaskName" required>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="editConnectionSelector" class="form-label">选择连接器</label>
+                        <label for="editConnectionSelector" class="form-label">Chọn máy chủ</label>
                         <select class="form-select" id="editConnectionSelector" required>
-                            <option value="">选择连接器</option>
-                            <!-- 通过JavaScript动态添加连接选项 -->
+                            <option value="">Chọn máy chủ</option>
+                            <!-- vượt quaJavaScriptThêm các tùy chọn kết nối -->
                         </select>
                     </div>
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="editSourceConnection" class="form-label">源连接</label>
+                            <label for="editSourceConnection" class="form-label">Kết nối nguồn</label>
                             <select class="form-select" id="editSourceConnection" required>
-                                <option value="">选择源连接</option>
-                                <!-- 根据选择的连接器动态加载存储列表 -->
+                                <option value="">Chọn Kết nối nguồn</option>
+                                <!-- Tải động danh sách lưu trữ dựa trên đầu nối đã chọn -->
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="editTargetConnections" class="form-label">目标连接</label>
+                            <label for="editTargetConnections" class="form-label">Kết nối mục tiêu</label>
                             <select class="form-select" id="editTargetConnections" multiple required>
-                                <!-- 目标连接为多选 -->
+                                <!-- Kết nối mục tiêu là đa chọn -->
                             </select>
-                            <div class="form-text">按住Ctrl键可多选</div>
+                            <div class="form-text">Nhấn và giữCtrlCó thể chọn nhiều khóa</div>
                         </div>
                     </div>
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="editSourcePath" class="form-label">源路径</label>
+                            <label for="editSourcePath" class="form-label">Đường dẫn nguồn</label>
                             <input type="text" class="form-control" id="editSourcePath" placeholder="/" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="editTargetPath" class="form-label">目标路径</label>
+                            <label for="editTargetPath" class="form-label">Đường dẫn mục tiêu</label>
                             <input type="text" class="form-control" id="editTargetPath" placeholder="/" required>
                         </div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="editExcludeDirs" class="form-label">排除目录</label>
+                        <label for="editExcludeDirs" class="form-label">Loại trừ thư mục</label>
                         <input type="text" class="form-control" id="editExcludeDirs" placeholder="/">
-                        <div class="form-text">相对于源路径，多个目录用英文逗号分隔</div>
+                        <div class="form-text">Liên quan đến đường dẫn nguồn，Nhiều thư mục được phân tách bằng dấu phẩy tiếng Anh</div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="editSyncType" class="form-label">同步模式</label>
+                        <label for="editSyncType" class="form-label">Chế độ đồng bộ</label>
                         <select class="form-select" id="editSyncType" required>
-                            <option value="file_sync">文件同步</option>
-                            <option value="file_move">文件移动</option>
+                            <option value="file_sync">Tệp đồng bộ hóa</option>
+                            <option value="file_move">Di chuyển tập tin</option>
                         </select>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="editSyncDiffAction" class="form-label">差异项处理策略</label>
+                        <label for="editSyncDiffAction" class="form-label">Chiến lược xử lý khác biệt</label>
                         <select class="form-select" id="editSyncDiffAction">
-                            <option value="none">不处理目标目录差异项</option>
-                            <option value="move">移至目标目录回收站</option>
-                            <option value="delete">删除目标目录多余项</option>
+                            <option value="none">Không xử lý sự khác biệt của thư mục đích</option>
+                            <option value="move">Di chuyển đến thư mục trash của đích</option>
+                            <option value="delete">Xóa khác biệt ở thư mục đích</option>
                         </select>
-                        <div class="form-text">注意：选择"文件移动"模式时，差异项处理策略将被禁用</div>
+                        <div class="form-text">Để ý：Chọn chế độ "Di chuyển tập tin"，Chiến lược xử lý mục khác biệt sẽ bị vô hiệu hóa</div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="editSchedule" class="form-label">计划 (Cron 表达式，留空表示手动)</label>
+                        <label for="editSchedule" class="form-label">kế hoạch (Biểu thức Cron，Để trống để chạy thủ công)</label>
                         <input type="text" class="form-control" id="editSchedule" placeholder="*/30 * * * *">
-                        <div class="form-text">示例：*/30 * * * * (每30分钟)</div>
+                        <div class="form-text">Ví dụ：*/30 * * * * (Mọi30phút)</div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="editFileFilter" class="form-label">文件过滤 (正则表达式，留空表示无过滤)</label>
+                        <label for="editFileFilter" class="form-label">Lọc tệp (Biểu thức regex，Để trống để không lọc)</label>
                         <input type="text" class="form-control" id="editFileFilter" placeholder="\.jpg$|\.png$">
                     </div>
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="editSizeMin" class="form-label">最小文件大小 (字节, 可选)</label>
-                            <input type="number" class="form-control" id="editSizeMin" min="0" placeholder="仅传输大于此大小的文件">
+                            <label for="editSizeMin" class="form-label">Kích thước tệp tối thiểu (Byte, Không bắt buộc)</label>
+                            <input type="number" class="form-control" id="editSizeMin" min="0" placeholder="Chỉ chuyển các tệp lớn hơn kích thước này">
                         </div>
                         <div class="col-md-6">
-                            <label for="editSizeMax" class="form-label">最大文件大小 (字节, 可选)</label>
-                            <input type="number" class="form-control" id="editSizeMax" min="0" placeholder="仅传输小于此大小的文件">
+                            <label for="editSizeMax" class="form-label">Kích thước tệp tối đa (Byte, Không bắt buộc)</label>
+                            <input type="number" class="form-control" id="editSizeMax" min="0" placeholder="Chỉ chuyển các tệp nhỏ hơn kích thước này">
                         </div>
                     </div>
                     
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="editTaskEnabled" checked>
-                        <label class="form-check-label" for="editTaskEnabled">启用任务</label>
+                        <label class="form-check-label" for="editTaskEnabled">Bật tác vụ</label>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="updateTaskBtn">更新任务</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-primary" id="updateTaskBtn">Cập nhật tác vụ</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 确认删除模态框 -->
+<!-- Xác nhận hộp phương thức xóa -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">确认删除</h5>
+                <h5 class="modal-title">Xác nhận xóa</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>确定要删除此任务吗？该操作不可恢复。</p>
+                <p>Bạn có chắc là bạn muốn xóa tác vụ này?？Hoạt động này không được khôi phục。</p>
                 <input type="hidden" id="deleteTaskId">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">确认删除</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xác nhận xóa</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 任务实例列表模态框 -->
+<!-- Hộp mô hình danh sách phiên bản tác vụ -->
 <div class="modal fade" id="taskInstancesModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">任务实例列表</h5>
+                <h5 class="modal-title">Danh sách thể hiện tác vụ</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -465,33 +465,33 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>开始时间</th>
-                                <th>结束时间</th>
-                                <th>状态</th>
-                                <th>操作</th>
+                                <th>Thời gian bắt đầu</th>
+                                <th>Thời gian kết thúc</th>
+                                <th>tình trạng</th>
+                                <th>vận hành</th>
                             </tr>
                         </thead>
                         <tbody id="instances-table">
                             <tr>
-                                <td colspan="5" class="text-center">加载中...</td>
+                                <td colspan="5" class="text-center">đang tải...</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 任务日志查看模态框 -->
+<!-- Hộp Modal Chế độ xem nhật ký tác vụ -->
 <div class="modal fade" id="taskLogModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">任务执行日志</h5>
+                <h5 class="modal-title">Nhật ký thực thi tác vụ</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -501,8 +501,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="refreshLogBtn">刷新</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="refreshLogBtn">làm cho khỏe lại</button>
             </div>
         </div>
     </div>
@@ -512,164 +512,164 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('页面加载完成，开始初始化...');
+        console.log('Tải trang hoàn tất，Bắt đầu khởi tạo...');
         
-        // 全局变量，用于存储连接数据
+        // Biến toàn cầu，Được sử dụng để lưu trữ dữ liệu kết nối
         let globalConnections = [];
         
-        // 加载所有连接
+        // Tải tất cả các kết nối
         loadConnections();
         
-        // 加载任务列表
-        console.log('开始加载任务列表...');
+        // Đang tải danh sách tác vụ
+        console.log('Bắt đầu tải danh sách tác vụ...');
         loadTasks();
         
-        // 为已存在的任务行添加事件
-        console.log('为当前任务行添加事件...');
+        // Thêm các sự kiện vào các hàng tác vụ hiện có
+        console.log('Thêm sự kiện cho hàng tác vụ hiện tại...');
         attachTaskRowEvents();
         
-        // 初始绑定删除确认按钮事件
+        // Sự kiện Nút Xác nhận Binding Binding ban đầu
         document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
             const taskId = document.getElementById('deleteTaskId').value;
             deleteTask(taskId, this);
         });
         
-        // 延迟检查任务行事件绑定
+        // Trì hoãn kiểm tra ràng buộc sự kiện dòng tác vụ
         setTimeout(function() {
-            console.log('延迟检查任务行事件绑定...');
+            console.log('Trì hoãn kiểm tra ràng buộc sự kiện dòng tác vụ...');
             const taskRows = document.querySelectorAll('.task-row');
             if (taskRows.length > 0) {
-                console.log(`检测到 ${taskRows.length} 个任务行，重新绑定事件`);
+                console.log(`Phát hiện ${taskRows.length} Một tác vụ，Sự kiện hồi phục`);
                 
-                // 添加直接的点击处理
+                // Thêm xử lý nhấp trực tiếp
                 taskRows.forEach(row => {
-                    // 移除旧事件，防止重复
+                    // Loại bỏ các sự kiện cũ，Ngăn chặn trùng lặp
                     row.removeEventListener('click', taskRowClickHandler);
-                    // 添加新事件
+                    // Thêm một sự kiện mới
                     row.addEventListener('click', taskRowClickHandler);
-                    console.log('已为任务行重新绑定点击事件:', row.getAttribute('data-task-id'));
+                    console.log('Rebound nhấp vào sự kiện cho hàng tác vụ:', row.getAttribute('data-task-id'));
                 });
             } else {
-                console.log('未检测到任务行，可能加载有延迟');
+                console.log('Không phát hiện hàng tác vụ nào được phát hiện，Có thể trì hoãn tải');
             }
-        }, 1000); // 等待1秒
+        }, 1000); // Chờ đợi1Thứ hai
         
-        // 定义任务行点击处理函数
+        // Xác định chức năng xử lý dòng tác vụ Nhấp vào chức năng
         function taskRowClickHandler(event) {
-            console.log('任务行点击处理函数被调用');
+            console.log('Chức năng xử lý dòng Nhấp vào dòng tác vụ được gọi');
             
-            // 如果点击的是按钮，不处理展开/收起
+            // Nếu nút được nhấp vào，Chưa được xử lý để mở rộng/Đóng
             if (event.target.tagName === 'BUTTON' || 
                 event.target.closest('button') || 
                 event.target.tagName === 'I' ||
                 event.target.closest('.btn-group')) {
-                console.log('点击了按钮区域，忽略展开/收起');
+                console.log('Nhấp vào khu vực nút，Bỏ qua mở rộng/Đóng');
                 return;
             }
             
-            // 获取任务ID
+            // Nhận một tác vụ ID
             const taskId = this.getAttribute('data-task-id');
-            console.log('点击任务行:', taskId);
+            console.log('Nhấp vào dòng tác vụ:', taskId);
             const detailRow = document.getElementById(`task-detail-${taskId}`);
             
             if (!detailRow) {
-                console.error(`找不到详情行 task-detail-${taskId}`);
+                console.error(`Không tìm thấy chi tiết task-detail-${taskId}`);
                 return;
             }
             
-            // 切换详情行的显示状态
+            // Chuyển đổi trạng thái hiển thị của dòng chi tiết
             if (detailRow.style.display === 'none' || !detailRow.style.display) {
-                // 关闭其他打开的详情行
+                // Đóng các dòng chi tiết mở khác
                 document.querySelectorAll('.task-detail-row').forEach(row => {
                     if (row.id !== `task-detail-${taskId}`) {
                         row.style.display = 'none';
-                        // 移除其他行的活动类
+                        // Xóa các lớp hoạt động khỏi các hàng khác
                         const otherId = row.id.replace('task-detail-', '');
                         const otherRow = document.querySelector(`.task-row[data-task-id="${otherId}"]`);
                         if (otherRow) otherRow.classList.remove('active-task-row');
                     }
                 });
                 
-                // 显示当前详情行
+                // Hiển thị dòng chi tiết hiện tại
                 detailRow.style.display = 'table-row';
                 this.classList.add('active-task-row');
             } else {
-                // 隐藏当前详情行
+                // Ẩn dòng chi tiết hiện tại
                 detailRow.style.display = 'none';
                 this.classList.remove('active-task-row');
             }
         }
         
-        // 初始化检查同步模式，如有必要则禁用差异项处理策略
+        // Khởi tạo chế độ đồng bộ hóa kiểm tra，Vô hiệu hóa chiến lược xử lý vật phẩm khác biệt nếu cần thiết
         function initSyncTypeHandling() {
-            // 检查添加任务表单
+            // Kiểm tra biểu mẫu thêm tác vụ
             const syncType = document.getElementById('syncType');
             if (syncType.value === 'file_move') {
                 const syncDiffAction = document.getElementById('syncDiffAction');
                 syncDiffAction.value = 'none';
                 syncDiffAction.disabled = true;
-                syncDiffAction.parentElement.querySelector('.form-text').textContent = '注意："文件移动"模式下，差异项处理策略已被禁用';
+                syncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chiến lược xử lý mục khác biệt đã bị vô hiệu hóa';
             }
             
-            // 检查编辑任务表单
+            // Kiểm tra biểu mẫu tác vụ chỉnh sửa
             const editSyncType = document.getElementById('editSyncType');
             if (editSyncType.value === 'file_move') {
                 const editSyncDiffAction = document.getElementById('editSyncDiffAction');
                 editSyncDiffAction.value = 'none';
                 editSyncDiffAction.disabled = true;
-                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = '注意："文件移动"模式下，差异项处理策略已被禁用';
+                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chiến lược xử lý mục khác biệt đã bị vô hiệu hóa';
             }
         }
         
-        // 初始检查
+        // Kiểm tra ban đầu
         initSyncTypeHandling();
         
-        // 监听模态框打开事件，确保状态正确
+        // Nghe hộp phương thức để mở các sự kiện，Đảm bảo trạng thái là chính xác
         document.getElementById('addTaskModal').addEventListener('show.bs.modal', initSyncTypeHandling);
         document.getElementById('editTaskModal').addEventListener('show.bs.modal', initSyncTypeHandling);
         
-        // 连接选择器变更事件
+        // Sự kiện thay đổi bộ chọn kết nối
         document.getElementById('connectionSelector').addEventListener('change', function() {
             const connId = this.value;
             if (connId) {
                 loadStorages(connId);
             } else {
-                // 清空存储列表
-                document.getElementById('sourceConnection').innerHTML = '<option value="">选择源连接</option>';
+                // Xóa danh sách lưu trữ
+                document.getElementById('sourceConnection').innerHTML = '<option value="">Chọn Kết nối nguồn</option>';
                 document.getElementById('targetConnections').innerHTML = '';
             }
         });
         
-        // 编辑模式连接选择器变更事件
+        // Chỉnh sửa sự kiện thay đổi bộ chọn kết nối chế độ chỉnh sửa
         document.getElementById('editConnectionSelector').addEventListener('change', function() {
             const connId = this.value;
             if (connId) {
                 loadStoragesForEdit(connId);
             } else {
-                // 清空存储列表
-                document.getElementById('editSourceConnection').innerHTML = '<option value="">选择源连接</option>';
+                // Xóa danh sách lưu trữ
+                document.getElementById('editSourceConnection').innerHTML = '<option value="">Chọn Kết nối nguồn</option>';
                 document.getElementById('editTargetConnections').innerHTML = '';
             }
         });
         
-        // 查看任务实例按钮
+        // Xem nút thể hiện tác vụ
         document.querySelectorAll('.view-instances').forEach(button => {
             button.addEventListener('click', function() {
                 const taskId = this.getAttribute('data-task-id');
                 const taskName = this.getAttribute('data-task-name');
                 
-                // 显示任务名称
-                document.getElementById('instancesTaskName').textContent = `任务: ${taskName} (ID: ${taskId})`;
+                // Hiển thị tên tác vụ
+                document.getElementById('instancesTaskName').textContent = `tác vụ: ${taskName} (ID: ${taskId})`;
                 
-                // 加载任务实例列表
+                // Đang tải danh sách thể hiện tác vụ
                 loadTaskInstances(taskId);
                 
-                // 显示模态框
+                // Hiển thị hộp phương thức
                 new bootstrap.Modal(document.getElementById('taskInstancesModal')).show();
             });
         });
         
-        // 任务日志刷新按钮
+        // Nút làm mới nhật ký tác vụ
         document.getElementById('refreshLogBtn').addEventListener('click', function() {
             const instanceId = this.getAttribute('data-instance-id');
             if (instanceId) {
@@ -677,46 +677,46 @@
             }
         });
         
-        // 编辑表单中的同步模式变更逻辑
+        // Chỉnh sửa logic thay đổi chế độ đồng bộ trong biểu mẫu
         document.getElementById('editSyncType').addEventListener('change', function() {
             const editSyncDiffAction = document.getElementById('editSyncDiffAction');
             if (this.value === 'file_move') {
                 editSyncDiffAction.value = 'none';
                 editSyncDiffAction.disabled = true;
-                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = '注意："文件移动"模式下，差异项处理策略已被禁用';
+                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chiến lược xử lý mục khác biệt đã bị vô hiệu hóa';
             } else {
                 editSyncDiffAction.disabled = false;
-                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = '注意：选择"文件移动"模式时，差异项处理策略将被禁用';
+                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý：Chọn chế độ "Di chuyển tập tin"，Chiến lược xử lý mục khác biệt sẽ bị vô hiệu hóa';
             }
         });
         
-        // 添加任务表单中的同步模式变更逻辑
+        // Thêm logic thay đổi mẫu đồng bộ hóa ở dạng tác vụ
         document.getElementById('syncType').addEventListener('change', function() {
             const syncDiffAction = document.getElementById('syncDiffAction');
             if (this.value === 'file_move') {
                 syncDiffAction.value = 'none';
                 syncDiffAction.disabled = true;
-                syncDiffAction.parentElement.querySelector('.form-text').textContent = '注意："文件移动"模式下，差异项处理策略已被禁用';
+                syncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chiến lược xử lý mục khác biệt đã bị vô hiệu hóa';
             } else {
                 syncDiffAction.disabled = false;
-                syncDiffAction.parentElement.querySelector('.form-text').textContent = '注意：选择"文件移动"模式时，差异项处理策略将被禁用';
+                syncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý：Chọn chế độ "Di chuyển tập tin"，Chiến lược xử lý mục khác biệt sẽ bị vô hiệu hóa';
             }
         });
         
-        // 保存任务按钮
+        // Lưu nút tác vụ
         document.getElementById('saveTaskBtn').addEventListener('click', function() {
-            console.log('保存任务按钮被点击');
+            console.log('Nút Save Task được nhấp vào');
             
-            // 验证必填字段
+            // Xác minh các trường bắt buộc
             const taskName = document.getElementById('taskName');
             if (!taskName.value.trim()) {
-                showAddTaskMessage('请输入任务名称', 'warning');
+                showAddTaskMessage('Vui lòng nhập tên tác vụ', 'warning');
                 taskName.focus();
-                console.log('验证失败：任务名称为空');
+                console.log('Xác minh thất bại：Tên tác vụ trống');
                 return;
             }
             
-            // 获取选择的源连接和目标连接
+            // Nhận kết nối nguồn và đích được chọn
             const sourceConn = document.getElementById('sourceConnection');
             const targetConns = [];
             document.querySelectorAll('#targetConnections option:checked').forEach(option => {
@@ -724,25 +724,25 @@
             });
             
             if (!sourceConn.value) {
-                showAddTaskMessage('请选择源连接', 'warning');
+                showAddTaskMessage('Vui lòng chọn kết nối nguồn', 'warning');
                 sourceConn.focus();
-                console.log('验证失败：未选择源连接');
+                console.log('Xác minh thất bại：Kết nối nguồn không được chọn');
                 return;
             }
             
             if (targetConns.length === 0) {
-                showAddTaskMessage('请至少选择一个目标连接', 'warning');
+                showAddTaskMessage('Vui lòng chọn ít nhất một kết nối đích', 'warning');
                 document.getElementById('targetConnections').focus();
-                console.log('验证失败：未选择目标连接');
+                console.log('Xác minh thất bại：Kết nối mục tiêu không được chọn');
                 return;
             }
             
-            // 禁用按钮，显示加载状态
+            // Tắt nút，Hiển thị trạng thái tải
             this.disabled = true;
-            this.innerHTML = '<i class="bi bi-hourglass-split"></i> 保存中...';
-            console.log('按钮已禁用，显示加载状态');
+            this.innerHTML = '<i class="bi bi-hourglass-split"></i> Tiết kiệm...';
+            console.log('Nút bị tắt，Hiển thị trạng thái tải');
             
-            // 准备表单数据
+            // Chuẩn bị dữ liệu biểu mẫu
             const taskData = {
                 name: taskName.value,
                 connection_id: document.getElementById('connectionSelector').value || 1,
@@ -762,16 +762,16 @@
                 enabled: document.getElementById('taskEnabled').checked
             };
             
-            console.log('准备保存任务数据:', taskData);
+            console.log('Chuẩn bị để lưu dữ liệu tác vụ:', taskData);
             
-            // 如果没有选择连接器，自动使用第一个连接ID
+            // Nếu không có đầu nối được chọn，Tự động sử dụng kết nối đầu tiênID
             if (!taskData.connection_id && globalConnections && globalConnections.length > 0) {
                 taskData.connection_id = globalConnections[0].connection_id;
-                console.log('未选择连接器，自动使用第一个连接ID:', taskData.connection_id);
+                console.log('Trình kết nối không được chọn，Tự động sử dụng kết nối đầu tiênID:', taskData.connection_id);
             }
             
-            // 发送AJAX请求保存任务
-            console.log('开始发送AJAX请求');
+            // gửiAJAXYêu cầu lưu tác vụ
+            console.log('Bắt đầu gửiAJAXhỏi');
             fetch('/api/tasks', {
                 method: 'POST',
                 headers: {
@@ -780,32 +780,32 @@
                 body: JSON.stringify(taskData),
             })
             .then(response => {
-                console.log('收到AJAX响应:', response.status, response.statusText);
+                console.log('nhận đượcAJAXphản ứng:', response.status, response.statusText);
                 if (!response.ok) {
-                    throw new Error(`网络响应错误: ${response.status} ${response.statusText}`);
+                    throw new Error(`Lỗi phản hồi mạng: ${response.status} ${response.statusText}`);
                 }
                 return response.json();
             })
             .then(data => {
-                console.log('解析响应数据:', data);
+                console.log('Phân tích dữ liệu phản hồi phân tích:', data);
                 if (data.status === 'success') {
-                    showAlert('任务添加成功', 'success');
-                    // 关闭模态框 - 使用Bootstrap 5的方式关闭
+                    showAlert('Bổ sung tác vụ đã thành công', 'success');
+                    // Đóng hộp phương thức - sử dụngBootstrap 5Đóng đường
                     const modalElement = document.getElementById('addTaskModal');
-                    console.log('获取到模态框元素:', modalElement);
+                    console.log('Nhận phần tử hộp phương thức:', modalElement);
                     
                     try {
                         const bsModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-                        console.log('使用getOrCreateInstance获取模态框实例:', bsModal);
+                        console.log('sử dụnggetOrCreateInstanceNhận một thể hiện hộp phương thức:', bsModal);
                         bsModal.hide();
-                        console.log('模态框已关闭');
+                        console.log('Hộp phương thức được đóng lại');
                     } catch (modalError) {
-                        console.error('关闭模态框时出错:', modalError);
+                        console.error('Xảy ra lỗi trong khi đóng hộp phương thức:', modalError);
                     }
-                    // 刷新任务列表而不是整个页面
+                    // Làm mới danh sách tác vụ thay vì toàn bộ trang
                     loadTasks();
                     
-                    // 重新加载调度器以更新任务计划
+                    // Tải lại Lập lịch để cập nhật lịch trình tác vụ
                     setTimeout(() => {
                         fetch('/api/scheduler/reload', {
                             method: 'POST',
@@ -815,114 +815,114 @@
                         })
                         .then(response => response.json())
                         .then(result => {
-                            console.log('调度器已重载:', result);
-                            // 在调度器重载后再次刷新，确保下次运行时间更新
+                            console.log('Bộ lập lịch đã được tải lại:', result);
+                            // Làm mới lại sau khi tải lại bộ lập lịch，Đảm bảo thời gian chạy tiếp theo được cập nhật
                             setTimeout(() => {
                                 loadTasks();
                             }, 1000);
                         })
                         .catch(err => {
-                            console.error('调度器重载失败:', err);
+                            console.error('Bộ lập lịch tải lại không thành công:', err);
                         });
                     }, 500);
                 } else {
-                    throw new Error(data.message || '保存失败');
+                    throw new Error(data.message || 'Tiết kiệm thất bại');
                 }
             })
             .catch(error => {
-                console.error('保存任务失败:', error);
-                showAlert('保存任务失败: ' + error.message, 'danger');
+                console.error('Lưu tác vụ không thành công:', error);
+                showAlert('Lưu tác vụ không thành công: ' + error.message, 'danger');
                 
-                // 在控制台显示更多错误信息
-                console.log('请检查控制台完整错误信息和网络请求');
+                // Hiển thị thêm thông báo lỗi trên bảng điều khiển
+                console.log('Vui lòng kiểm tra bảng điều khiển để biết thông báo lỗi hoàn chỉnh và yêu cầu mạng');
             })
             .finally(() => {
-                // 恢复按钮状态
+                // Khôi phục trạng thái nút
                 this.disabled = false;
-                this.innerHTML = '保存任务';
-                console.log('按钮状态已恢复');
+                this.innerHTML = 'Lưu tác vụ';
+                console.log('Trạng thái nút đã được khôi phục');
             });
         });
         
-        // 编辑任务按钮
+        // Chỉnh sửa nút tác vụ
         document.querySelectorAll('.edit-task').forEach(button => {
             button.addEventListener('click', function() {
                 const taskId = this.getAttribute('data-task-id');
                 
-                // 显示加载状态
+                // Hiển thị trạng thái tải
                 this.disabled = true;
                 const originalHTML = this.innerHTML;
                 this.innerHTML = '<i class="bi bi-hourglass-split"></i>';
                 
-                // 通过API获取任务信息
+                // vượt quaAPINhận thông tin tác vụ
                 fetch(`/api/tasks/${taskId}`)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('获取任务信息失败');
+                        throw new Error('Không lấy được thông tin tác vụ');
                     }
                     return response.json();
                 })
                 .then(task => {
-                    // 调试输出任务数据
-                    console.log('获取到的任务数据:', task);
+                    // Dữ liệu tác vụ đầu ra gỡ lỗi
+                    console.log('Thu được dữ liệu tác vụ:', task);
                     
-                    // 填充表单
+                    // Điền vào biểu mẫu
                     document.getElementById('editTaskId').value = task.id;
                     document.getElementById('editTaskName').value = task.name;
                     
-                    // 对于连接器，需要获取具体的连接ID
-                    // 在task.json中通常没有直接保存connection_id，需要从源连接信息中提取
+                    // Cho đầu nối，Cần có một kết nối cụ thểID
+                    // hiện hữutask.jsonThường không được lưu trực tiếp vàoconnection_id，Cần trích xuất từ thông tin kết nối nguồn
                     
-                    // 设置源路径和目标路径
+                    // Đặt đường dẫn nguồn và đường dẫn đích
                     document.getElementById('editSourcePath').value = task.source_path || '/';
                     document.getElementById('editTargetPath').value = task.target_path || '/';
                     document.getElementById('editSyncType').value = task.sync_type || 'file_sync';
                     document.getElementById('editSyncDiffAction').value = task.sync_diff_action || 'none';
                     document.getElementById('editSchedule').value = task.schedule || '';
                     document.getElementById('editFileFilter').value = task.file_filter || '';
-                    // 新增：最小/最大文件大小
+                    // Mới：Tối thiểu/Kích thước tệp tối đa
                     document.getElementById('editSizeMin').value = task.size_min != null ? task.size_min : '';
                     document.getElementById('editSizeMax').value = task.size_max != null ? task.size_max : '';
                     document.getElementById('editExcludeDirs').value = task.exclude_dirs || '';
                     document.getElementById('editTaskEnabled').checked = task.enabled !== false;
                     
-                    // 先加载所有连接，然后选择任务使用的连接并加载存储列表
+                    // Tải tất cả các kết nối đầu tiên，Sau đó chọn kết nối được sử dụng bởi tác vụ và tải Danh sách lưu trữ
                     loadConnectionsForEdit(task);
                     
-                    // 显示编辑模态框
+                    // Hiển thị hộp Modal EDIT
                     new bootstrap.Modal(document.getElementById('editTaskModal')).show();
                 })
                 .catch(error => {
-                    console.error('获取任务信息失败:', error);
-                    showAlert('获取任务信息失败: ' + error.message, 'danger');
+                    console.error('Không lấy được thông tin tác vụ:', error);
+                    showAlert('Không lấy được thông tin tác vụ: ' + error.message, 'danger');
                 })
                 .finally(() => {
-                    // 恢复按钮状态
+                    // Khôi phục trạng thái nút
                     this.disabled = false;
                     this.innerHTML = originalHTML;
                 });
             });
         });
         
-        // 更新任务按钮
+        // Cập nhật nút tác vụ
         document.getElementById('updateTaskBtn').addEventListener('click', function() {
-            // 验证必填字段
+            // Xác minh các trường bắt buộc
             const editTaskName = document.getElementById('editTaskName');
             if (!editTaskName.value.trim()) {
-                showEditMessage('请输入任务名称', 'warning');
+                showEditMessage('Vui lòng nhập tên tác vụ', 'warning');
                 editTaskName.focus();
                 return;
             }
             
-            // 获取任务ID
+            // Nhận một tác vụ ID
             const taskId = document.getElementById('editTaskId').value;
             
-            // 禁用按钮，显示加载状态
+            // Tắt nút，Hiển thị trạng thái tải
             this.disabled = true;
             const originalHTML = this.innerHTML;
-            this.innerHTML = '<i class="bi bi-hourglass-split"></i> 更新中...';
+            this.innerHTML = '<i class="bi bi-hourglass-split"></i> Cập nhật...';
             
-            // 获取选择的源连接和目标连接
+            // Nhận kết nối nguồn và đích được chọn
             const sourceConn = document.getElementById('editSourceConnection');
             const targetConns = [];
             document.querySelectorAll('#editTargetConnections option:checked').forEach(option => {
@@ -930,18 +930,18 @@
             });
             
             if (!sourceConn.value) {
-                showEditMessage('请选择源连接', 'warning');
+                showEditMessage('Vui lòng chọn kết nối nguồn', 'warning');
                 sourceConn.focus();
                 return;
             }
             
             if (targetConns.length === 0) {
-                showEditMessage('请至少选择一个目标连接', 'warning');
+                showEditMessage('Vui lòng chọn ít nhất một kết nối đích', 'warning');
                 document.getElementById('editTargetConnections').focus();
                 return;
             }
             
-            // 准备表单数据
+            // Chuẩn bị dữ liệu biểu mẫu
             const taskData = {
                 name: editTaskName.value,
                 connection_id: document.getElementById('editConnectionSelector').value || 1,
@@ -961,15 +961,15 @@
                 enabled: document.getElementById('editTaskEnabled').checked
             };
             
-            console.log('准备更新任务数据:', taskData);
+            console.log('Chuẩn bị cập nhật dữ liệu tác vụ:', taskData);
             
-            // 如果没有选择连接器，自动使用第一个连接ID
+            // Nếu không có đầu nối được chọn，Tự động sử dụng kết nối đầu tiênID
             if (!taskData.connection_id && globalConnections && globalConnections.length > 0) {
                 taskData.connection_id = globalConnections[0].connection_id;
-                console.log('未选择连接器，自动使用第一个连接ID:', taskData.connection_id);
+                console.log('Trình kết nối không được chọn，Tự động sử dụng kết nối đầu tiênID:', taskData.connection_id);
             }
             
-            // 发送AJAX请求更新任务
+            // gửiAJAXYêu cầu cập nhật tác vụ
             fetch(`/api/tasks/${taskId}`, {
                 method: 'PUT',
                 headers: {
@@ -979,28 +979,28 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('网络响应错误');
+                    throw new Error('Lỗi phản hồi mạng');
                 }
                 return response.json();
             })
             .then(data => {
                 if (data.status === 'success') {
-                    showAlert(taskId ? '任务更新成功' : '任务创建成功', 'success');
-                    // 关闭模态框并刷新任务列表
+                    showAlert(taskId ? 'Cập nhật tác vụ thành công' : 'Sáng tạo tác vụ thành công', 'success');
+                    // Đóng hộp phương thức và làm mới danh sách tác vụ
                     const modalElement = document.getElementById('editTaskModal');
-                    console.log('获取到编辑模态框元素:', modalElement);
+                    console.log('Nhận phần tử hộp chỉnh sửa phần tử:', modalElement);
                     
                     try {
                         const bsModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-                        console.log('使用getOrCreateInstance获取编辑模态框实例:', bsModal);
+                        console.log('sử dụnggetOrCreateInstanceNhận phiên bản Modal Box Chỉnh sửa:', bsModal);
                         bsModal.hide();
-                        console.log('编辑模态框已关闭');
+                        console.log('Chỉnh sửa hộp phương thức được đóng');
                     } catch (modalError) {
-                        console.error('关闭编辑模态框时出错:', modalError);
+                        console.error('Xảy ra lỗi trong khi đóng hộp chỉnh sửa phương thức:', modalError);
                     }
                     loadTasks();
                     
-                    // 重新加载调度器以更新任务计划
+                    // Tải lại Lập lịch để cập nhật lịch trình tác vụ
                     setTimeout(() => {
                         fetch('/api/scheduler/reload', {
                             method: 'POST',
@@ -1010,44 +1010,44 @@
                         })
                         .then(response => response.json())
                         .then(result => {
-                            console.log('调度器已重载:', result);
-                            // 在调度器重载后再次刷新，确保下次运行时间更新
+                            console.log('Bộ lập lịch đã được tải lại:', result);
+                            // Làm mới lại sau khi tải lại bộ lập lịch，Đảm bảo thời gian chạy tiếp theo được cập nhật
                             setTimeout(() => {
                                 loadTasks();
                             }, 1000);
                         })
                         .catch(err => {
-                            console.error('调度器重载失败:', err);
+                            console.error('Bộ lập lịch tải lại không thành công:', err);
                         });
                     }, 500);
                 } else {
-                    showAlert(data.message || '保存任务失败', 'danger');
+                    showAlert(data.message || 'Lưu tác vụ không thành công', 'danger');
                 }
             })
             .catch(error => {
-                console.error('更新任务失败:', error);
-                showAlert('更新任务失败: ' + error.message, 'danger');
+                console.error('Cập nhật tác vụ không thành công:', error);
+                showAlert('Cập nhật tác vụ không thành công: ' + error.message, 'danger');
             })
             .finally(() => {
-                // 恢复按钮状态
+                // Khôi phục trạng thái nút
                 this.disabled = false;
                 this.innerHTML = originalHTML;
             });
         });
         
-        // 删除按钮事件
+        // Xóa sự kiện nút
         document.querySelectorAll('.delete-task').forEach(button => {
             button.addEventListener('click', function() {
                 const taskId = this.getAttribute('data-task-id');
                 document.getElementById('deleteTaskId').value = taskId;
                 
-                // 重新绑定确认删除按钮的事件处理函数
+                // Chức năng xử lý sự kiện phục hồi của nút Xóa xác nhận
                 const confirmBtn = document.getElementById('confirmDeleteBtn');
-                // 移除之前可能存在的事件监听器
+                // Loại bỏ một trình nghe sự kiện có thể đã tồn tại trước đó
                 const newConfirmBtn = confirmBtn.cloneNode(true);
                 confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
                 
-                // 为新按钮添加事件监听器
+                // Thêm trình nghe sự kiện cho các nút mới
                 newConfirmBtn.addEventListener('click', function() {
                     deleteTask(taskId, this);
                 });
@@ -1056,17 +1056,17 @@
             });
         });
         
-        // 运行任务按钮
+        // Chạy nút tác vụ
         document.querySelectorAll('.run-task').forEach(button => {
             button.addEventListener('click', function() {
                 const taskId = this.getAttribute('data-task-id');
                 
-                // 显示加载状态
+                // Hiển thị trạng thái tải
                 const originalHTML = this.innerHTML;
                 this.innerHTML = '<i class="bi bi-hourglass-split"></i>';
                 this.disabled = true;
                 
-                // 发送AJAX请求运行任务
+                // gửiAJAXYêu cầu chạy một tác vụ
                 fetch(`/api/tasks/${taskId}/run`, {
                     method: 'POST',
                     headers: {
@@ -1075,37 +1075,37 @@
                 })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('网络响应错误');
+                        throw new Error('Lỗi phản hồi mạng');
                     }
                     return response.json();
                 })
                 .then(data => {
                     if (data.status === 'success') {
-                        // 显示任务运行结果
+                        // Hiển thị kết quả chạy tác vụ
                         if (data.instance_id) {
-                            // 如果返回了实例ID，提示查看日志
-                            const result = confirm(`任务 ${taskId} 已开始运行，是否查看执行日志？`);
+                            // Nếu thể hiện được trả lạiID，Nhắc xem nhật ký
+                            const result = confirm(`tác vụ ${taskId} Bắt đầu chạy，Có xem nhật ký thực thi hay không？`);
                             if (result) {
-                                // 显示任务名称
+                                // Hiển thị tên tác vụ
                                 const taskName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
-                                document.getElementById('logTaskName').textContent = `任务: ${taskName} (实例 ID: ${data.instance_id})`;
+                                document.getElementById('logTaskName').textContent = `tác vụ: ${taskName} (Task ID: ${data.instance_id})`;
                                 
-                                // 设置刷新按钮的实例ID
+                                // Đặt một phiên bản của nút làm mớiID
                                 document.getElementById('refreshLogBtn').setAttribute('data-instance-id', data.instance_id);
                                 
-                                // 加载任务日志
+                                // Tải nhật ký tác vụ
                                 loadTaskLog(data.instance_id);
                                 
-                                // 显示日志模态框
+                                // Hiển thị hộp Modal nhật ký
                                 new bootstrap.Modal(document.getElementById('taskLogModal')).show();
                             }
                         } else {
-                            showAlert(`任务 ${taskId} 已开始运行`, 'success');
+                            showAlert(`tác vụ ${taskId} Bắt đầu chạy`, 'success');
                         }
-                        // 刷新任务列表而不是整个页面
+                        // Làm mới danh sách tác vụ thay vì toàn bộ trang
                         loadTasks();
                         
-                        // 重新加载调度器以更新任务计划
+                        // Tải lại Lập lịch để cập nhật lịch trình tác vụ
                         setTimeout(() => {
                             fetch('/api/scheduler/reload', {
                                 method: 'POST',
@@ -1115,42 +1115,42 @@
                             })
                             .then(response => response.json())
                             .then(result => {
-                                console.log('调度器已重载:', result);
-                                // 在调度器重载后再次刷新，确保下次运行时间更新
+                                console.log('Bộ lập lịch đã được tải lại:', result);
+                                // Làm mới lại sau khi tải lại bộ lập lịch，Đảm bảo thời gian chạy tiếp theo được cập nhật
                                 setTimeout(() => {
                                     loadTasks();
                                 }, 1000);
                             })
                             .catch(err => {
-                                console.error('调度器重载失败:', err);
+                                console.error('Bộ lập lịch tải lại không thành công:', err);
                             });
                         }, 500);
                     } else {
-                        throw new Error(data.message || '运行失败');
+                        throw new Error(data.message || 'Chạy không thành công');
                     }
                 })
                 .catch(error => {
-                    console.error('运行任务失败:', error);
-                    showAlert('运行任务失败: ' + error.message, 'danger');
+                    console.error('Không chạy tác vụ:', error);
+                    showAlert('Không chạy tác vụ: ' + error.message, 'danger');
                 })
                 .finally(() => {
-                    // 恢复按钮状态
+                    // Khôi phục trạng thái nút
                     this.innerHTML = originalHTML;
                     this.disabled = false;
                 });
             });
         });
         
-        // 辅助函数：加载所有连接
+        // Chức năng trợ giúp：Tải tất cả các kết nối
         function loadConnections() {
             fetch('/api/connections')
             .then(response => response.json())
             .then(connections => {
-                // 存储连接数据到全局变量
+                // Lưu trữ dữ liệu kết nối đến các biến toàn cầu
                 globalConnections = connections;
                 
                 const connectionSelector = document.getElementById('connectionSelector');
-                connectionSelector.innerHTML = '<option value="">选择连接器</option>';
+                connectionSelector.innerHTML = '<option value="">Chọn máy chủ</option>';
                 
                 if (connections && connections.length > 0) {
                     connections.forEach(conn => {
@@ -1162,18 +1162,18 @@
                 }
             })
             .catch(error => {
-                console.error('加载连接失败:', error);
-                showAlert('加载连接列表失败', 'danger');
+                console.error('Tải kết nối không thành công:', error);
+                showAlert('Không tải danh sách kết nối', 'danger');
             });
         }
         
-        // 辅助函数：加载编辑模式的连接
+        // Chức năng trợ giúp：Tải kết nối chế độ chỉnh sửa
         function loadConnectionsForEdit(task) {
             fetch('/api/connections')
             .then(response => response.json())
             .then(connections => {
                 const editConnectionSelector = document.getElementById('editConnectionSelector');
-                editConnectionSelector.innerHTML = '<option value="">选择连接器</option>';
+                editConnectionSelector.innerHTML = '<option value="">Chọn máy chủ</option>';
                 
                 if (connections && connections.length > 0) {
                     connections.forEach(conn => {
@@ -1183,21 +1183,21 @@
                         editConnectionSelector.appendChild(option);
                     });
                     
-                    // 使用任务中的连接ID填充编辑表单
-                    // 通常，任务中都应该有这个连接器ID
+                    // Sử dụng kết nối trong tác vụIDĐiền vào mẫu chỉnh sửa
+                    // nói chung là，Đầu nối này nên có sẵn trong các tác vụ ID
                     const connId = task.connection_id || task.conn_id;
                     
-                    // 打印任务数据，帮助调试
-                    console.log('任务数据:', task);
+                    // In dữ liệu tác vụ，Giúp gỡ lỗi
+                    console.log('Dữ liệu tác vụ:', task);
                     
                     if (connId) {
-                        // 设置选中的连接器
+                        // Thiết lập đầu nối đã chọn
                         editConnectionSelector.value = connId;
-                        // 加载连接器的存储列表
+                        // Tải danh sách lưu trữ của các đầu nối
                         loadStoragesForEdit(connId, task);
                     } else {
-                        console.warn('任务数据中没有找到connection_id字段');
-                        // 尝试从第一个连接加载存储列表
+                        console.warn('Không tìm thấy trong dữ liệu tác vụconnection_idCánh đồng');
+                        // Cố gắng tải danh sách lưu trữ từ kết nối đầu tiên
                         if (connections.length > 0) {
                             const firstConnId = connections[0].connection_id;
                             editConnectionSelector.value = firstConnId;
@@ -1207,16 +1207,16 @@
                 }
             })
             .catch(error => {
-                console.error('加载连接失败:', error);
-                showAlert('加载连接列表失败', 'danger');
+                console.error('Tải kết nối không thành công:', error);
+                showAlert('Không tải danh sách kết nối', 'danger');
             });
         }
         
-        // 辅助函数：加载存储列表
+        // Chức năng trợ giúp：Tải danh sách lưu trữ
         function loadStorages(connId) {
-            // 显示加载中状态
-            document.getElementById('sourceConnection').innerHTML = '<option value="">加载中...</option>';
-            document.getElementById('targetConnections').innerHTML = '<option value="">加载中...</option>';
+            // Hiển thị trạng thái tải
+            document.getElementById('sourceConnection').innerHTML = '<option value="">đang tải...</option>';
+            document.getElementById('targetConnections').innerHTML = '<option value="">đang tải...</option>';
             
             fetch(`/api/storages?conn_id=${connId}`)
             .then(response => response.json())
@@ -1224,44 +1224,44 @@
                 const sourceConnection = document.getElementById('sourceConnection');
                 const targetConnections = document.getElementById('targetConnections');
                 
-                // 重置选择器
-                sourceConnection.innerHTML = '<option value="">选择源连接</option>';
+                // Đặt lại bộ chọn
+                sourceConnection.innerHTML = '<option value="">Chọn Kết nối nguồn</option>';
                 targetConnections.innerHTML = '';
                 
                 if (data.status === 'success' && data.data && data.data.length > 0) {
-                    // 填充存储列表
+                    // Điền vào danh sách lưu trữ
                     data.data.forEach(storage => {
-                        // 添加到源连接
+                        // Thêm vào kết nối nguồn
                         const sourceOption = document.createElement('option');
                         sourceOption.value = storage.id || storage.name;
                         sourceOption.textContent = storage.name;
                         sourceConnection.appendChild(sourceOption);
                         
-                        // 添加到目标连接
+                        // Thêm vào kết nối đích
                         const targetOption = document.createElement('option');
                         targetOption.value = storage.id || storage.name;
                         targetOption.textContent = storage.name;
                         targetConnections.appendChild(targetOption);
                     });
                 } else {
-                    showAlert('获取存储列表失败或存储列表为空', 'warning');
+                    showAlert('Không nhận được danh sách lưu trữ hoặc danh sách lưu trữ trống', 'warning');
                 }
             })
             .catch(error => {
-                console.error('加载存储列表失败:', error);
-                showAlert('加载存储列表失败: ' + error.message, 'danger');
+                console.error('Không tải được danh sách lưu trữ:', error);
+                showAlert('Không tải được danh sách lưu trữ: ' + error.message, 'danger');
                 
-                // 重置选择器
-                document.getElementById('sourceConnection').innerHTML = '<option value="">选择源连接</option>';
+                // Đặt lại bộ chọn
+                document.getElementById('sourceConnection').innerHTML = '<option value="">Chọn Kết nối nguồn</option>';
                 document.getElementById('targetConnections').innerHTML = '';
             });
         }
         
-        // 辅助函数：加载编辑模式的存储列表
+        // Chức năng trợ giúp：Tải danh sách lưu trữ của chế độ chỉnh sửa
         function loadStoragesForEdit(connId, task = null) {
-            // 显示加载中状态
-            document.getElementById('editSourceConnection').innerHTML = '<option value="">加载中...</option>';
-            document.getElementById('editTargetConnections').innerHTML = '<option value="">加载中...</option>';
+            // Hiển thị trạng thái tải
+            document.getElementById('editSourceConnection').innerHTML = '<option value="">đang tải...</option>';
+            document.getElementById('editTargetConnections').innerHTML = '<option value="">đang tải...</option>';
             
             fetch(`/api/storages?conn_id=${connId}`)
             .then(response => response.json())
@@ -1269,87 +1269,87 @@
                 const editSourceConnection = document.getElementById('editSourceConnection');
                 const editTargetConnections = document.getElementById('editTargetConnections');
                 
-                // 重置选择器
-                editSourceConnection.innerHTML = '<option value="">选择源连接</option>';
+                // Đặt lại bộ chọn
+                editSourceConnection.innerHTML = '<option value="">Chọn Kết nối nguồn</option>';
                 editTargetConnections.innerHTML = '';
                 
                 if (data.status === 'success' && data.data && data.data.length > 0) {
-                    // 填充存储列表
+                    // Điền vào danh sách lưu trữ
                     data.data.forEach(storage => {
-                        // 添加到源连接
+                        // Thêm vào kết nối nguồn
                         const sourceOption = document.createElement('option');
                         sourceOption.value = storage.id || storage.name;
                         sourceOption.textContent = storage.name;
                         editSourceConnection.appendChild(sourceOption);
                         
-                        // 添加到目标连接
+                        // Thêm vào kết nối đích
                         const targetOption = document.createElement('option');
                         targetOption.value = storage.id || storage.name;
                         targetOption.textContent = storage.name;
                         editTargetConnections.appendChild(targetOption);
                     });
                     
-                    // 如果有任务数据，设置选中的值
+                    // Nếu có dữ liệu tác vụ，Đặt giá trị đã chọn
                     if (task) {
-                        console.log('正在填充源连接和目标连接:', task);
+                        console.log('Các kết nối nguồn và mục tiêu là nguồn:', task);
                         
-                        // 设置源连接
+                        // Thiết lập kết nối nguồn
                         if (task.source_connection_id) {
-                            console.log('设置源连接:', task.source_connection_id);
+                            console.log('Thiết lập kết nối nguồn:', task.source_connection_id);
                             editSourceConnection.value = task.source_connection_id;
                         }
                         
-                        // 设置目标连接（多选）
+                        // Thiết lập kết nối mục tiêu（Nhiều lựa chọn）
                         if (task.target_connection_ids && Array.isArray(task.target_connection_ids)) {
-                            console.log('设置目标连接:', task.target_connection_ids);
-                            // 由于是select multiple，需要逐个设置option的selected属性
+                            console.log('Thiết lập kết nối mục tiêu:', task.target_connection_ids);
+                            // Bởi vì nó làselect multiple，Cần được đặt từng cái mộtoptioncủaselectedtài sản
                             Array.from(editTargetConnections.options).forEach(option => {
                                 option.selected = task.target_connection_ids.includes(option.value);
                             });
                         }
                     }
                 } else {
-                    console.error('获取存储列表失败或为空:', data);
-                    showAlert('获取存储列表失败或存储列表为空', 'warning');
+                    console.error('Không nhận được danh sách lưu trữ hoặc trống:', data);
+                    showAlert('Không nhận được danh sách lưu trữ hoặc danh sách lưu trữ trống', 'warning');
                 }
             })
             .catch(error => {
-                console.error('加载存储列表失败:', error);
-                showAlert('加载存储列表失败: ' + error.message, 'danger');
+                console.error('Không tải được danh sách lưu trữ:', error);
+                showAlert('Không tải được danh sách lưu trữ: ' + error.message, 'danger');
                 
-                // 重置选择器
-                document.getElementById('editSourceConnection').innerHTML = '<option value="">选择源连接</option>';
+                // Đặt lại bộ chọn
+                document.getElementById('editSourceConnection').innerHTML = '<option value="">Chọn Kết nối nguồn</option>';
                 document.getElementById('editTargetConnections').innerHTML = '';
             });
         }
         
-        // 辅助函数：加载任务实例列表
+        // Chức năng trợ giúp：Đang tải danh sách thể hiện tác vụ
         function loadTaskInstances(taskId) {
             const instancesTable = document.getElementById('instances-table');
-            instancesTable.innerHTML = '<tr><td colspan="5" class="text-center">加载中...</td></tr>';
+            instancesTable.innerHTML = '<tr><td colspan="5" class="text-center">đang tải...</td></tr>';
             
             fetch(`/api/task-instances?task_id=${taskId}`)
             .then(response => response.json())
             .then(instances => {
                 if (instances && instances.length > 0) {
-                    // 清空表格
+                    // Xóa hình thức
                     instancesTable.innerHTML = '';
                     
-                    // 填充实例数据
+                    // Dữ liệu thể hiện
                     instances.forEach(instance => {
                         const row = document.createElement('tr');
                         
-                        // 添加实例信息
+                        // Thêm thông tin thể hiện
                         row.innerHTML = `
                             <td>${instance.task_instances_id}</td>
                             <td>${instance.start_time_formatted}</td>
-                            <td>${instance.end_time_formatted || '进行中'}</td>
+                            <td>${instance.end_time_formatted || 'Trong tiến trình'}</td>
                             <td>
                                 ${getStatusBadge(instance.status)}
                             </td>
                             <td>
                                 <button class="btn btn-sm btn-info view-log" data-instance-id="${instance.task_instances_id}" data-task-name="${instance.task_name}">
-                                    <i class="bi bi-file-text"></i> 查看日志
+                                    <i class="bi bi-file-text"></i> Xem nhật ký
                                 </button>
                             </td>
                         `;
@@ -1357,45 +1357,45 @@
                         instancesTable.appendChild(row);
                     });
                     
-                    // 添加查看日志事件
+                    // Thêm một sự kiện ghi xem Chế độ xem
                     document.querySelectorAll('.view-log').forEach(button => {
                         button.addEventListener('click', function() {
                             const instanceId = this.getAttribute('data-instance-id');
                             const taskName = this.getAttribute('data-task-name');
                             
-                            // 显示任务名称
-                            document.getElementById('logTaskName').textContent = `任务: ${taskName} (实例 ID: ${instanceId})`;
+                            // Hiển thị tên tác vụ
+                            document.getElementById('logTaskName').textContent = `tác vụ: ${taskName} (Task ID: ${instanceId})`;
                             
-                            // 设置刷新按钮的实例ID
+                            // Đặt một phiên bản của nút làm mớiID
                             document.getElementById('refreshLogBtn').setAttribute('data-instance-id', instanceId);
                             
-                            // 加载任务日志
+                            // Tải nhật ký tác vụ
                             loadTaskLog(instanceId);
                             
-                            // 显示日志模态框
+                            // Hiển thị hộp Modal nhật ký
                             new bootstrap.Modal(document.getElementById('taskLogModal')).show();
                         });
                     });
                 } else {
-                    instancesTable.innerHTML = '<tr><td colspan="5" class="text-center">暂无任务实例记录</td></tr>';
+                    instancesTable.innerHTML = '<tr><td colspan="5" class="text-center">Chưa có bản ghi phiên bản nào</td></tr>';
                 }
             })
             .catch(error => {
-                console.error('加载任务实例失败:', error);
-                instancesTable.innerHTML = '<tr><td colspan="5" class="text-center text-danger">加载失败: ' + error.message + '</td></tr>';
+                console.error('Không tải được thể hiện tác vụ:', error);
+                instancesTable.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Tải không thành công: ' + error.message + '</td></tr>';
             });
         }
         
-        // 辅助函数：加载任务日志
+        // Chức năng trợ giúp：Tải nhật ký tác vụ
         function loadTaskLog(instanceId) {
             const logContent = document.getElementById('logContent');
             const logContentPre = document.getElementById('task-log-content');
             
-            // 显示加载中状态 - 根据DOM结构选择正确的元素
+            // Hiển thị trạng thái tải - TheoDOMChọn đúng phần tử trong cấu trúc
             if (logContentPre) {
-                logContentPre.textContent = '加载中...';
+                logContentPre.textContent = 'đang tải...';
             } else {
-                logContent.textContent = '加载中...';
+                logContent.textContent = 'đang tải...';
             }
             
             fetch(`/api/task-instances/${instanceId}/logs`)
@@ -1409,7 +1409,7 @@
                         logContent.textContent = logText;
                     }
                 } else {
-                    const emptyText = '没有找到日志记录';
+                    const emptyText = 'Không tìm thấy ghi nhật ký';
                     if (logContentPre) {
                         logContentPre.textContent = emptyText;
                     } else {
@@ -1418,8 +1418,8 @@
                 }
             })
             .catch(error => {
-                console.error('加载任务日志失败:', error);
-                const errorText = '加载日志失败: ' + error.message;
+                console.error('Không tải được nhật ký tác vụ:', error);
+                const errorText = 'Không tải được nhật ký: ' + error.message;
                 if (logContentPre) {
                     logContentPre.textContent = errorText;
                 } else {
@@ -1428,21 +1428,21 @@
             });
         }
         
-        // 辅助函数：获取状态徽章HTML
+        // Chức năng trợ giúp：Nhận huy hiệu trạng tháiHTML
         function getStatusBadge(status) {
             switch (status) {
                 case 'running':
-                    return '<span class="badge bg-primary">运行中</span>';
+                    return '<span class="badge bg-primary">Đang chạy</span>';
                 case 'completed':
-                    return '<span class="badge bg-success">已完成</span>';
+                    return '<span class="badge bg-success">Hoàn thành</span>';
                 case 'failed':
-                    return '<span class="badge bg-danger">失败</span>';
+                    return '<span class="badge bg-danger">thất bại</span>';
                 default:
-                    return '<span class="badge bg-secondary">未知</span>';
+                    return '<span class="badge bg-secondary">không xác định</span>';
             }
         }
         
-        // 辅助函数：显示添加任务模态框中的消息
+        // Chức năng trợ giúp：Hiển thị thông báo trong hộp Chế độ tác vụ Thêm
         function showAddTaskMessage(message, type = 'warning') {
             const messageDiv = document.createElement('div');
             messageDiv.className = `alert alert-${type} alert-dismissible fade show`;
@@ -1451,17 +1451,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             `;
             
-            // 获取添加模态框的消息容器
+            // Nhận thùng chứa thông báo để thêm hộp phương thức
             const messageContainer = document.getElementById('addTaskModalMessages') || document.querySelector('#addTaskModal .modal-body');
             
-            // 清除已有消息
+            // Xóa các tin nhắn hiện có
             const existingMessages = messageContainer.querySelectorAll('.alert');
             existingMessages.forEach(msg => msg.remove());
             
-            // 添加新消息到容器的顶部
+            // Thêm thông báo mới vào đầu của container
             messageContainer.insertBefore(messageDiv, messageContainer.firstChild);
             
-            // 3秒后自动消失
+            // 3Nó tự động biến mất trong vài giây
             setTimeout(() => {
                 messageDiv.classList.remove('show');
                 setTimeout(() => {
@@ -1472,7 +1472,7 @@
             }, 3000);
         }
         
-        // 辅助函数：显示编辑模态框中的消息
+        // Chức năng trợ giúp：Hiển thị thông báo trong hộp chỉnh sửa phương thức
         function showEditMessage(message, type = 'warning') {
             const messageDiv = document.createElement('div');
             messageDiv.className = `alert alert-${type} alert-dismissible fade show`;
@@ -1481,17 +1481,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             `;
             
-            // 获取编辑模态框的消息容器
+            // Nhận hộp chứa tin nhắn để chỉnh sửa hộp phương thức
             const messageContainer = document.getElementById('editTaskModalMessages') || document.querySelector('#editTaskModal .modal-body');
             
-            // 清除已有消息
+            // Xóa các tin nhắn hiện có
             const existingMessages = messageContainer.querySelectorAll('.alert');
             existingMessages.forEach(msg => msg.remove());
             
-            // 添加新消息到容器的顶部
+            // Thêm thông báo mới vào đầu của container
             messageContainer.insertBefore(messageDiv, messageContainer.firstChild);
             
-            // 3秒后自动消失
+            // 3Nó tự động biến mất trong vài giây
             setTimeout(() => {
                 messageDiv.classList.remove('show');
                 setTimeout(() => {
@@ -1502,14 +1502,14 @@
             }, 3000);
         }
 
-        // 辅助函数：显示全局消息提示
+        // Chức năng trợ giúp：Hiển thị lời nhắc tin nhắn toàn cầu
         function showAlert(message, type = 'info') {
-            // 创建警告容器
+            // Tạo một container cảnh báo
             const alertContainer = document.createElement('div');
             alertContainer.className = 'position-fixed top-0 end-0 p-3';
             alertContainer.style.zIndex = '9999';
             
-            // 创建警告元素
+            // Tạo các yếu tố cảnh báo
             const alertEl = document.createElement('div');
             alertEl.className = `alert alert-${type} alert-dismissible fade show`;
             alertEl.innerHTML = `
@@ -1517,11 +1517,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             `;
             
-            // 添加到容器和页面
+            // Thêm vào các container và trang
             alertContainer.appendChild(alertEl);
             document.body.appendChild(alertContainer);
             
-            // 3秒后自动关闭
+            // 3Tự động đóng trong vài giây
             setTimeout(() => {
                 alertEl.classList.remove('show');
                 setTimeout(() => {
@@ -1532,7 +1532,7 @@
             }, 3000);
         }
         
-        // 辅助函数：加载任务列表
+        // Chức năng trợ giúp：Đang tải danh sách tác vụ
         function loadTasks() {
             fetch('/api/tasks')
             .then(response => response.json())
@@ -1540,34 +1540,34 @@
                 const tasksTable = document.getElementById('tasks-table');
                 
                 if (tasks && tasks.length > 0) {
-                    // 清空表格并重新填充
+                    // Xóa biểu mẫu và đổ đầy nó
                     tasksTable.innerHTML = '';
                     
-                    // 使用模板填充任务列表
+                    // Tập hợp danh sách tác vụ với các mẫu
                     tasks.forEach(task => {
-                        // 主行
+                        // Dòng chính
                         const taskRow = document.createElement('tr');
                         taskRow.className = 'task-row';
                         taskRow.setAttribute('data-task-id', task.id);
                         
-                        // 设置行内容
+                        // Đặt nội dung dòng
                         taskRow.innerHTML = `
                             <td>${task.id}</td>
                             <td>${task.name}</td>
                             <td>${task.source_connection_name || ''}</td>
                             <td>${task.target_connection_names || ''}</td>
                             <td>
-                                ${task.sync_type === 'file_sync' ? '<span class="badge bg-info">文件同步</span>' : ''}
-                                ${task.sync_type === 'file_move' ? '<span class="badge bg-primary">文件移动</span>' : ''}
+                                ${task.sync_type === 'file_sync' ? '<span class="badge bg-info">Tệp đồng bộ hóa</span>' : ''}
+                                ${task.sync_type === 'file_move' ? '<span class="badge bg-primary">Di chuyển tập tin</span>' : ''}
                             </td>
                             <td>${task.created_at || ''}</td>
-                            <td>${task.last_run || '从未'}</td>
-                            <td>${task.next_run || '未计划'}</td>
+                            <td>${task.last_run || 'Không bao giờ'}</td>
+                            <td>${task.next_run || 'Không có kế hoạch'}</td>
                             <td>
-                                ${task.status === 'running' ? '<span class="badge bg-primary">运行中</span>' : ''}
-                                ${task.status === 'completed' ? '<span class="badge bg-success">已完成</span>' : ''}
-                                ${task.status === 'failed' ? '<span class="badge bg-danger">失败</span>' : ''}
-                                ${task.status === 'pending' ? '<span class="badge bg-secondary">等待中</span>' : ''}
+                                ${task.status === 'running' ? '<span class="badge bg-primary">Đang chạy</span>' : ''}
+                                ${task.status === 'completed' ? '<span class="badge bg-success">Hoàn thành</span>' : ''}
+                                ${task.status === 'failed' ? '<span class="badge bg-danger">thất bại</span>' : ''}
+                                ${task.status === 'pending' ? '<span class="badge bg-secondary">Chờ</span>' : ''}
                             </td>
                             <td>
                                 <div class="btn-group">
@@ -1587,55 +1587,55 @@
                             </td>
                         `;
                         
-                        // 详情行
+                        // Chi tiết
                         const detailRow = document.createElement('tr');
                         detailRow.className = 'task-detail-row';
                         detailRow.id = `task-detail-${task.id}`;
                         detailRow.style.display = 'none';
                         
-                        // 差异项处理策略文本
-                        let diffActionText = '不处理';
-                        if (task.sync_diff_action === 'move') diffActionText = '移至回收站';
-                        if (task.sync_diff_action === 'delete') diffActionText = '删除';
+                        // Văn bản chiến lược xử lý mục khác biệt
+                        let diffActionText = 'Không được xử lý';
+                        if (task.sync_diff_action === 'move') diffActionText = 'Di chuyển đến trạm tái chế';
+                        if (task.sync_diff_action === 'delete') diffActionText = 'xóa bỏ';
                         
-                        // 设置详情行内容
+                        // Đặt nội dung dòng chi tiết
                         detailRow.innerHTML = `
                             <td colspan="10">
                                 <div class="card tech-card mb-0">
                                     <div class="card-body">
-                                        <h5 class="card-title">任务详情</h5>
+                                        <h5 class="card-title">Chi tiết tác vụ</h5>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="mb-2">
-                                                    <strong>源路径:</strong> ${task.source_path || '/'}
+                                                    <strong>Đường dẫn nguồn:</strong> ${task.source_path || '/'}
                                                 </div>
                                                 <div class="mb-2">
-                                                    <strong>目标路径:</strong> ${task.target_path || '/'}
+                                                    <strong>Đường dẫn mục tiêu:</strong> ${task.target_path || '/'}
                                                 </div>
                                                 <div class="mb-2">
-                                                    <strong>同步模式:</strong> 
-                                                    ${task.sync_type === 'file_sync' ? '文件同步' : ''}
-                                                    ${task.sync_type === 'file_move' ? '文件移动' : ''}
+                                                    <strong>Chế độ đồng bộ:</strong> 
+                                                    ${task.sync_type === 'file_sync' ? 'Tệp đồng bộ hóa' : ''}
+                                                    ${task.sync_type === 'file_move' ? 'Di chuyển tập tin' : ''}
                                                 </div>
                                                 <div class="mb-2">
-                                                    <strong>差异项处理:</strong> ${diffActionText}
+                                                    <strong>Chính sách xử lý khác biệt:</strong> ${diffActionText}
                                                 </div>
                                                 <div class="mb-2">
-                                                    <strong>排除目录:</strong> ${task.exclude_dirs || '无'}
+                                                    <strong>Loại trừ thư mục:</strong> ${task.exclude_dirs || 'không có'}
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-2">
-                                                    <strong>计划:</strong> ${task.schedule || '手动执行'}
+                                                    <strong>kế hoạch:</strong> ${task.schedule || 'Thực thi thủ công'}
                                                 </div>
                                                 <div class="mb-2">
-                                                    <strong>文件过滤:</strong> ${task.file_filter || '无'}
+                                                    <strong>Lọc tệp:</strong> ${task.file_filter || 'không có'}
                                                 </div>
                                                 <div class="mb-2">
-                                                    <strong>启用状态:</strong> ${task.enabled !== false ? '启用' : '禁用'}
+                                                    <strong>Đã bật:</strong> ${task.enabled !== false ? 'Cho phép' : 'Tàn tật'}
                                                 </div>
                                                 <div class="mb-2">
-                                                    <strong>目标存储数量:</strong> 
+                                                    <strong>Số lượng lưu trữ mục tiêu:</strong> 
                                                     ${Array.isArray(task.target_connection_ids) ? task.target_connection_ids.length : 1}
                                                 </div>
                                             </div>
@@ -1645,64 +1645,64 @@
                             </td>
                         `;
                         
-                        // 添加到表格
+                        // Thêm vào bảng
                         tasksTable.appendChild(taskRow);
                         tasksTable.appendChild(detailRow);
                     });
                     
-                    // 为任务行和按钮添加事件
+                    // Thêm sự kiện cho các dòng và nút tác vụ
                     attachTaskButtonEvents();
-                    console.log('在loadTasks中绑定任务行点击事件');
+                    console.log('hiện hữuloadTasksNhấp vào sự kiện trong dòng tác vụ liên kết');
                     
-                    // 再次确保任务行绑定了点击事件
+                    // Đảm bảo dòng tác vụ bị ràng buộc với sự kiện nhấp chuột
                     const taskRows = document.querySelectorAll('.task-row');
                     taskRows.forEach(row => {
-                        // 移除旧事件，防止重复
+                        // Loại bỏ các sự kiện cũ，Ngăn chặn trùng lặp
                         row.removeEventListener('click', taskRowClickHandler);
-                        // 添加新事件
+                        // Thêm một sự kiện mới
                         row.addEventListener('click', taskRowClickHandler);
-                        console.log('在loadTasks中为任务行绑定点击事件:', row.getAttribute('data-task-id'));
+                        console.log('hiện hữuloadTasksBINDING BLOP SỰ KIỆN CHO LINE TASK:', row.getAttribute('data-task-id'));
                     });
                 } else {
-                    tasksTable.innerHTML = '<tr><td colspan="10" class="text-center">暂无任务</td></tr>';
+                    tasksTable.innerHTML = '<tr><td colspan="10" class="text-center">Chưa có tác vụ</td></tr>';
                 }
             })
             .catch(error => {
-                console.error('加载任务列表失败:', error);
+                console.error('Không tải được danh sách tác vụ:', error);
                 document.getElementById('tasks-table').innerHTML = 
-                    '<tr><td colspan="10" class="text-center text-danger">加载任务列表失败</td></tr>';
+                    '<tr><td colspan="10" class="text-center text-danger">Không tải được danh sách tác vụ</td></tr>';
             });
         }
         
-        // 为新加载的任务按钮绑定事件
+        // Liên kết các sự kiện cho các nút tác vụ mới được tải
         function attachTaskButtonEvents() {
-            // 编辑任务按钮
+            // Chỉnh sửa nút tác vụ
             document.querySelectorAll('.edit-task').forEach(button => {
                 button.addEventListener('click', function() {
                     const taskId = this.getAttribute('data-task-id');
                     
-                    // 显示加载状态
+                    // Hiển thị trạng thái tải
                     this.disabled = true;
                     const originalHTML = this.innerHTML;
                     this.innerHTML = '<i class="bi bi-hourglass-split"></i>';
                     
-                    // 通过API获取任务信息
+                    // vượt quaAPINhận thông tin tác vụ
                     fetch(`/api/tasks/${taskId}`)
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('获取任务信息失败');
+                            throw new Error('Không lấy được thông tin tác vụ');
                         }
                         return response.json();
                     })
                     .then(task => {
-                        // 调试输出任务数据
-                        console.log('获取到的任务数据:', task);
+                        // Dữ liệu tác vụ đầu ra gỡ lỗi
+                        console.log('Thu được dữ liệu tác vụ:', task);
                         
-                        // 填充表单
+                        // Điền vào biểu mẫu
                         document.getElementById('editTaskId').value = task.id;
                         document.getElementById('editTaskName').value = task.name;
                         
-                        // 设置源路径和目标路径
+                        // Đặt đường dẫn nguồn và đường dẫn đích
                         document.getElementById('editSourcePath').value = task.source_path || '/';
                         document.getElementById('editTargetPath').value = task.target_path || '/';
                         document.getElementById('editSyncType').value = task.sync_type || 'file_sync';
@@ -1710,43 +1710,43 @@
                         document.getElementById('editSchedule').value = task.schedule || '';
                         document.getElementById('editFileFilter').value = task.file_filter || '';
                         
-                        // 最小/最大文件大小
+                        // Tối thiểu/Kích thước tệp tối đa
                         document.getElementById('editSizeMin').value = task.size_min != null ? task.size_min : '';
                         document.getElementById('editSizeMax').value = task.size_max != null ? task.size_max : '';
                         document.getElementById('editExcludeDirs').value = task.exclude_dirs || '';
                         document.getElementById('editTaskEnabled').checked = task.enabled !== false;
                         
-                        // 先加载所有连接，然后选择任务使用的连接并加载存储列表
+                        // Tải tất cả các kết nối đầu tiên，Sau đó chọn kết nối được sử dụng bởi tác vụ và tải Danh sách lưu trữ
                         loadConnectionsForEdit(task);
                         
-                        // 显示编辑模态框
+                        // Hiển thị hộp Modal EDIT
                         new bootstrap.Modal(document.getElementById('editTaskModal')).show();
                     })
                     .catch(error => {
-                        console.error('获取任务信息失败:', error);
-                        showAlert('获取任务信息失败: ' + error.message, 'danger');
+                        console.error('Không lấy được thông tin tác vụ:', error);
+                        showAlert('Không lấy được thông tin tác vụ: ' + error.message, 'danger');
                     })
                     .finally(() => {
-                        // 恢复按钮状态
+                        // Khôi phục trạng thái nút
                         this.disabled = false;
                         this.innerHTML = originalHTML;
                     });
                 });
             });
             
-            // 删除按钮事件
+            // Xóa sự kiện nút
             document.querySelectorAll('.delete-task').forEach(button => {
                 button.addEventListener('click', function() {
                     const taskId = this.getAttribute('data-task-id');
                     document.getElementById('deleteTaskId').value = taskId;
                     
-                    // 重新绑定确认删除按钮的事件处理函数
+                    // Chức năng xử lý sự kiện phục hồi của nút Xóa xác nhận
                     const confirmBtn = document.getElementById('confirmDeleteBtn');
-                    // 移除之前可能存在的事件监听器
+                    // Loại bỏ một trình nghe sự kiện có thể đã tồn tại trước đó
                     const newConfirmBtn = confirmBtn.cloneNode(true);
                     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
                     
-                    // 为新按钮添加事件监听器
+                    // Thêm trình nghe sự kiện cho các nút mới
                     newConfirmBtn.addEventListener('click', function() {
                         deleteTask(taskId, this);
                     });
@@ -1755,17 +1755,17 @@
                 });
             });
             
-            // 运行任务按钮
+            // Chạy nút tác vụ
             document.querySelectorAll('.run-task').forEach(button => {
                 button.addEventListener('click', function() {
                     const taskId = this.getAttribute('data-task-id');
                     
-                    // 显示加载状态
+                    // Hiển thị trạng thái tải
                     const originalHTML = this.innerHTML;
                     this.innerHTML = '<i class="bi bi-hourglass-split"></i>';
                     this.disabled = true;
                     
-                    // 发送AJAX请求运行任务
+                    // gửiAJAXYêu cầu chạy một tác vụ
                     fetch(`/api/tasks/${taskId}/run`, {
                         method: 'POST',
                         headers: {
@@ -1774,37 +1774,37 @@
                     })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('网络响应错误');
+                            throw new Error('Lỗi phản hồi mạng');
                         }
                         return response.json();
                     })
                     .then(data => {
                         if (data.status === 'success') {
-                            // 显示任务运行结果
+                            // Hiển thị kết quả chạy tác vụ
                             if (data.instance_id) {
-                                // 如果返回了实例ID，提示查看日志
-                                const result = confirm(`任务 ${taskId} 已开始运行，是否查看执行日志？`);
+                                // Nếu thể hiện được trả lạiID，Nhắc xem nhật ký
+                                const result = confirm(`tác vụ ${taskId} Bắt đầu chạy，Có xem nhật ký thực thi hay không？`);
                                 if (result) {
-                                    // 显示任务名称
+                                    // Hiển thị tên tác vụ
                                     const taskName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
-                                    document.getElementById('logTaskName').textContent = `任务: ${taskName} (实例 ID: ${data.instance_id})`;
+                                    document.getElementById('logTaskName').textContent = `tác vụ: ${taskName} (Task ID: ${data.instance_id})`;
                                     
-                                    // 设置刷新按钮的实例ID
+                                    // Đặt một phiên bản của nút làm mớiID
                                     document.getElementById('refreshLogBtn').setAttribute('data-instance-id', data.instance_id);
                                     
-                                    // 加载任务日志
+                                    // Tải nhật ký tác vụ
                                     loadTaskLog(data.instance_id);
                                     
-                                    // 显示日志模态框
+                                    // Hiển thị hộp Modal nhật ký
                                     new bootstrap.Modal(document.getElementById('taskLogModal')).show();
                                 }
                             } else {
-                                showAlert(`任务 ${taskId} 已开始运行`, 'success');
+                                showAlert(`tác vụ ${taskId} Bắt đầu chạy`, 'success');
                             }
-                            // 刷新任务列表而不是整个页面
+                            // Làm mới danh sách tác vụ thay vì toàn bộ trang
                             loadTasks();
                             
-                            // 重新加载调度器以更新任务计划
+                            // Tải lại Lập lịch để cập nhật lịch trình tác vụ
                             setTimeout(() => {
                                 fetch('/api/scheduler/reload', {
                                     method: 'POST',
@@ -1814,133 +1814,133 @@
                                 })
                                 .then(response => response.json())
                                 .then(result => {
-                                    console.log('调度器已重载:', result);
-                                    // 在调度器重载后再次刷新，确保下次运行时间更新
+                                    console.log('Bộ lập lịch đã được tải lại:', result);
+                                    // Làm mới lại sau khi tải lại bộ lập lịch，Đảm bảo thời gian chạy tiếp theo được cập nhật
                                     setTimeout(() => {
                                         loadTasks();
                                     }, 1000);
                                 })
                                 .catch(err => {
-                                    console.error('调度器重载失败:', err);
+                                    console.error('Bộ lập lịch tải lại không thành công:', err);
                                 });
                             }, 500);
                         } else {
-                            throw new Error(data.message || '运行失败');
+                            throw new Error(data.message || 'Chạy không thành công');
                         }
                     })
                     .catch(error => {
-                        console.error('运行任务失败:', error);
-                        showAlert('运行任务失败: ' + error.message, 'danger');
+                        console.error('Không chạy tác vụ:', error);
+                        showAlert('Không chạy tác vụ: ' + error.message, 'danger');
                     })
                     .finally(() => {
-                        // 恢复按钮状态
+                        // Khôi phục trạng thái nút
                         this.innerHTML = originalHTML;
                         this.disabled = false;
                     });
                 });
             });
             
-            // 查看任务实例按钮
+            // Xem nút thể hiện tác vụ
             document.querySelectorAll('.view-instances').forEach(button => {
                 button.addEventListener('click', function() {
                     const taskId = this.getAttribute('data-task-id');
                     const taskName = this.getAttribute('data-task-name');
                     
-                    // 显示任务名称
-                    document.getElementById('instancesTaskName').textContent = `任务: ${taskName} (ID: ${taskId})`;
+                    // Hiển thị tên tác vụ
+                    document.getElementById('instancesTaskName').textContent = `tác vụ: ${taskName} (ID: ${taskId})`;
                     
-                    // 加载任务实例列表
+                    // Đang tải danh sách thể hiện tác vụ
                     loadTaskInstances(taskId);
                     
-                    // 显示模态框
+                    // Hiển thị hộp phương thức
                     new bootstrap.Modal(document.getElementById('taskInstancesModal')).show();
                 });
             });
             
-            // 为任务行绑定点击事件
-            console.log('在attachTaskButtonEvents中为任务行绑定点击事件');
+            // Binding Click Events cho các hàng tác vụ
+            console.log('hiện hữuattachTaskButtonEventsBINDING BLOP SỰ KIỆN CHO LINE TASK');
             const taskRows = document.querySelectorAll('.task-row');
             taskRows.forEach(row => {
-                // 移除旧事件，防止重复
+                // Loại bỏ các sự kiện cũ，Ngăn chặn trùng lặp
                 row.removeEventListener('click', taskRowClickHandler);
-                // 添加新事件
+                // Thêm một sự kiện mới
                 row.addEventListener('click', taskRowClickHandler);
-                console.log('已为任务行绑定点击事件:', row.getAttribute('data-task-id'));
+                console.log('Nhấp vào sự kiện bị ràng buộc với dòng tác vụ:', row.getAttribute('data-task-id'));
             });
         }
         
-        // 为任务行添加点击展开/收起功能
+        // Thêm nhấp vào dòng tác vụ để mở rộng/Chức năng sụp đổ
         function attachTaskRowEvents() {
-            console.log('开始绑定任务行点击事件...');
-            // 获取所有任务行
+            console.log('Bắt đầu BINDING Dòng tác vụ Nhấp vào sự kiện...');
+            // Nhận tất cả các dòng tác vụ
             const taskRows = document.querySelectorAll('.task-row');
-            console.log(`找到 ${taskRows.length} 个任务行`);
+            console.log(`xuất hiện ${taskRows.length} Một tác vụ`);
             
-            // 为所有任务行添加点击事件
+            // Thêm nhấp chuột vào sự kiện cho tất cả các dòng tác vụ
             taskRows.forEach(row => {
                 row.addEventListener('click', function(event) {
-                    console.log('任务行被点击:', this.getAttribute('data-task-id'));
-                    // 如果点击的是按钮，不处理展开/收起
+                    console.log('Dòng tác vụ được nhấp vào:', this.getAttribute('data-task-id'));
+                    // Nếu nút được nhấp vào，Chưa được xử lý để mở rộng/Đóng
                     if (event.target.tagName === 'BUTTON' || 
                         event.target.closest('button') || 
                         event.target.tagName === 'I' ||
                         event.target.closest('.btn-group')) {
-                        console.log('点击了按钮区域，忽略展开/收起');
+                        console.log('Nhấp vào khu vực nút，Bỏ qua mở rộng/Đóng');
                         return;
                     }
                     
-                    // 获取任务ID
+                    // Nhận một tác vụ ID
                     const taskId = this.getAttribute('data-task-id');
-                    console.log('准备切换详情显示，任务ID:', taskId);
+                    console.log('Sẵn sàng chuyển đổi chi tiết hiển thị，tác vụ ID:', taskId);
                     const detailRow = document.getElementById(`task-detail-${taskId}`);
                     if (!detailRow) {
-                        console.error(`找不到详情行 task-detail-${taskId}`);
+                        console.error(`Không tìm thấy chi tiết task-detail-${taskId}`);
                         return;
                     }
                     
-                    // 切换详情行的显示状态
+                    // Chuyển đổi trạng thái hiển thị của dòng chi tiết
                     if (detailRow.style.display === 'none' || !detailRow.style.display) {
-                        console.log('显示详情行');
-                        // 关闭其他打开的详情行
+                        console.log('Hiển thị chi tiết');
+                        // Đóng các dòng chi tiết mở khác
                         document.querySelectorAll('.task-detail-row').forEach(row => {
                             if (row.id !== `task-detail-${taskId}`) {
                                 row.style.display = 'none';
-                                // 移除其他行的活动状态
+                                // Xóa trạng thái hoạt động của các hàng khác
                                 const otherId = row.id.replace('task-detail-', '');
                                 const otherRow = document.querySelector(`.task-row[data-task-id="${otherId}"]`);
                                 if (otherRow) otherRow.classList.remove('active-task-row');
                             }
                         });
                         
-                        // 显示当前详情行
+                        // Hiển thị dòng chi tiết hiện tại
                         detailRow.style.display = 'table-row';
                         this.classList.add('active-task-row');
                     } else {
-                        console.log('隐藏详情行');
-                        // 隐藏当前详情行
+                        console.log('Ẩn chi tiết');
+                        // Ẩn dòng chi tiết hiện tại
                         detailRow.style.display = 'none';
                         this.classList.remove('active-task-row');
                     }
                 });
-                console.log('已为任务行绑定点击事件:', row.getAttribute('data-task-id'));
+                console.log('Nhấp vào sự kiện bị ràng buộc với dòng tác vụ:', row.getAttribute('data-task-id'));
             });
             
-            // 阻止详情行的点击事件冒泡
+            // Ngăn chặn sự kiện nhấp chuột của dòng chi tiết từ sủi bọt
             document.querySelectorAll('.task-detail-row').forEach(row => {
                 row.addEventListener('click', function(event) {
                     event.stopPropagation();
                 });
-                console.log('已阻止详情行的点击事件冒泡:', row.id);
+                console.log('Sự kiện nhấp chuột của dòng chi tiết đã bị chặn khỏi sủi bọt:', row.id);
             });
         }
         
-        // 将删除任务的逻辑提取到一个单独的函数
+        // Trích xuất logic của tác vụ xóa vào một hàm riêng biệt
         function deleteTask(taskId, buttonElement) {
-            // 禁用按钮，显示加载状态
+            // Tắt nút，Hiển thị trạng thái tải
             buttonElement.disabled = true;
-            buttonElement.innerHTML = '<i class="bi bi-hourglass-split"></i> 删除中...';
+            buttonElement.innerHTML = '<i class="bi bi-hourglass-split"></i> Xóa bỏ...';
             
-            // 发送AJAX请求删除任务
+            // gửiAJAXYêu cầu xóa một tác vụ
             fetch(`/api/tasks/${taskId}`, {
                 method: 'DELETE',
                 headers: {
@@ -1949,34 +1949,34 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('网络响应错误');
+                    throw new Error('Lỗi phản hồi mạng');
                 }
                 return response.json();
             })
             .then(data => {
                 if (data.status === 'success') {
-                    // 显示成功消息
-                    showAlert(`任务 ${taskId} 已删除`, 'success');
-                    // 关闭模态框
+                    // Hiển thị tin nhắn thành công
+                    showAlert(`tác vụ ${taskId} Đã xóa`, 'success');
+                    // Đóng hộp phương thức
                     bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal')).hide();
-                    // 刷新任务列表
+                    // Làm mới danh sách tác vụ
                     loadTasks();
                 } else {
-                    throw new Error(data.message || '删除失败');
+                    throw new Error(data.message || 'Xóa không thành công');
                 }
             })
             .catch(error => {
-                console.error('删除任务失败:', error);
-                showAlert('删除任务失败: ' + error.message, 'danger');
+                console.error('Không xóa tác vụ:', error);
+                showAlert('Không xóa tác vụ: ' + error.message, 'danger');
             })
             .finally(() => {
-                // 恢复按钮状态
+                // Khôi phục trạng thái nút
                 buttonElement.disabled = false;
-                buttonElement.innerHTML = '确认删除';
+                buttonElement.innerHTML = 'Xác nhận xóa';
             });
         }
         
-        // 辅助函数：显示添加任务模态框中的消息
+        // Chức năng trợ giúp：Hiển thị thông báo trong hộp Chế độ tác vụ Thêm
         function showAddTaskMessage(message, type = 'warning') {
             const messageDiv = document.createElement('div');
             messageDiv.className = `alert alert-${type} alert-dismissible fade show`;
@@ -1985,17 +1985,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             `;
             
-            // 获取添加模态框的消息容器
+            // Nhận thùng chứa thông báo để thêm hộp phương thức
             const messageContainer = document.getElementById('addTaskModalMessages') || document.querySelector('#addTaskModal .modal-body');
             
-            // 清除已有消息
+            // Xóa các tin nhắn hiện có
             const existingMessages = messageContainer.querySelectorAll('.alert');
             existingMessages.forEach(msg => msg.remove());
             
-            // 添加新消息到容器的顶部
+            // Thêm thông báo mới vào đầu của container
             messageContainer.insertBefore(messageDiv, messageContainer.firstChild);
             
-            // 3秒后自动消失
+            // 3Nó tự động biến mất trong vài giây
             setTimeout(() => {
                 messageDiv.classList.remove('show');
                 setTimeout(() => {

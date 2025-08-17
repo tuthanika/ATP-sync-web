@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - Alist-Sync 自动化同步系统</title>
+    <title>Đăng nhập - Alist-Sync Hệ thống đồng bộ hóa tự động</title>
     <link rel="stylesheet" href="https://s4.zstatic.net/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://s4.zstatic.net/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -72,7 +72,7 @@
                     <h1 class="login-logo">
                         <i class="bi bi-arrow-repeat text-primary"></i> Alist-Sync
                     </h1>
-                    <p class="text-muted">自动化同步系统</p>
+                    <p class="text-muted">Hệ thống đồng bộ hóa tự động</p>
                 </div>
                 
                 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -88,24 +88,24 @@
                 
                 <form class="login-form" method="POST" action="{{ url_for('auth.login') }}">
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="username" name="username" placeholder="用户名" required>
-                        <label for="username"><i class="bi bi-person-fill me-2"></i>用户名</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Tên người dùng" required>
+                        <label for="username"><i class="bi bi-person-fill me-2"></i>Tên người dùng</label>
                     </div>
                     
                     <div class="form-floating">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="密码" required>
-                        <label for="password"><i class="bi bi-key-fill me-2"></i>密码</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="mật khẩu" required>
+                        <label for="password"><i class="bi bi-key-fill me-2"></i>mật khẩu</label>
                     </div>
                     
                     <div class="d-grid gap-2 mt-4">
                         <button type="submit" class="btn btn-primary btn-lg py-3">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>登录
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
                         </button>
                     </div>
                 </form>
                 
                 <div class="text-center mt-4 text-muted small">
-                    <p>默认账号密码: admin/admin</p>
+                    <p>Mật khẩu tài khoản mặc định: admin/admin</p>
                     <p>© 2023 Alist-Sync</p>
                 </div>
             </div>

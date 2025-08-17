@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}连接管理 - Alist-Sync{% endblock %}
+{% block title %}Quản lý kết nối - Alist-Sync{% endblock %}
 
-{% block page_title %}连接管理{% endblock %}
+{% block page_title %}Quản lý kết nối{% endblock %}
 
 {% block header_buttons %}
 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addConnectionModal">
-    <i class="bi bi-plus-lg"></i> 添加连接
+    <i class="bi bi-plus-lg"></i> Thêm một kết nối
 </button>
 {% endblock %}
 
@@ -20,12 +20,12 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>名称</th>
-                                <th>服务器地址</th>
-                                <th>状态</th>
-                                <th>创建时间</th>
-                                <th>更新时间</th>
-                                <th>操作</th>
+                                <th>tên</th>
+                                <th>Địa chỉ máy chủ</th>
+                                <th>tình trạng</th>
+                                <th>Thời gian sáng tạo</th>
+                                <th>Cập nhật thời gian</th>
+                                <th>vận hành</th>
                             </tr>
                         </thead>
                         <tbody id="connections-table">
@@ -37,9 +37,9 @@
                                     <td>{{ conn.server }}</td>
                                     <td>
                                         {% if conn.status == 'online' %}
-                                        <span class="badge bg-success">在线</span>
+                                        <span class="badge bg-success">Trực tuyến</span>
                                         {% else %}
-                                        <span class="badge bg-danger">离线</span>
+                                        <span class="badge bg-danger">Ngoại tuyến</span>
                                         {% endif %}
                                     </td>
                                     <td>{{ conn.created_at }}</td>
@@ -61,7 +61,7 @@
                                 {% endfor %}
                             {% else %}
                                 <tr>
-                                    <td colspan="7" class="text-center">暂无连接</td>
+                                    <td colspan="7" class="text-center">Chưa kết nối</td>
                                 </tr>
                             {% endif %}
                         </tbody>
@@ -72,30 +72,30 @@
     </div>
 </div>
 
-<!-- 添加连接模态框 -->
+<!-- Thêm một hộp phương thức kết nối -->
 <div class="modal fade" id="addConnectionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark text-light">
             <div class="modal-header">
-                <h5 class="modal-title">添加 Alist 连接</h5>
+                <h5 class="modal-title">Thêm vào Alist kết nối</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="connectionForm">
                     <div class="mb-3">
-                        <label for="connName" class="form-label">连接名称</label>
+                        <label for="connName" class="form-label">Tên kết nối</label>
                         <input type="text" class="form-control bg-dark text-light" id="connName" required>
                     </div>
                     <div class="mb-3">
-                        <label for="connServer" class="form-label">服务器地址</label>
+                        <label for="connServer" class="form-label">Địa chỉ máy chủ</label>
                         <input type="url" class="form-control bg-dark text-light" id="connServer" placeholder="https://your-alist-server.com" required>
                     </div>
                     <div class="mb-3">
-                        <label for="connUser" class="form-label">用户名</label>
+                        <label for="connUser" class="form-label">Tên người dùng</label>
                         <input type="text" class="form-control bg-dark text-light" id="connUser">
                     </div>
                     <div class="mb-3">
-                        <label for="connPassword" class="form-label">密码</label>
+                        <label for="connPassword" class="form-label">mật khẩu</label>
                         <div class="input-group">
                             <input type="password" class="form-control bg-dark text-light" id="connPassword">
                             <button class="btn btn-outline-secondary bg-dark text-light password-toggle" type="button" data-target="connPassword">
@@ -104,62 +104,62 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="connToken" class="form-label">API 令牌</label>
+                        <label for="connToken" class="form-label">API Mã thông báo</label>
                         <div class="input-group">
-                            <input type="password" class="form-control bg-dark text-light" id="connToken" placeholder="可选，优先使用令牌认证">
+                            <input type="password" class="form-control bg-dark text-light" id="connToken" placeholder="Không bắt buộc，Ưu tiên sử dụng xác thực mã thông báo">
                             <button class="btn btn-outline-secondary bg-dark text-light password-toggle" type="button" data-target="connToken">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="connProxy" class="form-label">代理设置 (可选)</label>
+                        <label for="connProxy" class="form-label">Cài đặt proxy (Không bắt buộc)</label>
                         <input type="text" class="form-control bg-dark text-light" id="connProxy" placeholder="http://proxy:port">
                     </div>
                     <div class="mb-3">
-                        <label for="connMaxRetry" class="form-label">最大重试次数</label>
+                        <label for="connMaxRetry" class="form-label">Số lượng thử lại tối đa</label>
                         <input type="number" class="form-control bg-dark text-light" id="connMaxRetry" value="3" min="0" max="10">
                     </div>
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="connInsecure">
-                        <label class="form-check-label" for="connInsecure">允许不安全的 HTTPS 连接 (自签名证书)</label>
+                        <label class="form-check-label" for="connInsecure">Cho phép không an toàn HTTPS kết nối (Giấy chứng nhận tự ký)</label>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-info" id="testConnectionBtn">测试连接</button>
-                <button type="button" class="btn btn-primary" id="saveConnectionBtn">保存连接</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-info" id="testConnectionBtn">Kết nối kiểm tra</button>
+                <button type="button" class="btn btn-primary" id="saveConnectionBtn">Lưu kết nối</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 编辑连接模态框 -->
+<!-- Chỉnh sửa hộp kết nối Modal -->
 <div class="modal fade" id="editConnectionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark text-light">
             <div class="modal-header">
-                <h5 class="modal-title">编辑 Alist 连接</h5>
+                <h5 class="modal-title">biên tập Alist kết nối</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="editConnectionForm">
                     <input type="hidden" id="editConnId">
                     <div class="mb-3">
-                        <label for="editConnName" class="form-label">连接名称</label>
+                        <label for="editConnName" class="form-label">Tên kết nối</label>
                         <input type="text" class="form-control bg-dark text-light" id="editConnName" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editConnServer" class="form-label">服务器地址</label>
+                        <label for="editConnServer" class="form-label">Địa chỉ máy chủ</label>
                         <input type="url" class="form-control bg-dark text-light" id="editConnServer" placeholder="https://your-alist-server.com" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editConnUser" class="form-label">用户名</label>
+                        <label for="editConnUser" class="form-label">Tên người dùng</label>
                         <input type="text" class="form-control bg-dark text-light" id="editConnUser">
                     </div>
                     <div class="mb-3">
-                        <label for="editConnPassword" class="form-label">密码</label>
+                        <label for="editConnPassword" class="form-label">mật khẩu</label>
                         <div class="input-group">
                             <input type="password" class="form-control bg-dark text-light" id="editConnPassword">
                             <button class="btn btn-outline-secondary bg-dark text-light password-toggle" type="button" data-target="editConnPassword">
@@ -168,52 +168,52 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="editConnToken" class="form-label">API 令牌</label>
+                        <label for="editConnToken" class="form-label">API Mã thông báo</label>
                         <div class="input-group">
-                            <input type="password" class="form-control bg-dark text-light" id="editConnToken" placeholder="可选，优先使用令牌认证">
+                            <input type="password" class="form-control bg-dark text-light" id="editConnToken" placeholder="Không bắt buộc，Ưu tiên sử dụng xác thực mã thông báo">
                             <button class="btn btn-outline-secondary bg-dark text-light password-toggle" type="button" data-target="editConnToken">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="editConnProxy" class="form-label">代理设置 (可选)</label>
+                        <label for="editConnProxy" class="form-label">Cài đặt proxy (Không bắt buộc)</label>
                         <input type="text" class="form-control bg-dark text-light" id="editConnProxy" placeholder="http://proxy:port">
                     </div>
                     <div class="mb-3">
-                        <label for="editConnMaxRetry" class="form-label">最大重试次数</label>
+                        <label for="editConnMaxRetry" class="form-label">Số lượng thử lại tối đa</label>
                         <input type="number" class="form-control bg-dark text-light" id="editConnMaxRetry" value="3" min="0" max="10">
                     </div>
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="editConnInsecure">
-                        <label class="form-check-label" for="editConnInsecure">允许不安全的 HTTPS 连接 (自签名证书)</label>
+                        <label class="form-check-label" for="editConnInsecure">Cho phép không an toàn HTTPS kết nối (Giấy chứng nhận tự ký)</label>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-info" id="editTestConnectionBtn">测试连接</button>
-                <button type="button" class="btn btn-primary" id="updateConnectionBtn">更新连接</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-info" id="editTestConnectionBtn">Kiểm tra kết nối</button>
+                <button type="button" class="btn btn-primary" id="updateConnectionBtn">Cập nhật kết nối</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 确认删除模态框 -->
+<!-- Xác nhận hộp phương thức xóa -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content bg-dark text-light">
             <div class="modal-header">
-                <h5 class="modal-title">确认删除</h5>
+                <h5 class="modal-title">Xác nhận xóa</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>确定要删除此连接吗？该操作不可恢复，且可能影响依赖此连接的同步任务。</p>
+                <p>Bạn có chắc là bạn muốn xóa kết nối này?？Hoạt động này không được khôi phục，Và có thể ảnh hưởng đến các tác vụ đồng bộ hóa phụ thuộc vào kết nối này。</p>
                 <input type="hidden" id="deleteConnId">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">确认删除</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xác nhận xóa</button>
             </div>
         </div>
     </div>
@@ -223,33 +223,33 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 添加连接事件
+        // Thêm một sự kiện kết nối
         document.getElementById('saveConnectionBtn').addEventListener('click', function() {
-            // 验证必填字段
+            // Xác minh các trường bắt buộc
             const connName = document.getElementById('connName');
             const connServer = document.getElementById('connServer');
             
             if (!connName.value.trim()) {
-                showMessage('warning', '请输入连接名称');
+                showMessage('warning', 'Vui lòng nhập tên kết nối');
                 connName.focus();
                 return;
             }
             
             if (!connServer.value.trim()) {
-                showMessage('warning', '请输入服务器地址');
+                showMessage('warning', 'Vui lòng nhập địa chỉ máy chủ');
                 connServer.focus();
                 return;
             }
             
-            // 禁用按钮，显示加载状态
+            // Tắt nút，Hiển thị trạng thái tải
             this.disabled = true;
-            this.innerHTML = '<i class="bi bi-hourglass-split"></i> 保存中...';
+            this.innerHTML = '<i class="bi bi-hourglass-split"></i> Tiết kiệm...';
             
-            // 获取连接状态 - 使用测试结果的状态
+            // Nhận trạng thái kết nối - Tình trạng sử dụng kết quả kiểm tra
             const connectionForm = document.getElementById('connectionForm');
             let connectionStatus = connectionForm.dataset.connectionStatus || 'offline';
             
-            // 准备表单数据
+            // Chuẩn bị dữ liệu biểu mẫu
             const connection = {
                 name: connName.value,
                 server: connServer.value,
@@ -262,7 +262,7 @@
                 status: connectionStatus
             };
             
-            // 发送保存请求
+            // Gửi yêu cầu lưu
             fetch('/api/connections', {
                 method: 'POST',
                 headers: {
@@ -272,44 +272,44 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('网络响应错误');
+                    throw new Error('Lỗi phản hồi mạng');
                 }
                 return response.json();
             })
             .then(data => {
-                showMessage('success', '连接已添加');
+                showMessage('success', 'Kết nối được thêm vào');
                 hideAddModal();
                 
-                // 重新加载列表
+                // Tải lại danh sách
                 setTimeout(() => {
                     location.reload();
                 }, 1000);
             })
             .catch(error => {
-                console.error('保存连接失败:', error);
-                showMessage('danger', '保存连接失败: ' + error.message);
+                console.error('Lưu kết nối không thành công:', error);
+                showMessage('danger', 'Lưu kết nối không thành công: ' + error.message);
             })
             .finally(() => {
-                // 恢复按钮状态
+                // Khôi phục trạng thái nút
                 this.disabled = false;
-                this.innerHTML = '保存连接';
+                this.innerHTML = 'Lưu kết nối';
             });
         });
         
-        // 测试连接按钮 - 适用于新建模式
+        // Nút kết nối kiểm tra - Thích hợp cho chế độ mới
         document.getElementById('testConnectionBtn').addEventListener('click', function() {
             const server = document.getElementById('connServer').value;
             if (!server) {
-                showMessage('warning', '请输入服务器地址');
+                showMessage('warning', 'Vui lòng nhập địa chỉ máy chủ');
                 return;
             }
             
-            // 禁用按钮，显示加载状态
+            // Tắt nút，Hiển thị trạng thái tải
             this.disabled = true;
             const originalHTML = this.innerHTML;
-            this.innerHTML = '<i class="bi bi-hourglass-split"></i> 测试中...';
+            this.innerHTML = '<i class="bi bi-hourglass-split"></i> Trong thử nghiệm...';
             
-            // 准备测试数据
+            // Chuẩn bị dữ liệu kiểm tra
             const testData = {
                 server: server,
                 username: document.getElementById('connUser').value,
@@ -318,7 +318,7 @@
                 insecure: document.getElementById('connInsecure').checked
             };
             
-            // 发送测试请求
+            // Gửi yêu cầu kiểm tra
             fetch('/api/test-connection', {
                 method: 'POST',
                 headers: {
@@ -328,52 +328,52 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('网络响应错误');
+                    throw new Error('Lỗi phản hồi mạng');
                 }
                 return response.json();
             })
             .then(data => {
-                // 保存连接状态到表单中，以便后续保存时使用
+                // Lưu trạng thái kết nối vào biểu mẫu，Để lưu trữ sau này
                 const connectionForm = document.getElementById('connectionForm');
                 connectionForm.dataset.connectionStatus = data.data.connection_status;
                 
                 if (data.status === 'success') {
-                    // 如果获取到了新令牌，更新令牌输入框
+                    // Nếu có được mã thông báo mới，Cập nhật hộp đầu vào mã thông báo
                     if (data.data && data.data.token) {
                         document.getElementById('connToken').value = data.data.token;
                     }
                     
-                    showMessage('success', '连接测试成功');
+                    showMessage('success', 'Kiểm tra kết nối thành công');
                 } else {
-                    showMessage('danger', data.message || '连接测试失败');
+                    showMessage('danger', data.message || 'Kiểm tra kết nối không thành công');
                 }
             })
             .catch(error => {
-                console.error('测试连接失败:', error);
-                showMessage('danger', '测试连接失败: ' + error.message);
+                console.error('Kết nối kiểm tra không thành công:', error);
+                showMessage('danger', 'Kết nối kiểm tra không thành công: ' + error.message);
             })
             .finally(() => {
-                // 恢复按钮状态
+                // Khôi phục trạng thái nút
                 this.disabled = false;
                 this.innerHTML = originalHTML;
             });
         });
         
-        // 编辑连接按钮
+        // Chỉnh sửa nút kết nối
         document.querySelectorAll('.edit-connection').forEach(button => {
             button.addEventListener('click', function() {
                 const connId = this.getAttribute('data-conn-id');
                 
-                // 禁用按钮，显示加载状态
+                // Tắt nút，Hiển thị trạng thái tải
                 this.disabled = true;
                 const originalHTML = this.innerHTML;
                 this.innerHTML = '<i class="bi bi-hourglass-split"></i>';
                 
-                // 通过API获取连接信息
+                // vượt quaAPINhận thông tin kết nối
                 fetch(`/api/connections/${connId}`)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('获取连接信息失败');
+                        throw new Error('Không lấy được thông tin kết nối');
                     }
                     return response.json();
                 })
@@ -383,7 +383,7 @@
                     document.getElementById('editConnServer').value = conn.server;
                     document.getElementById('editConnUser').value = conn.username;
                     
-                    // 设置密码值
+                    // Đặt giá trị mật khẩu
                     if(conn.password) {
                         document.getElementById('editConnPassword').value = conn.password;
                     }
@@ -393,42 +393,42 @@
                     document.getElementById('editConnMaxRetry').value = conn.max_retry || 3;
                     document.getElementById('editConnInsecure').checked = conn.insecure === true;
                     
-                    // 保存连接状态到表单数据中
+                    // Lưu trạng thái kết nối vào dữ liệu biểu mẫu
                     const connectionForm = document.getElementById('editConnectionForm');
                     connectionForm.dataset.connectionStatus = conn.status || 'offline';
                     
-                    // 显示模态框
+                    // Hiển thị hộp phương thức
                     new bootstrap.Modal(document.getElementById('editConnectionModal')).show();
                 })
                 .catch(error => {
-                    console.error('获取连接信息失败:', error);
-                    alert('获取连接信息失败: ' + error.message);
+                    console.error('Không lấy được thông tin kết nối:', error);
+                    alert('Không lấy được thông tin kết nối: ' + error.message);
                 })
                 .finally(() => {
-                    // 恢复按钮状态
+                    // Khôi phục trạng thái nút
                     this.disabled = false;
                     this.innerHTML = originalHTML;
                 });
             });
         });
         
-        // 更新连接按钮
+        // Cập nhật nút kết nối
         document.getElementById('updateConnectionBtn').addEventListener('click', function() {
-            // 获取表单数据
+            // Nhận dữ liệu biểu mẫu
             const connId = document.getElementById('editConnId').value;
             
-            // 显示加载状态
+            // Hiển thị trạng thái tải
             this.disabled = true;
-            this.innerHTML = '<i class="bi bi-hourglass-split"></i> 更新中...';
+            this.innerHTML = '<i class="bi bi-hourglass-split"></i> Cập nhật...';
             
-            // 获取连接状态
+            // Nhận trạng thái kết nối
             const connectionForm = document.getElementById('editConnectionForm');
             const connectionStatus = connectionForm.dataset.connectionStatus || 'offline';
             
-            // 调试日志
-            console.log("更新连接前的状态:", connectionStatus, "表单数据:", connectionForm.dataset);
+            // Nhật ký gỡ lỗi
+            console.log("Cập nhật trạng thái trước khi kết nối:", connectionStatus, "Hình thức dữ liệu:", connectionForm.dataset);
             
-            // 构建连接数据
+            // Xây dựng dữ liệu kết nối
             const connection = {
                 connection_id: parseInt(connId),
                 name: document.getElementById('editConnName').value,
@@ -442,7 +442,7 @@
                 status: connectionStatus
             };
             
-            // 发送更新请求
+            // Gửi yêu cầu cập nhật
             fetch(`/api/connections/${connId}`, {
                 method: 'PUT',
                 headers: {
@@ -452,7 +452,7 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('网络响应错误');
+                    throw new Error('Lỗi phản hồi mạng');
                 }
                 return response.json();
             })
@@ -460,33 +460,33 @@
                 showMessage('success', data.message);
                 hideEditModal();
                 
-                // 重新加载列表
+                // Tải lại danh sách
                 setTimeout(() => {
                     location.reload();
                 }, 1000);
             })
             .catch(error => {
-                console.error('更新连接失败:', error);
-                showMessage('danger', '更新连接失败: ' + error.message);
+                console.error('Cập nhật kết nối không thành công:', error);
+                showMessage('danger', 'Cập nhật kết nối không thành công: ' + error.message);
             })
             .finally(() => {
-                // 恢复按钮状态
+                // Khôi phục trạng thái nút
                 this.disabled = false;
-                this.innerHTML = '更新连接';
+                this.innerHTML = 'Cập nhật kết nối';
             });
         });
         
-        // 测试连接按钮 - 适用于编辑模式
+        // Nút kết nối kiểm tra - Áp dụng cho chế độ chỉnh sửa
         document.getElementById('editTestConnectionBtn').addEventListener('click', function() {
-            // 禁用按钮，显示加载状态
+            // Tắt nút，Hiển thị trạng thái tải
             this.disabled = true;
             const originalHTML = this.innerHTML;
-            this.innerHTML = '<i class="bi bi-hourglass-split"></i> 测试中...';
+            this.innerHTML = '<i class="bi bi-hourglass-split"></i> Trong thử nghiệm...';
             
-            // 获取连接ID
+            // Nhận kết nốiID
             const connId = document.getElementById('editConnId').value;
             
-            // 准备测试数据
+            // Chuẩn bị dữ liệu kiểm tra
             const testData = {
                 connection_id: parseInt(connId),
                 server: document.getElementById('editConnServer').value,
@@ -495,13 +495,13 @@
                 insecure: document.getElementById('editConnInsecure').checked
             };
             
-            // 只有当密码字段有值时才包含在请求中
+            // Chỉ bao gồm trong yêu cầu nếu trường Mật khẩu có giá trị
             const password = document.getElementById('editConnPassword').value;
             if (password) {
                 testData.password = password;
             }
             
-            // 发送测试请求
+            // Gửi yêu cầu kiểm tra
             fetch('/api/test-connection', {
                 method: 'POST',
                 headers: {
@@ -511,65 +511,65 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('网络响应错误');
+                    throw new Error('Lỗi phản hồi mạng');
                 }
                 return response.json();
             })
             .then(data => {
-                // 保存连接状态到表单中，以便后续保存时使用
+                // Lưu trạng thái kết nối vào biểu mẫu，Để lưu trữ sau này
                 const connectionForm = document.getElementById('editConnectionForm');
                 connectionForm.dataset.connectionStatus = data.data.connection_status;
                 
-                // 调试日志
-                console.log("测试连接后设置状态:", data.data.connection_status);
+                // Nhật ký gỡ lỗi
+                console.log("Đặt trạng thái sau khi kết nối kiểm tra:", data.data.connection_status);
                 
                 if (data.status === 'success') {
-                    // 如果获取到了新令牌，更新令牌输入框
+                    // Nếu có được mã thông báo mới，Cập nhật hộp đầu vào mã thông báo
                     if (data.data && data.data.token) {
                         document.getElementById('editConnToken').value = data.data.token;
                     }
                     
-                    // 立即更新UI显示连接状态
-                    const statusBadgeHtml = `<span class="badge bg-success">在线</span>`;
+                    // Cập nhật ngay bây giờUIHiển thị trạng thái kết nối
+                    const statusBadgeHtml = `<span class="badge bg-success">Trực tuyến</span>`;
                     document.querySelector(`.test-connection[data-conn-id="${connId}"]`)
                         .closest('tr')
                         .querySelector('td:nth-child(4)')
                         .innerHTML = statusBadgeHtml;
                     
-                    showMessage('success', '连接测试成功，状态已更新为"在线"');
+                    showMessage('success', 'Kiểm tra kết nối thành công，Trạng thái đã được cập nhật để"Trực tuyến"');
                 } else {
-                    // 立即更新UI显示连接状态
-                    const statusBadgeHtml = `<span class="badge bg-danger">离线</span>`;
+                    // Cập nhật ngay bây giờUIHiển thị trạng thái kết nối
+                    const statusBadgeHtml = `<span class="badge bg-danger">Ngoại tuyến</span>`;
                     document.querySelector(`.test-connection[data-conn-id="${connId}"]`)
                         .closest('tr')
                         .querySelector('td:nth-child(4)')
                         .innerHTML = statusBadgeHtml;
                     
-                    showMessage('danger', data.message || '连接测试失败');
+                    showMessage('danger', data.message || 'Kiểm tra kết nối không thành công');
                 }
             })
             .catch(error => {
-                console.error('测试连接失败:', error);
-                showMessage('danger', '测试连接失败: ' + error.message);
+                console.error('Kết nối kiểm tra không thành công:', error);
+                showMessage('danger', 'Kết nối kiểm tra không thành công: ' + error.message);
             })
             .finally(() => {
-                // 恢复按钮状态
+                // Khôi phục trạng thái nút
                 this.disabled = false;
                 this.innerHTML = originalHTML;
             });
         });
         
-        // 删除连接按钮事件
+        // Xóa sự kiện nút kết nối
         document.querySelectorAll('.delete-connection').forEach(button => {
             button.addEventListener('click', function() {
                 const connId = this.getAttribute('data-conn-id');
                 const connName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
                 
-                if (!confirm(`确定要删除连接 "${connName}" 吗？此操作不可恢复。`)) {
+                if (!confirm(`Xác nhận để xóa kết nối "${connName}" Là nó？Hoạt động này không được khôi phục。`)) {
                     return;
                 }
                 
-                // 禁用按钮，显示加载状态
+                // Tắt nút，Hiển thị trạng thái tải
                 this.disabled = true;
                 const originalHTML = this.innerHTML;
                 this.innerHTML = '<i class="bi bi-hourglass-split"></i>';
@@ -579,54 +579,54 @@
                 })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('网络响应错误');
+                        throw new Error('Lỗi phản hồi mạng');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    showMessage('success', `连接 "${connName}" 已删除`);
+                    showMessage('success', `kết nối "${connName}" Đã xóa`);
                     
-                    // 从表格中移除该行
+                    // Xóa hàng khỏi bảng
                     this.closest('tr').remove();
                     
-                    // 如果表格为空，显示"暂无连接"消息
+                    // Nếu bàn trống，trình diễn"Chưa kết nối"thông tin
                     const table = document.getElementById('connections-table');
                     if (table.children.length === 0) {
-                        table.innerHTML = '<tr><td colspan="7" class="text-center">暂无连接</td></tr>';
+                        table.innerHTML = '<tr><td colspan="7" class="text-center">Chưa kết nối</td></tr>';
                     }
                 })
                 .catch(error => {
-                    console.error('删除连接失败:', error);
-                    showMessage('danger', '删除连接失败: ' + error.message);
+                    console.error('Không xóa kết nối:', error);
+                    showMessage('danger', 'Không xóa kết nối: ' + error.message);
                     
-                    // 恢复按钮状态
+                    // Khôi phục trạng thái nút
                     this.disabled = false;
                     this.innerHTML = originalHTML;
                 });
             });
         });
         
-        // 测试连接按钮（列表中的）
+        // Nút kết nối kiểm tra（Danh sách của）
         document.querySelectorAll('.test-connection').forEach(button => {
             button.addEventListener('click', function() {
                 const connId = this.getAttribute('data-conn-id');
                 
-                // 显示测试中状态
+                // Hiển thị trạng thái trong bài kiểm tra
                 const originalHTML = this.innerHTML;
                 this.innerHTML = '<i class="bi bi-hourglass-split"></i>';
                 this.disabled = true;
                 
-                // 获取该连接的状态标签
+                // Nhận thẻ trạng thái cho kết nối
                 const statusBadge = this.closest('tr').querySelector('td:nth-child(4) .badge');
                 
-                // 获取该连接的信息
+                // Nhận thông tin về kết nối này
                 fetch(`/api/connections/${connId}`)
                 .then(response => response.json())
                 .then(connection => {
-                    // 如果获取连接信息成功，进行连接测试
+                    // Nếu thông tin kết nối thành công，Tiến hành kiểm tra kết nối
                     if (connection) {
                         const connectionData = {
-                            connection_id: parseInt(connId), // 使用connection_id
+                            connection_id: parseInt(connId), // sử dụngconnection_id
                             server: connection.server,
                             username: connection.username,
                             password: connection.password,
@@ -641,49 +641,49 @@
                             body: JSON.stringify(connectionData),
                         });
                     } else {
-                        throw new Error('无法获取连接信息');
+                        throw new Error('Không thể có được thông tin kết nối');
                     }
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        // 立即更新UI显示
+                        // Cập nhật ngay bây giờUItrình diễn
                         if (statusBadge) {
                             statusBadge.className = 'badge bg-success';
-                            statusBadge.textContent = '在线';
+                            statusBadge.textContent = 'Trực tuyến';
                         }
                         
-                        showMessage('success', '连接测试成功');
+                        showMessage('success', 'Kiểm tra kết nối thành công');
                     } else {
-                        // 立即更新UI显示
+                        // Cập nhật ngay bây giờUItrình diễn
                         if (statusBadge) {
                             statusBadge.className = 'badge bg-danger';
-                            statusBadge.textContent = '离线';
+                            statusBadge.textContent = 'Ngoại tuyến';
                         }
                         
-                        showMessage('danger', `连接测试失败: ${data.message}`);
+                        showMessage('danger', `Kiểm tra kết nối không thành công: ${data.message}`);
                     }
                 })
                 .catch(error => {
-                    console.error('测试连接失败:', error);
+                    console.error('Kết nối kiểm tra không thành công:', error);
                     
-                    // 出错时更新为离线状态
+                    // Được cập nhật lên trạng thái ngoại tuyến khi xảy ra lỗi
                     if (statusBadge) {
                         statusBadge.className = 'badge bg-danger';
-                        statusBadge.textContent = '离线';
+                        statusBadge.textContent = 'Ngoại tuyến';
                     }
                     
-                    showMessage('danger', `测试连接失败: ${error.message}`);
+                    showMessage('danger', `Kết nối kiểm tra không thành công: ${error.message}`);
                 })
                 .finally(() => {
-                    // 恢复按钮状态
+                    // Khôi phục trạng thái nút
                     this.innerHTML = originalHTML;
                     this.disabled = false;
                 });
             });
         });
 
-        // 密码显示/隐藏切换功能
+        // Hiển thị mật khẩu/Ẩn chức năng chuyển đổi
         document.querySelectorAll('.password-toggle').forEach(button => {
             button.addEventListener('click', function() {
                 const targetId = this.getAttribute('data-target');
@@ -702,7 +702,7 @@
             });
         });
 
-        // 辅助函数：显示消息提示
+        // Chức năng trợ giúp：Hiển thị lời nhắc tin nhắn
         function showMessage(type, message) {
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type} alert-dismissible fade show fixed-top w-50 mx-auto mt-3`;
@@ -712,7 +712,7 @@
             `;
             document.body.appendChild(alertDiv);
             
-            // 3秒后自动关闭
+            // 3Tự động đóng trong vài giây
             setTimeout(() => {
                 alertDiv.classList.remove('show');
                 setTimeout(() => {
@@ -721,7 +721,7 @@
             }, 3000);
         }
         
-        // 辅助函数：隐藏添加模态框
+        // Chức năng trợ giúp：Ẩn thêm hộp phương thức
         function hideAddModal() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('addConnectionModal'));
             if (modal) {
@@ -729,7 +729,7 @@
             }
         }
         
-        // 辅助函数：隐藏编辑模态框
+        // Chức năng trợ giúp：Ẩn Box Modal EDIT
         function hideEditModal() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('editConnectionModal'));
             if (modal) {

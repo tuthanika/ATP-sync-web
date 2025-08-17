@@ -1,80 +1,80 @@
 {% extends "base.html" %}
 
-{% block title %}数据导入导出 - Alist-Sync{% endblock %}
+{% block title %}Nhập và xuất dữ liệu - Alist-Sync{% endblock %}
 
-{% block page_title %}数据导入导出{% endblock %}
+{% block page_title %}Nhập và xuất dữ liệu{% endblock %}
 
 {% block content %}
 <div class="row">
-    <!-- 导出系统数据 -->
+    <!-- Xuất dữ liệu hệ thống -->
     <div class="col-md-6 mb-4">
         <div class="card bg-dark text-light">
             <div class="card-header bg-dark bg-opacity-50">
-                <h5><i class="bi bi-download me-2"></i>导出系统数据</h5>
+                <h5><i class="bi bi-download me-2"></i>Xuất dữ liệu hệ thống</h5>
             </div>
             <div class="card-body">
-                <p>导出当前系统的所有配置数据，包括：</p>
+                <p>Xuất tất cả dữ liệu cấu hình của hệ thống hiện tại，bao gồm：</p>
                 <ul>
-                    <li>用户数据 (users.json)</li>
-                    <li>连接配置 (connections.json)</li>
-                    <li>任务配置 (tasks.json)</li>
-                    <li>系统设置 (settings.json)</li>
+                    <li>Dữ liệu người dùng (users.json)</li>
+                    <li>Cấu hình kết nối (connections.json)</li>
+                    <li>Cấu hình nhiệm vụ (tasks.json)</li>
+                    <li>Cài đặt hệ thống (settings.json)</li>
                 </ul>
                 <div class="alert alert-info">
-                    <i class="bi bi-info-circle-fill me-2"></i>导出的数据可用于备份或迁移到其他系统。
+                    <i class="bi bi-info-circle-fill me-2"></i>Dữ liệu được xuất có thể được sử dụng để sao lưu hoặc di chuyển sang các hệ thống khác。
                 </div>
                 <button id="export-btn" class="btn btn-primary mt-3">
-                    <i class="bi bi-download me-2"></i>导出数据
+                    <i class="bi bi-download me-2"></i>Xuất dữ liệu
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 导入系统数据 -->
+    <!-- Nhập dữ liệu hệ thống -->
     <div class="col-md-6 mb-4">
         <div class="card bg-dark text-light">
             <div class="card-header bg-dark bg-opacity-50">
-                <h5><i class="bi bi-upload me-2"></i>导入系统数据</h5>
+                <h5><i class="bi bi-upload me-2"></i>Nhập dữ liệu hệ thống</h5>
             </div>
             <div class="card-body">
-                <p>导入系统配置数据，将覆盖当前系统的所有配置。</p>
+                <p>Nhập dữ liệu cấu hình hệ thống，Sẽ bao gồm tất cả các cấu hình của hệ thống hiện tại。</p>
                 <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>导入数据将替换当前系统的所有配置，所有连接和任务数据将被完全覆盖而不是追加。系统会自动备份当前数据。
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Nhập dữ liệu sẽ thay thế tất cả các cấu hình của hệ thống hiện tại，Tất cả dữ liệu kết nối và tác vụ sẽ hoàn toàn được ghi đè thay vì được thêm vào。Hệ thống sẽ tự động sao lưu dữ liệu hiện tại。
                 </div>
                 <div class="alert alert-info">
-                    <i class="bi bi-info-circle-fill me-2"></i>支持多种导入格式：
+                    <i class="bi bi-info-circle-fill me-2"></i>Hỗ trợ nhiều định dạng nhập：
                     <ul class="mb-0 mt-2">
-                        <li>标准格式 - 通过本系统导出的完整数据</li>
-                        <li>旧版基本配置 - 旧版AList-Sync的基本配置文件，包含服务器地址和Token</li>
-                        <li>旧版同步配置 - 旧版AList-Sync的同步任务配置文件</li>
-                        <li>新版同步配置 - 新版AList-Sync的同步任务配置文件，包含源存储和目标存储</li>
+                        <li>Định dạng tiêu chuẩn - Hoàn thành dữ liệu được xuất qua hệ thống này</li>
+                        <li>Phiên bản cũ Cấu hình cơ bản - Phiên bản cũAList-SyncTệp cấu hình cơ bản，Chứa địa chỉ máy chủ vàToken</li>
+                        <li>Cấu hình đồng bộ hóa phiên bản cũ - Phiên bản cũAList-SyncTệp cấu hình tác vụ đồng bộ</li>
+                        <li>Phiên bản mới Cấu hình đồng bộ - Phiên bản mớiAList-SyncTệp cấu hình tác vụ đồng bộ，Chứa nguồn lưu trữ nguồn và mục tiêu</li>
                     </ul>
                 </div>
                 <div class="mb-3">
-                    <label for="import-file" class="form-label">选择导出的JSON文件</label>
+                    <label for="import-file" class="form-label">Chọn xuất khẩuJSONtài liệu</label>
                     <input type="file" class="form-control" id="import-file" accept=".json">
                 </div>
                 <button id="import-btn" class="btn btn-warning mt-3" disabled>
-                    <i class="bi bi-upload me-2"></i>导入数据
+                    <i class="bi bi-upload me-2"></i>Nhập dữ liệu
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 导入结果模态框 -->
+<!-- Nhập hộp kết quả kết quả -->
 <div class="modal fade" id="import-result-modal" tabindex="-1" aria-labelledby="importResultModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark text-light">
             <div class="modal-header">
-                <h5 class="modal-title" id="importResultModalLabel">导入结果</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="关闭"></button>
+                <h5 class="modal-title" id="importResultModalLabel">Kết quả nhập khẩu</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng cửa"></button>
             </div>
             <div class="modal-body" id="import-result-content">
-                <!-- 结果内容将在JS中动态填充 -->
+                <!-- Kết quả sẽ làJSĐộng lực điền vào -->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng cửa</button>
             </div>
         </div>
     </div>
@@ -84,10 +84,10 @@
 {% block extra_js %}
 <script>
     $(document).ready(function() {
-        // 导出功能
+        // Chức năng xuất
         $('#export-btn').click(function() {
-            // 显示加载动画
-            $(this).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>导出中...');
+            // Hiển thị hoạt hình tải
+            $(this).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Xuất khẩu...');
             $(this).prop('disabled', true);
             
             $.ajax({
@@ -95,12 +95,12 @@
                 method: 'GET',
                 success: function(response) {
                     if (response.status === 'success') {
-                        // 创建下载链接
+                        // Tạo liên kết tải xuống
                         const exportData = JSON.stringify(response.data, null, 2);
                         const blob = new Blob([exportData], {type: 'application/json'});
                         const url = URL.createObjectURL(blob);
                         
-                        // 创建下载元素并触发下载
+                        // Tạo phần tử tải xuống và kích hoạt tải xuống
                         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
                         const a = document.createElement('a');
                         a.href = url;
@@ -110,42 +110,42 @@
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
                     } else {
-                        alert('导出失败: ' + response.message);
+                        alert('Xuất khẩu không thành công: ' + response.message);
                     }
                 },
                 error: function(xhr) {
-                    let errorMsg = '导出失败';
+                    let errorMsg = 'Xuất khẩu không thành công';
                     try {
                         const response = JSON.parse(xhr.responseText);
                         errorMsg = response.message || errorMsg;
                     } catch (e) {
-                        errorMsg = '导出失败，服务器错误';
+                        errorMsg = 'Xuất khẩu không thành công，Lỗi máy chủ';
                     }
                     alert(errorMsg);
                 },
                 complete: function() {
-                    // 恢复按钮状态
-                    $('#export-btn').html('<i class="bi bi-download me-2"></i>导出数据');
+                    // Khôi phục trạng thái nút
+                    $('#export-btn').html('<i class="bi bi-download me-2"></i>Xuất dữ liệu');
                     $('#export-btn').prop('disabled', false);
                 }
             });
         });
         
-        // 启用/禁用导入按钮
+        // Cho phép/Tắt nút nhập
         $('#import-file').on('change', function() {
             $('#import-btn').prop('disabled', !this.files.length);
         });
         
-        // 导入功能
+        // Hàm nhập
         $('#import-btn').click(function() {
             const fileInput = document.getElementById('import-file');
             if (!fileInput.files.length) {
-                alert('请选择要导入的文件');
+                alert('Vui lòng chọn tệp để nhập');
                 return;
             }
             
-            // 显示加载动画
-            $(this).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>导入中...');
+            // Hiển thị hoạt hình tải
+            $(this).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Nhập khẩu...');
             $(this).prop('disabled', true);
             
             const file = fileInput.files[0];
@@ -155,21 +155,21 @@
                 try {
                     const importData = JSON.parse(e.target.result);
                     
-                    // 确认导入
-                    if (!confirm('导入将覆盖现有配置数据，所有连接和任务数据将被完全替换而不是追加，确认继续？')) {
-                        $('#import-btn').html('<i class="bi bi-upload me-2"></i>导入数据');
+                    // Xác nhận nhập khẩu
+                    if (!confirm('Nhập sẽ ghi đè dữ liệu cấu hình hiện có，Tất cả dữ liệu kết nối và tác vụ sẽ được thay thế hoàn toàn thay vì được thêm vào，Xác nhận để tiếp tục？')) {
+                        $('#import-btn').html('<i class="bi bi-upload me-2"></i>Nhập dữ liệu');
                         $('#import-btn').prop('disabled', false);
                         return;
                     }
                     
-                    // 发送导入请求
+                    // Gửi yêu cầu nhập khẩu
                     $.ajax({
                         url: '/api/import',
                         method: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify({"data": importData}),
                         success: function(response) {
-                            // 在模态框中显示结果
+                            // Hiển thị kết quả trong hộp phương thức
                             let resultHTML = '';
                             
                             if (response.status === 'success') {
@@ -182,42 +182,42 @@
                                 resultHTML += '</div>';
                             }
                             
-                            // 添加详细信息
+                            // Thêm chi tiết
                             if (response.details) {
-                                resultHTML += '<h6>详细信息：</h6>';
+                                resultHTML += '<h6>Chi tiết：</h6>';
                                 resultHTML += '<ul class="list-group list-group-flush bg-dark">';
                                 
-                                // 显示导入格式信息
+                                // Hiển thị thông tin định dạng nhập khẩu
                                 if (response.details.format) {
                                     resultHTML += '<li class="list-group-item bg-dark text-light border-secondary">';
-                                    let formatDesc = '标准格式';
+                                    let formatDesc = 'Định dạng tiêu chuẩn';
                                     if (response.details.format === 'alist_sync_base_config') {
-                                        formatDesc = 'AList-Sync基本配置格式';
+                                        formatDesc = 'AList-SyncĐịnh dạng cấu hình cơ bản';
                                     } else if (response.details.format === 'alist_sync_sync_config') {
-                                        formatDesc = 'AList-Sync同步任务配置格式';
+                                        formatDesc = 'AList-SyncĐịnh dạng cấu hình tác vụ đồng bộ';
                                         
-                                        // 显示任务统计信息
+                                        // Hiển thị số liệu thống kê nhiệm vụ
                                         if (response.details.task_count !== undefined) {
-                                            formatDesc += ` (共${response.details.task_count}个任务)`;
+                                            formatDesc += ` (chung${response.details.task_count}Một nhiệm vụ)`;
                                         }
                                         
-                                        // 显示是否为新旧版格式
+                                        // Hiển thị liệu nó có ở định dạng cũ và mới không
                                         if (response.details.format_version) {
                                             formatDesc += ` - ${response.details.format_version}`;
                                         }
                                     }
-                                    resultHTML += '导入格式: ' + formatDesc;
+                                    resultHTML += 'Định dạng nhập khẩu: ' + formatDesc;
                                     resultHTML += '</li>';
                                 }
                                 
-                                // 处理备份信息
+                                // Xử lý thông tin sao lưu
                                 if (response.details.backup_dir) {
                                     resultHTML += '<li class="list-group-item bg-dark text-light border-secondary">';
-                                    resultHTML += '备份目录: ' + response.details.backup_dir;
+                                    resultHTML += 'Thư mục sao lưu: ' + response.details.backup_dir;
                                     resultHTML += '</li>';
                                 }
                                 
-                                // 处理各类数据导入结果
+                                // Xử lý kết quả nhập dữ liệu khác nhau
                                 const dataTypes = ['users', 'connections', 'tasks', 'settings'];
                                 for (const type of dataTypes) {
                                     if (response.details[type]) {
@@ -227,16 +227,16 @@
                                     }
                                 }
                                 
-                                // 处理调度器信息
+                                // Quy trình thông tin lập lịch
                                 if (response.details.scheduler) {
                                     resultHTML += '<li class="list-group-item bg-dark text-light border-secondary">';
-                                    resultHTML += '调度器: ' + response.details.scheduler;
+                                    resultHTML += 'Người lập lịch: ' + response.details.scheduler;
                                     resultHTML += '</li>';
                                 }
                                 
                                 if (response.details.scheduler_error) {
                                     resultHTML += '<li class="list-group-item bg-dark text-light border-secondary text-warning">';
-                                    resultHTML += '调度器错误: ' + response.details.scheduler_error;
+                                    resultHTML += 'Lỗi lập lịch: ' + response.details.scheduler_error;
                                     resultHTML += '</li>';
                                 }
                                 
@@ -245,10 +245,10 @@
                             
                             $('#import-result-content').html(resultHTML);
                             
-                            // 显示结果模态框
+                            // Hiển thị kết quả hộp phương thức
                             new bootstrap.Modal(document.getElementById('import-result-modal')).show();
                             
-                            // 如果成功，刷新页面
+                            // Nếu thành công，Làm mới trang
                             if (response.status === 'success') {
                                 setTimeout(function() {
                                     window.location.reload();
@@ -256,7 +256,7 @@
                             }
                         },
                         error: function(xhr) {
-                            let errorMsg = '导入失败';
+                            let errorMsg = 'Nhập khẩu không thành công';
                             let details = {};
                             
                             try {
@@ -264,17 +264,17 @@
                                 errorMsg = response.message || errorMsg;
                                 details = response.details || {};
                             } catch (e) {
-                                errorMsg = '导入失败，服务器错误';
+                                errorMsg = 'Nhập khẩu không thành công，Lỗi máy chủ';
                             }
                             
-                            // 构建错误信息HTML
+                            // Xây dựng thông báo lỗiHTML
                             let resultHTML = '<div class="alert alert-danger mb-3">';
                             resultHTML += '<i class="bi bi-x-circle-fill me-2"></i>' + errorMsg;
                             resultHTML += '</div>';
                             
-                            // 添加详细信息
+                            // Thêm chi tiết
                             if (Object.keys(details).length > 0) {
-                                resultHTML += '<h6>错误详情：</h6>';
+                                resultHTML += '<h6>Chi tiết lỗi：</h6>';
                                 resultHTML += '<ul class="list-group list-group-flush bg-dark">';
                                 for (const [key, value] of Object.entries(details)) {
                                     resultHTML += '<li class="list-group-item bg-dark text-light border-secondary">';
@@ -288,24 +288,24 @@
                             new bootstrap.Modal(document.getElementById('import-result-modal')).show();
                         },
                         complete: function() {
-                            // 恢复按钮状态
-                            $('#import-btn').html('<i class="bi bi-upload me-2"></i>导入数据');
+                            // Khôi phục trạng thái nút
+                            $('#import-btn').html('<i class="bi bi-upload me-2"></i>Nhập dữ liệu');
                             $('#import-btn').prop('disabled', false);
                             
-                            // 清空文件输入
+                            // Xóa đầu vào tệp
                             $('#import-file').val('');
                         }
                     });
                 } catch (e) {
-                    alert('文件格式错误，请上传有效的JSON文件');
-                    $('#import-btn').html('<i class="bi bi-upload me-2"></i>导入数据');
+                    alert('Lỗi định dạng tệp，Vui lòng tải lên hợp lệJSONtài liệu');
+                    $('#import-btn').html('<i class="bi bi-upload me-2"></i>Nhập dữ liệu');
                     $('#import-btn').prop('disabled', false);
                 }
             };
             
             reader.onerror = function() {
-                alert('读取文件失败');
-                $('#import-btn').html('<i class="bi bi-upload me-2"></i>导入数据');
+                alert('Không đọc được tệp');
+                $('#import-btn').html('<i class="bi bi-upload me-2"></i>Nhập dữ liệu');
                 $('#import-btn').prop('disabled', false);
             };
             
