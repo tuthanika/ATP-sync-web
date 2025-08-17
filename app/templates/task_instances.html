@@ -36,7 +36,7 @@
                                     <td>{{ instance.task_name }}</td>
                                     <td>{{ instance.task_id }}</td>
                                     <td>{{ instance.start_time_formatted }}</td>
-                                    <td>{{ instance.end_time_formatted or "Trong tiến trình" }}</td>
+                                    <td>{{ instance.end_time_formatted or "Đang tiến hành" }}</td>
                                     <td>
                                         {% if instance.status == 'running' %}
                                         <span class="badge bg-primary">Đang chạy</span>
@@ -64,7 +64,7 @@
                                 {% endfor %}
                             {% else %}
                                 <tr>
-                                    <td colspan="7" class="text-center">Chưa có ví dụ nào</td>
+                                    <td colspan="7" class="text-center">Chưa có phiên nào</td>
                                 </tr>
                             {% endif %}
                         </tbody>

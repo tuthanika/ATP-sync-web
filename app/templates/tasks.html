@@ -101,7 +101,7 @@
                                     <td>{{ task.target_connection_names }}</td>
                                     <td>
                                         {% if task.sync_type == 'file_sync' %}
-                                        <span class="badge bg-info">Tệp đồng bộ hóa</span>
+                                        <span class="badge bg-info">Đồng bộ hóa tệp</span>
                                         {% elif task.sync_type == 'file_move' %}
                                         <span class="badge bg-primary">Di chuyển tập tin</span>
                                         {% endif %}
@@ -152,7 +152,7 @@
                                                         </div>
                                                         <div class="mb-2">
                                                             <strong>Chế độ đồng bộ:</strong> 
-                                                            {% if task.sync_type == 'file_sync' %}Tệp đồng bộ hóa
+                                                            {% if task.sync_type == 'file_sync' %}Đồng bộ hóa tệp
                                                             {% elif task.sync_type == 'file_move' %}Di chuyển tập tin
                                                             {% endif %}
                                                         </div>
@@ -266,7 +266,7 @@
                     <div class="mb-3">
                         <label for="syncType" class="form-label">Chế độ đồng bộ</label>
                         <select class="form-select" id="syncType" required>
-                            <option value="file_sync">Tệp đồng bộ hóa</option>
+                            <option value="file_sync">Đồng bộ hóa tệp</option>
                             <option value="file_move">Di chuyển tập tin</option>
                         </select>
                     </div>
@@ -379,7 +379,7 @@
                     <div class="mb-3">
                         <label for="editSyncType" class="form-label">Chế độ đồng bộ</label>
                         <select class="form-select" id="editSyncType" required>
-                            <option value="file_sync">Tệp đồng bộ hóa</option>
+                            <option value="file_sync">Đồng bộ hóa tệp</option>
                             <option value="file_move">Di chuyển tập tin</option>
                         </select>
                     </div>
@@ -552,7 +552,7 @@
             } else {
                 console.log('Không phát hiện hàng tác vụ nào được phát hiện，Có thể trì hoãn tải');
             }
-        }, 1000); // Chờ đợi1Thứ hai
+        }, 1000); // Chờ đợi1s
         
         // Xác định chức năng xử lý dòng tác vụ Nhấp vào chức năng
         function taskRowClickHandler(event) {
@@ -600,7 +600,7 @@
             }
         }
         
-        // Khởi tạo chế độ đồng bộ hóa kiểm tra，Vô hiệu hóa Chính sách xử lý vật phẩm khác biệt nếu cần thiết
+        // Khởi tạo chế độ đồng bộ hóa kiểm tra，Vô hiệu hóa Chính sách xử lý mục khác biệt nếu cần thiết
         function initSyncTypeHandling() {
             // Kiểm tra biểu mẫu thêm tác vụ
             const syncType = document.getElementById('syncType');
@@ -1343,7 +1343,7 @@
                         row.innerHTML = `
                             <td>${instance.task_instances_id}</td>
                             <td>${instance.start_time_formatted}</td>
-                            <td>${instance.end_time_formatted || 'Trong tiến trình'}</td>
+                            <td>${instance.end_time_formatted || 'Đang tiến hành'}</td>
                             <td>
                                 ${getStatusBadge(instance.status)}
                             </td>
@@ -1557,7 +1557,7 @@
                             <td>${task.source_connection_name || ''}</td>
                             <td>${task.target_connection_names || ''}</td>
                             <td>
-                                ${task.sync_type === 'file_sync' ? '<span class="badge bg-info">Tệp đồng bộ hóa</span>' : ''}
+                                ${task.sync_type === 'file_sync' ? '<span class="badge bg-info">Đồng bộ hóa tệp</span>' : ''}
                                 ${task.sync_type === 'file_move' ? '<span class="badge bg-primary">Di chuyển tập tin</span>' : ''}
                             </td>
                             <td>${task.created_at || ''}</td>
@@ -1614,7 +1614,7 @@
                                                 </div>
                                                 <div class="mb-2">
                                                     <strong>Chế độ đồng bộ:</strong> 
-                                                    ${task.sync_type === 'file_sync' ? 'Tệp đồng bộ hóa' : ''}
+                                                    ${task.sync_type === 'file_sync' ? 'Đồng bộ hóa tệp' : ''}
                                                     ${task.sync_type === 'file_move' ? 'Di chuyển tập tin' : ''}
                                                 </div>
                                                 <div class="mb-2">

@@ -51,7 +51,7 @@
                     </ul>
                 </div>
                 <div class="mb-3">
-                    <label for="import-file" class="form-label">Chọn xuất khẩuJSONtài liệu</label>
+                    <label for="import-file" class="form-label">Chọn xuấtJSONtài liệu</label>
                     <input type="file" class="form-control" id="import-file" accept=".json">
                 </div>
                 <button id="import-btn" class="btn btn-warning mt-3" disabled>
@@ -67,14 +67,14 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark text-light">
             <div class="modal-header">
-                <h5 class="modal-title" id="importResultModalLabel">Kết quả nhập khẩu</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng cửa"></button>
+                <h5 class="modal-title" id="importResultModalLabel">Kết quả nhập</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body" id="import-result-content">
                 <!-- Kết quả sẽ làJSĐộng lực điền vào -->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng cửa</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
@@ -87,7 +87,7 @@
         // Chức năng xuất
         $('#export-btn').click(function() {
             // Hiển thị hoạt hình tải
-            $(this).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Xuất khẩu...');
+            $(this).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>xuất...');
             $(this).prop('disabled', true);
             
             $.ajax({
@@ -110,16 +110,16 @@
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
                     } else {
-                        alert('Xuất khẩu không thành công: ' + response.message);
+                        alert('xuất không thành công: ' + response.message);
                     }
                 },
                 error: function(xhr) {
-                    let errorMsg = 'Xuất khẩu không thành công';
+                    let errorMsg = 'xuất không thành công';
                     try {
                         const response = JSON.parse(xhr.responseText);
                         errorMsg = response.message || errorMsg;
                     } catch (e) {
-                        errorMsg = 'Xuất khẩu không thành công，Lỗi máy chủ';
+                        errorMsg = 'xuất không thành công，Lỗi máy chủ';
                     }
                     alert(errorMsg);
                 },
@@ -145,7 +145,7 @@
             }
             
             // Hiển thị hoạt hình tải
-            $(this).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Nhập khẩu...');
+            $(this).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Đang nhập...');
             $(this).prop('disabled', true);
             
             const file = fileInput.files[0];
@@ -155,14 +155,14 @@
                 try {
                     const importData = JSON.parse(e.target.result);
                     
-                    // Xác nhận nhập khẩu
+                    // Xác nhận nhập
                     if (!confirm('Nhập sẽ ghi đè dữ liệu cấu hình hiện có，Tất cả dữ liệu kết nối và tác vụ sẽ được thay thế hoàn toàn thay vì được thêm vào，Xác nhận để tiếp tục？')) {
                         $('#import-btn').html('<i class="bi bi-upload me-2"></i>Nhập dữ liệu');
                         $('#import-btn').prop('disabled', false);
                         return;
                     }
                     
-                    // Gửi yêu cầu nhập khẩu
+                    // Gửi yêu cầu nhập
                     $.ajax({
                         url: '/api/import',
                         method: 'POST',
@@ -187,7 +187,7 @@
                                 resultHTML += '<h6>Chi tiết：</h6>';
                                 resultHTML += '<ul class="list-group list-group-flush bg-dark">';
                                 
-                                // Hiển thị thông tin định dạng nhập khẩu
+                                // Hiển thị thông tin định dạng nhập
                                 if (response.details.format) {
                                     resultHTML += '<li class="list-group-item bg-dark text-light border-secondary">';
                                     let formatDesc = 'Định dạng tiêu chuẩn';
@@ -206,7 +206,7 @@
                                             formatDesc += ` - ${response.details.format_version}`;
                                         }
                                     }
-                                    resultHTML += 'Định dạng nhập khẩu: ' + formatDesc;
+                                    resultHTML += 'Định dạng nhập: ' + formatDesc;
                                     resultHTML += '</li>';
                                 }
                                 
@@ -256,7 +256,7 @@
                             }
                         },
                         error: function(xhr) {
-                            let errorMsg = 'Nhập khẩu không thành công';
+                            let errorMsg = 'Nhập không thành công';
                             let details = {};
                             
                             try {
@@ -264,7 +264,7 @@
                                 errorMsg = response.message || errorMsg;
                                 details = response.details || {};
                             } catch (e) {
-                                errorMsg = 'Nhập khẩu không thành công，Lỗi máy chủ';
+                                errorMsg = 'Nhập không thành công，Lỗi máy chủ';
                             }
                             
                             // Xây dựng thông báo lỗiHTML

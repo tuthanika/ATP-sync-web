@@ -199,7 +199,7 @@
     function updateCharts(stats) {
         // Biểu đồ trạng thái tác vụ
         var taskStatusChartData = {
-            labels: ['Hoàn thành', 'Trong tiến trình', 'thất bại', 'Chờ'],
+            labels: ['Hoàn thành', 'Đang tiến hành', 'thất bại', 'Chờ'],
             datasets: [{
                 data: [
                     stats.completed_task_count || 0, 
@@ -281,7 +281,7 @@
         
         // Biểu đồ thống kê thời gian thực hiện tác vụ
         var taskDurationData = {
-            labels: stats.task_duration_labels || ['Ít hơn1phút', '1-5phút', '5-15phút', '15-30phút', '30phút以上'],
+            labels: stats.task_duration_labels || ['Ít hơn 1phút', '1-5phút', '5-15phút', '15-30phút', '30phút以上'],
             datasets: [{
                 label: 'Số lượng tác vụ',
                 data: stats.task_duration_counts || [8, 5, 3, 2, 1],
@@ -411,7 +411,7 @@
             
             html += `<tr>
                 <td>${task.name}</td>
-                <td>${task.sync_type === 'file_sync' ? 'Tệp đồng bộ hóa' : 'khác'}</td>
+                <td>${task.sync_type === 'file_sync' ? 'Đồng bộ hóa tệp' : 'khác'}</td>
                 <td title="${task.source_path}">${task.source_path}</td>
                 <td title="${task.target_path}">${task.target_path}</td>
                 <td><span class="badge bg-${statusClass}">${statusText}</span></td>
