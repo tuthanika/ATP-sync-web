@@ -26,7 +26,7 @@ Dựa trên một Web Giao diện Alist Công cụ đồng bộ hóa lưu trữ�
 - 🔄 Hỗ trợ quản lý đa nhiệm vụ
 - ⏰ ủng hộ Cron Nhiệm vụ thời gian
 - 📂 Hỗ trợ hai chế độ: đồng bộ hóa dữ liệu và đồng bộ hóa tệp
-- 🗑️ Hỗ trợ nhiều chiến lược xử lý khác biệt（dự trữ/Di chuyển đến thùng tái chế/xóa bỏ）
+- 🗑️ Hỗ trợ nhiều Chính sách xử lý khác biệt（dự trữ/Di chuyển đến thùng rác/xóa bỏ）
 - 📝 Ghi nhật ký đồng bộ chi tiết
 - 🔒 Hỗ trợ xác thực người dùng và quản lý mật khẩu
 - 🐳 ủng hộ Docker triển khai
@@ -46,7 +46,7 @@ Dựa trên một Web Giao diện Alist Công cụ đồng bộ hóa lưu trữ�
 mkdir -p /DATA/AppData/alist-sync-web/data 
 ```
 
-2. tạo nên docker-compose.yml：
+2. Tạo docker-compose.yml：
 
 ```bash
 version: '3'
@@ -115,11 +115,11 @@ Hỗ trợ hai chế độ đồng bộ hóa：
 - Ghi chú：Phương thức chuyển động tệp là sao chép vào đường dẫn đích trước，Sau đó, lần tới khi bạn tự động hóa nhiệm vụ，Xác định xem đường dẫn đích đã có tệp không，Nếu nó tồn tại, hãy xóa tệp đường dẫn nguồn
 
 
-### 3. Chiến lược xử lý khác biệt
+### 3. Chính sách xử lý khác biệt
 
-Cung cấp ba phương pháp điều trị khác biệt：
+Cung cấp ba Phương thức điều trị khác biệt：
 - Không được xử lý：Giữ các tệp vi sai trong thư mục đích
-- Di chuyển đến thùng tái chế：Di chuyển tệp diff đến thùng rác của lưu trữ mục tiêu(trash)
+- Di chuyển đến thùng rác：Di chuyển tệp diff đến thùng rác của lưu trữ mục tiêu(trash)
 - xóa bỏ：直接xóa bỏ目标目录中的差异文件
 - di chuyển/xóa bỏ Một số nguồn lưu trữ sẽ thất bại. Chào mừng bạn đến gửiIssue，Tôi đã báo cáo Alist tác giả
 
@@ -173,7 +173,7 @@ SYNC_DELETE_ACTION: Hành động xóa đồng bộ，Giá trị tùy chọn là
 khiSYNC_DELETE_ACTIONĐặt nhưmovegiờ，Tệp sẽ được chuyển sangtrashTrong thư mục；Ví dụ, thư mục bộ nhớ là /dav/quark，Sau đó các tệp dư thừa trong thư mục nguồn sẽ được chuyển sang/dav/quark/trash Trong thư mục
 EXCLUDE_DIRS: Loại trừ thư mục
 MOVE_FILE: Có di chuyển tệp không，Thư mục nguồn sẽ bị xóa，Và vớiSYNC_DELETE_ACTION Không thể có hiệu lực cùng một lúc
-REGEX_PATTERNS: Biểu thức thông thường được sử dụng để khớp với tên tệp
+REGEX_PATTERNS: biểu thức chính quy được sử dụng để khớp với tên tệp
 
 ```
 
@@ -193,11 +193,11 @@ ql raw https://github.com/xjxjin/alist-sync/raw/main/alist-sync-ql.py
 ## Cập nhật hồ sơ
 ### v1.1.5
 - 2025-03-15
-- Đã sửa lỗi báo cáo lỗi cho các biểu thức thông thường khi chúng trống
+- Đã sửa lỗi báo cáo lỗi cho các biểu thức chính quy khi chúng trống
 
 ### v1.1.4
 - 2025-02-21
-- Đã sửa lỗi báo cáo lỗi cho các biểu thức thông thường khi chúng trống
+- Đã sửa lỗi báo cáo lỗi cho các biểu thức chính quy khi chúng trống
 
 ### v1.1.3
 - 2025-02-18
@@ -256,7 +256,7 @@ ql raw https://github.com/xjxjin/alist-sync/raw/main/alist-sync-ql.py
 
 
 ### 2024-09-06gia hạn
-- Đã thêm tham số，Xử lý nhiều tệp hoặc thư mục trong thư mục đích，Nhưng thư mục nguồn không có phương pháp xử lý,Chức năng bởi【[RWDai](https://github.com/RWDai)】Được cung cấp bởi anh chàng 
+- Đã thêm tham số，Xử lý nhiều tệp hoặc thư mục trong thư mục đích，Nhưng thư mục nguồn không có Phương thức xử lý,Chức năng bởi【[RWDai](https://github.com/RWDai)】Được cung cấp bởi anh chàng 
 - none Không làm gì cả 
 - move Di chuyển đến thư mục đíchtrashMục lục 
 - delete Xóa thực sự 
@@ -321,8 +321,8 @@ MIT License
 ## Tệp đồng bộ hóa
 <img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Tệp đồng bộ hóa.png" width="700" alt="Tệp đồng bộ hóa">
 
-## Chuyển động tập tin
-<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Chuyển động tập tin.png" width="700" alt="Chuyển động tập tin">
+## Di chuyển tập tin
+<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Di chuyển tập tin.png" width="700" alt="Di chuyển tập tin">
 
 ## Mua lại mã thông báo
 <img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Mã thông báo.png" width="700" alt="Mã thông báo获取">
