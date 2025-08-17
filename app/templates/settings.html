@@ -86,7 +86,7 @@
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="notificationType" class="form-label">Phương pháp thông báo</label>
+                            <label for="notificationType" class="form-label">Phương thức thông báo</label>
                             <select class="form-select bg-dark text-light" id="notificationType">
                                 <option value="webhook" {% if settings.notification_type == 'webhook' %}selected{% endif %}>Tùy chỉnh Webhook</option>
                                 <option value="feishu" {% if settings.notification_type == 'feishu' %}selected{% endif %}>Robot Feishu</option>

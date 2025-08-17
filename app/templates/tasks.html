@@ -272,13 +272,13 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="syncDiffAction" class="form-label">Chiến lược xử lý khác biệt</label>
+                        <label for="syncDiffAction" class="form-label">Chính sách xử lý khác biệt</label>
                         <select class="form-select" id="syncDiffAction">
                             <option value="none">Không xử lý sự khác biệt của thư mục đích</option>
                             <option value="move">Di chuyển đến thư mục trash của đích</option>
                             <option value="delete">Xóa khác biệt ở thư mục đích</option>
                         </select>
-                        <div class="form-text">Để ý：Chọn chế độ "Di chuyển tập tin"，Chiến lược xử lý mục khác biệt sẽ bị vô hiệu hóa</div>
+                        <div class="form-text">Để ý：Chọn chế độ "Di chuyển tập tin"，Chính sách xử lý mục khác biệt sẽ bị vô hiệu hóa</div>
                     </div>
                     
                     <div class="mb-3">
@@ -385,13 +385,13 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="editSyncDiffAction" class="form-label">Chiến lược xử lý khác biệt</label>
+                        <label for="editSyncDiffAction" class="form-label">Chính sách xử lý khác biệt</label>
                         <select class="form-select" id="editSyncDiffAction">
                             <option value="none">Không xử lý sự khác biệt của thư mục đích</option>
                             <option value="move">Di chuyển đến thư mục trash của đích</option>
                             <option value="delete">Xóa khác biệt ở thư mục đích</option>
                         </select>
-                        <div class="form-text">Để ý：Chọn chế độ "Di chuyển tập tin"，Chiến lược xử lý mục khác biệt sẽ bị vô hiệu hóa</div>
+                        <div class="form-text">Để ý：Chọn chế độ "Di chuyển tập tin"，Chính sách xử lý mục khác biệt sẽ bị vô hiệu hóa</div>
                     </div>
                     
                     <div class="mb-3">
@@ -600,7 +600,7 @@
             }
         }
         
-        // Khởi tạo chế độ đồng bộ hóa kiểm tra，Vô hiệu hóa chiến lược xử lý vật phẩm khác biệt nếu cần thiết
+        // Khởi tạo chế độ đồng bộ hóa kiểm tra，Vô hiệu hóa Chính sách xử lý vật phẩm khác biệt nếu cần thiết
         function initSyncTypeHandling() {
             // Kiểm tra biểu mẫu thêm tác vụ
             const syncType = document.getElementById('syncType');
@@ -608,7 +608,7 @@
                 const syncDiffAction = document.getElementById('syncDiffAction');
                 syncDiffAction.value = 'none';
                 syncDiffAction.disabled = true;
-                syncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chiến lược xử lý mục khác biệt đã bị vô hiệu hóa';
+                syncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chính sách xử lý mục khác biệt đã bị vô hiệu hóa';
             }
             
             // Kiểm tra biểu mẫu tác vụ chỉnh sửa
@@ -617,7 +617,7 @@
                 const editSyncDiffAction = document.getElementById('editSyncDiffAction');
                 editSyncDiffAction.value = 'none';
                 editSyncDiffAction.disabled = true;
-                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chiến lược xử lý mục khác biệt đã bị vô hiệu hóa';
+                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chính sách xử lý mục khác biệt đã bị vô hiệu hóa';
             }
         }
         
@@ -683,10 +683,10 @@
             if (this.value === 'file_move') {
                 editSyncDiffAction.value = 'none';
                 editSyncDiffAction.disabled = true;
-                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chiến lược xử lý mục khác biệt đã bị vô hiệu hóa';
+                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chính sách xử lý mục khác biệt đã bị vô hiệu hóa';
             } else {
                 editSyncDiffAction.disabled = false;
-                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý：Chọn chế độ "Di chuyển tập tin"，Chiến lược xử lý mục khác biệt sẽ bị vô hiệu hóa';
+                editSyncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý：Chọn chế độ "Di chuyển tập tin"，Chính sách xử lý mục khác biệt sẽ bị vô hiệu hóa';
             }
         });
         
@@ -696,10 +696,10 @@
             if (this.value === 'file_move') {
                 syncDiffAction.value = 'none';
                 syncDiffAction.disabled = true;
-                syncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chiến lược xử lý mục khác biệt đã bị vô hiệu hóa';
+                syncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý："Di chuyển tập tin"Trong chế độ，Chính sách xử lý mục khác biệt đã bị vô hiệu hóa';
             } else {
                 syncDiffAction.disabled = false;
-                syncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý：Chọn chế độ "Di chuyển tập tin"，Chiến lược xử lý mục khác biệt sẽ bị vô hiệu hóa';
+                syncDiffAction.parentElement.querySelector('.form-text').textContent = 'Để ý：Chọn chế độ "Di chuyển tập tin"，Chính sách xử lý mục khác biệt sẽ bị vô hiệu hóa';
             }
         });
         
@@ -1196,7 +1196,7 @@
                         // Tải danh sách lưu trữ của các đầu nối
                         loadStoragesForEdit(connId, task);
                     } else {
-                        console.warn('Không tìm thấy trong dữ liệu tác vụconnection_idCánh đồng');
+                        console.warn('Không tìm thấy trong dữ liệu tác vụconnection_idtrường');
                         // Cố gắng tải danh sách lưu trữ từ kết nối đầu tiên
                         if (connections.length > 0) {
                             const firstConnId = connections[0].connection_id;
@@ -1231,13 +1231,13 @@
                 if (data.status === 'success' && data.data && data.data.length > 0) {
                     // Điền vào danh sách lưu trữ
                     data.data.forEach(storage => {
-                        // Thêm vào kết nối nguồn
+                        // Thêm  kết nối nguồn
                         const sourceOption = document.createElement('option');
                         sourceOption.value = storage.id || storage.name;
                         sourceOption.textContent = storage.name;
                         sourceConnection.appendChild(sourceOption);
                         
-                        // Thêm vào kết nối đích
+                        // Thêm  kết nối đích
                         const targetOption = document.createElement('option');
                         targetOption.value = storage.id || storage.name;
                         targetOption.textContent = storage.name;
@@ -1276,13 +1276,13 @@
                 if (data.status === 'success' && data.data && data.data.length > 0) {
                     // Điền vào danh sách lưu trữ
                     data.data.forEach(storage => {
-                        // Thêm vào kết nối nguồn
+                        // Thêm  kết nối nguồn
                         const sourceOption = document.createElement('option');
                         sourceOption.value = storage.id || storage.name;
                         sourceOption.textContent = storage.name;
                         editSourceConnection.appendChild(sourceOption);
                         
-                        // Thêm vào kết nối đích
+                        // Thêm  kết nối đích
                         const targetOption = document.createElement('option');
                         targetOption.value = storage.id || storage.name;
                         targetOption.textContent = storage.name;
@@ -1517,7 +1517,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             `;
             
-            // Thêm vào các container và trang
+            // Thêm  các container và trang
             alertContainer.appendChild(alertEl);
             document.body.appendChild(alertContainer);
             
@@ -1593,7 +1593,7 @@
                         detailRow.id = `task-detail-${task.id}`;
                         detailRow.style.display = 'none';
                         
-                        // Văn bản chiến lược xử lý mục khác biệt
+                        // Văn bản Chính sách xử lý mục khác biệt
                         let diffActionText = 'Không được xử lý';
                         if (task.sync_diff_action === 'move') diffActionText = 'Di chuyển đến trạm tái chế';
                         if (task.sync_diff_action === 'delete') diffActionText = 'xóa bỏ';
@@ -1645,7 +1645,7 @@
                             </td>
                         `;
                         
-                        // Thêm vào bảng
+                        // Thêm  bảng
                         tasksTable.appendChild(taskRow);
                         tasksTable.appendChild(detailRow);
                     });
