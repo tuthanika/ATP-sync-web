@@ -318,8 +318,8 @@ MIT License
 ## Đồng bộ hóa dữ liệu
 <img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Đồng bộ hóa dữ liệu.png" width="700" alt="Đồng bộ hóa dữ liệu">
 
-## Tệp đồng bộ hóa
-<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Tệp đồng bộ hóa.png" width="700" alt="Tệp đồng bộ hóa">
+## Đồng bộ hóa tệp
+<img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Đồng bộ hóa tệp.png" width="700" alt="Đồng bộ hóa tệp">
 
 ## Di chuyển tập tin
 <img src="https://raw.githubusercontent.com/xjxjin/alist-sync/main/static/images/Di chuyển tập tin.png" width="700" alt="Di chuyển tập tin">
